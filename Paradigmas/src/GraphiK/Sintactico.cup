@@ -1,0 +1,85 @@
+package GraphiK;
+import java.io.*;
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+init with {:
+
+:};
+parser code
+{:
+// METODOS Y VARIABLES GLOBALES DEL PARSER, PUEDEN SER PUBLICAS O PRIVADAS
+public static String n="";      
+public static String u="";      
+public static String p="";      
+public static String c="";      
+public static String s="";      
+
+
+ 
+public void syntax_error(Symbol s){
+/**Metodo al que se llama automaticamente ante algun error sintactico.*/
+        System.out.println("Error Sintactico en la Linea " + (s.right+1) +" Columna "+s.left+ ". Identificador " +s.value + " no reconocido." );
+int linea = s.right+1; int columna = s.left; 
+String texto = "Identificador " +s.value + " no reconocido.";
+
+}            
+public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+/**Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores.*/
+        System.out.println("Error Sintactico no recuperable en la Linea " + (s.right+1)+ " Columna "+s.left+". Identificador " + s.value + " no reconocido.");
+}
+:}
+
+action code
+{:
+:}
+
+terminal String user,pass,name,dollar,id,numero,cadena,arroba,correo,score,
+igual,parentesisA,parentesisC,coma,
+decimal,ERROR;
+
+
+non terminal Caracter INICIO,ATRIBUTOS,SERVIDOR,USUARIOS,USUARIO,PASSWORD,NOMBRE,EMAIL,U,A,PUNTEO;
+
+
+start with INICIO;
+
+INICIO::=USUARIOS{::};
+
+USUARIOS::=USUARIOS U{::}
+|U{::};
+
+
+U::=dollar parentesisA ATRIBUTOS parentesisC{:
+Usuario.guardarUsuario(aSintactico.n,aSintactico.p,aSintactico.u,aSintactico.c,aSintactico.s);
+:};
+
+ATRIBUTOS::=ATRIBUTOS coma A{::}
+|A{::};
+
+
+A::=USUARIO{::}
+|PASSWORD{::}
+|NOMBRE{::}
+|EMAIL{::}
+|PUNTEO{::};
+
+USUARIO::=user igual id:n{:
+aSintactico.u = n;
+:}; 
+
+PASSWORD::=pass igual id:n{:
+aSintactico.p = n;
+:}; 
+
+NOMBRE::=name igual cadena:n{:
+aSintactico.n = n;
+:}; 
+
+EMAIL::=correo igual cadena:n{:
+aSintactico.c = n;
+:}; 
+
+PUNTEO::=score igual numero:n{:
+aSintactico.s = n;
+:};

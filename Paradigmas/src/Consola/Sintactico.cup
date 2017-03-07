@@ -1,0 +1,338 @@
+package Consola;
+import java.io.*;
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+init with {:
+
+:};
+parser code
+{:
+// METODOS Y VARIABLES GLOBALES DEL PARSER, PUEDEN SER PUBLICAS O PRIVADAS
+public static String n="";      
+
+ 
+public void syntax_error(Symbol s){
+/**Metodo al que se llama automaticamente ante algun error sintactico.*/
+        System.out.println("Error Sintactico en la Linea " + (s.right+1) +" Columna "+s.left+ ". Identificador " +s.value + " no reconocido." );
+int linea = s.right+1; int columna = s.left; 
+String texto = "Identificador " +s.value + " no reconocido.";
+
+}            
+public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+/**Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores.*/
+        System.out.println("Error Sintactico no recuperable en la Linea " + (s.right+1)+ " Columna "+s.left+". Identificador " + s.value + " no reconocido.");
+}
+:}
+
+action code
+{:
+:}
+
+terminal String succ,decc,pot,sqrt,mod,dollar,id,numero,cadena,llaveA,porcentaje,
+llaveC,igual,parentesisA,parentesisC,coma,mas,menos,por,div,mayor,menor,mayorIgual,
+menorIgual,diferente,or,and,not,puntoComa,corcheteA,corcheteC,disminuir,posicion,
+dosPuntos,verdadero,falso,igualDoble,decimal,end,let,calcular,para,asc,desc,caracter,
+si,sino,interrumpir,caso,defecto,mientras,hacer,salir,sum,product,revers,impr,par,
+length,entonces,max,min,concatenar,ERROR;
+
+
+non terminal Caracter INICIO,OP,E,INSTRUCCION,DECLARACION,INSTRUCCIONES,LISTA,ELEMENTO,
+CALCULAR,ELEMENTOS,MATRIZ,EXTRAS,OPERACION_LISTA,NOMBRE_OP,POSICION;
+
+precedence left mas, menos;
+precedence left por, div;
+precedence left or,and,not;
+precedence left mayor,menor,mayorIgual,menorIgual;
+precedence left igual,diferente,igualDoble;
+precedence left mod,pot,sqrt,concatenar;
+
+
+start with INICIO;
+
+INICIO::=INSTRUCCIONES;
+
+INSTRUCCIONES::=INSTRUCCIONES INSTRUCCION
+|INSTRUCCION;
+
+INSTRUCCION::=LISTA
+|OPERACION_LISTA
+|OP;
+
+LISTA::= let id igual MATRIZ
+|let id igual ELEMENTO;
+
+MATRIZ::=MATRIZ coma corcheteA ELEMENTO corcheteC
+|corcheteA ELEMENTO corcheteC
+|corcheteA MATRIZ corcheteC
+|corcheteA corcheteC;
+
+ELEMENTO::= ELEMENTO coma OP
+|OP;
+
+CALCULAR::= dollar calcular OP dollar 
+|calcular OP;
+
+OPERACION_LISTA::= NOMBRE_OP MATRIZ
+|NOMBRE_OP id
+|id POSICION;
+
+NOMBRE_OP ::= sum
+|product
+|revers
+|impr
+|asc
+|desc
+|par
+|length;
+
+POSICION::=POSICION posicion OP
+|posicion OP;
+
+OP::=E:a{:
+    RESULT = new Caracter();
+    RESULT.valor = a.valor;
+    RESULT.texto =  a.texto;
+:};
+
+E::=parentesisA E:a parentesisC{:
+    RESULT = new Caracter();
+    RESULT.valor = a.valor;
+    RESULT.texto =  "(" + a.texto + ")";
+:}
+|E:a mas E:b{: 
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + "+" + b.texto;
+    try{
+        if(a.cadena==false && b.cadena==false){
+            RESULT.val = Double.parseDouble(a.valor) + Double.parseDouble(b.valor);
+            RESULT.valor = String.valueOf(RESULT.val);
+            RESULT.cadena = false;
+        }else{
+            RESULT.valor =a.valor+b.valor;
+            RESULT.cadena = true;
+        }      
+    }catch(Exception e){
+        System.out.println("ERROR al operar (+) "+e);
+    }
+:}
+|E:a menos E:b{:
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + "-" + b.texto;
+    try{
+       // System.out.println("Menos ="+(a.valor)+","+(b.valor));
+        RESULT.val = Double.parseDouble(a.valor) - Double.parseDouble(b.valor);
+        RESULT.valor = String.valueOf(RESULT.val);
+        RESULT.cadena = false;
+    }catch(Exception e){
+        System.out.println("ERROR al operar (-) "+e);
+    }
+ :}
+|E:a por E:b{: 
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + "*" + b.texto;
+    try{
+        RESULT.val = Double.parseDouble(a.valor) * Double.parseDouble(b.valor);
+        RESULT.valor = String.valueOf(RESULT.val);
+        RESULT.cadena = false;
+    }catch(Exception e){
+        System.out.println("ERROR al operar (*) "+e);
+    }
+:}
+|E:a div E:b{: 
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + " / " + b.texto;
+    try{
+        RESULT.val = Double.parseDouble(a.valor) / Double.parseDouble(b.valor);
+        RESULT.valor = String.valueOf(RESULT.val);
+        RESULT.cadena = false;
+    }catch(Exception e){
+        System.out.println("ERROR al operar (/) "+e);
+    }
+:}
+|E:a mayor E:b{: 
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + " > " + b.texto;
+    try{
+       if( Double.parseDouble(a.valor) > Double.parseDouble(b.valor)){
+            RESULT.valor = "true";
+       }else{
+            RESULT.valor = "false";
+       }
+    }catch(Exception e){
+        System.out.println("ERROR al operar (>) "+e);
+    }
+:}
+|E:a menor E:b{: 
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + " < " + b.texto;
+    try{
+       if( Double.parseDouble(a.valor) < Double.parseDouble(b.valor)){
+            RESULT.valor = "true";
+       }else{
+            RESULT.valor = "false";
+       }
+    }catch(Exception e){
+        System.out.println("ERROR al operar (<) "+e);
+    }
+:}
+|E:a mayorIgual E:b{:
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + " >= " + b.texto;
+    try{
+       if( Double.parseDouble(a.valor) >= Double.parseDouble(b.valor)){
+            RESULT.valor = "true";
+       }else{
+            RESULT.valor = "false";
+       }
+    }catch(Exception e){
+        System.out.println("ERROR al operar (>=) "+e);
+    }
+ :}
+|E:a menorIgual E:b{: 
+    RESULT = new Caracter();
+    RESULT.texto =  a.texto + " <= " + b.texto;
+    try{
+       if( Double.parseDouble(a.valor) <= Double.parseDouble(b.valor)){
+            RESULT.valor = "true";
+       }else{
+            RESULT.valor = "false";
+       }
+    }catch(Exception e){
+        System.out.println("ERROR al operar (<=) "+e);
+    }
+:}
+|E:a igual E:b{: 
+    RESULT = new Caracter();
+    RESULT.valor = a.valor;
+    RESULT.texto =  a.texto + " = " + b.texto;
+:}
+|E:a igualDoble E:b{:
+    RESULT = new Caracter();
+    RESULT.valor = a.valor;
+    RESULT.texto =  a.texto + " == " + b.texto;
+ :}
+|E:a diferente E:b{: 
+    RESULT = new Caracter();
+    RESULT.valor = a.valor;
+    RESULT.texto =  a.texto + " != " + b.texto;
+:}
+|verdadero:t{:
+    RESULT= new Caracter();
+    RESULT.valor = "true";
+    RESULT.cadena = true;
+    RESULT.texto = "true";
+ :}
+|falso:f{:
+    RESULT = new Caracter();
+    RESULT.valor = "false";
+    RESULT.cadena = true;
+    RESULT.texto =  "false";
+ :}
+|E:a or E:b{:
+    RESULT = new Caracter();
+    RESULT.valor = a.valor;
+    RESULT.texto =  a.texto + " || " + b.texto +")";
+:}
+|E:a and E:b{:
+    RESULT = new Caracter();
+    RESULT.valor = a.valor;
+    RESULT.texto =  a.texto + " %% " + b.texto +")";
+ :}
+|not E:b{: 
+    RESULT = new Caracter();
+    RESULT.valor = "a";
+    RESULT.texto = "! " + b.texto;
+:}
+|E:a mod E:b{:
+    RESULT = new Caracter();
+    RESULT.texto = "potencia (" + a.texto + "," + b.texto +")";
+    try{
+        if(a.cadena==false && b.cadena==false){
+            RESULT.val = Math.pow(Double.parseDouble(a.valor), Double.parseDouble(b.valor));
+            RESULT.valor = String.valueOf(RESULT.val);
+           
+        }else{
+            RESULT.valor =a.valor+b.valor;
+           
+        }      
+    }catch(Exception e){
+        System.out.println("ERROR al operar (p) "+e);
+    }
+:}
+|E:a sqrt E:b{:
+    RESULT = new Caracter();
+    RESULT.texto = "raiz (" + a.texto + "," + b.texto +")";
+    try{
+        if(a.cadena==false && b.cadena==false){
+            //RESULT.val = Metodo_Funcion.raiz(Double.parseDouble(a.valor),Double.parseDouble(b.valor));
+            RESULT.valor = String.valueOf(RESULT.val);
+            RESULT.cadena = false;
+        }else{
+            RESULT.valor =a.valor+b.valor;
+            RESULT.cadena = true;
+        }      
+    }catch(Exception e){
+        System.out.println("ERROR al operar (r) "+e);
+    }
+:}
+|E:a pot E:b{:
+    RESULT = new Caracter();
+    RESULT.texto = "potencia (" + a.texto + "," + b.texto +")";
+    try{
+        if(a.cadena==false && b.cadena==false){
+            RESULT.val = Math.pow(Double.parseDouble(a.valor), Double.parseDouble(b.valor));
+            RESULT.valor = String.valueOf(RESULT.val);
+           
+        }else{
+            RESULT.valor =a.valor+b.valor;
+           
+        }      
+    }catch(Exception e){
+        System.out.println("ERROR al operar (p) "+e);
+    }
+:}
+|cadena:n{:
+    RESULT = new Caracter();
+    RESULT.valor = n.replace("\"","");
+    RESULT.texto = n;
+:}
+|caracter:n{:
+    RESULT = new Caracter();
+    RESULT.valor = n.replace("'","");
+    RESULT.cadena = true;
+    RESULT.texto = n;
+:}
+|numero:n{:
+    RESULT = new Caracter();
+    RESULT.valor = n;
+    RESULT.texto = n;
+:}
+|id:i{:
+    RESULT = new Caracter();
+    RESULT.valor = "1";
+    RESULT.texto = i;
+:}
+|CALCULAR{:
+    RESULT = new Caracter();
+    RESULT.valor = "1";
+    RESULT.texto = "";
+:}
+|EXTRAS{:
+    RESULT = new Caracter();
+    RESULT.valor = "1";
+    RESULT.texto = "";
+:};
+
+
+EXTRAS::= succ E
+|decc E
+|succ porcentaje
+|decc porcentaje
+|min corcheteA ELEMENTO corcheteC
+|max corcheteA ELEMENTO corcheteC
+|E concatenar E;
+
+
+
+
