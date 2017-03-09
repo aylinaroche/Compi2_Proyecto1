@@ -38,14 +38,15 @@ length,entonces,max,min,concatenar,ERROR;
 
 
 non terminal Caracter INICIO,OP,E,INSTRUCCION,DECLARACION,INSTRUCCIONES,LISTA,ELEMENTO,
-CALCULAR,ELEMENTOS,MATRIZ,EXTRAS,OPERACION_LISTA,NOMBRE_OP,POSICION;
+CALCULAR,ELEMENTOS,MATRIZ,EXTRAS,OPERACION_LISTA,NOMBRE_OP,POSICION,LLAMADA;
 
 precedence left mas, menos;
 precedence left por, div;
 precedence left or,and,not;
 precedence left mayor,menor,mayorIgual,menorIgual;
 precedence left igual,diferente,igualDoble;
-precedence left mod,pot,sqrt,concatenar;
+precedence left mod,concatenar;
+precedence right pot,sqrt;
 
 
 start with INICIO;
@@ -59,8 +60,8 @@ INSTRUCCION::=LISTA
 |OPERACION_LISTA
 |OP;
 
-LISTA::= let id igual MATRIZ
-|let id igual ELEMENTO;
+LISTA::= dollar let id igual MATRIZ dollar
+|dollar let id igual ELEMENTO dollar;
 
 MATRIZ::=MATRIZ coma corcheteA ELEMENTO corcheteC
 |corcheteA ELEMENTO corcheteC
@@ -73,9 +74,9 @@ ELEMENTO::= ELEMENTO coma OP
 CALCULAR::= dollar calcular OP dollar 
 |calcular OP;
 
-OPERACION_LISTA::= NOMBRE_OP MATRIZ
-|NOMBRE_OP id
-|id POSICION;
+OPERACION_LISTA::=dollar NOMBRE_OP MATRIZ dollar
+|dollar NOMBRE_OP id dollar
+|dollar id POSICION dollar;
 
 NOMBRE_OP ::= sum
 |product
@@ -88,6 +89,9 @@ NOMBRE_OP ::= sum
 
 POSICION::=POSICION posicion OP
 |posicion OP;
+
+LLAMADA::= dollar id llaveA ELEMENTO llaveC dollar;
+
 
 OP::=E:a{:
     RESULT = new Caracter();
@@ -319,6 +323,11 @@ E::=parentesisA E:a parentesisC{:
     RESULT.texto = "";
 :}
 |EXTRAS{:
+    RESULT = new Caracter();
+    RESULT.valor = "1";
+    RESULT.texto = "";
+:}
+|LLAMADA{:
     RESULT = new Caracter();
     RESULT.valor = "1";
     RESULT.texto = "";

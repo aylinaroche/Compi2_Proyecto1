@@ -1,0 +1,254 @@
+package Graphik;
+
+import java.io.*;
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+init with {:
+
+:};
+parser code
+{:
+// METODOS Y VARIABLES GLOBALES DEL PARSER, PUEDEN SER PUBLICAS O PRIVADAS
+
+ 
+public void syntax_error(Symbol s){
+/**Metodo al que se llama automaticamente ante algun error sintactico.*/
+        System.out.println("Error Sintactico en la Linea " + (s.right+1) +" Columna "+s.left+ ". Identificador " +s.value + " no reconocido." );
+int linea = s.right+1; int columna = s.left; 
+String texto = "Identificador " +s.value + " no reconocido.";
+
+}            
+public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+/**Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores.*/
+        System.out.println("Error Sintactico no recuperable en la Linea " + (s.right+1)+ " Columna "+s.left+". Identificador " + s.value + " no reconocido.");
+}
+:}
+
+action code
+{:
+:}
+
+terminal String publico,privado,protegido,programa,importar,tipoVoid,tipoString,tipoInt,tipoChar,tipoBool,tipoDouble,
+parentesisA,parentesisC,coma,retornar,main,si,sino,interrumpir,caso,defecto,mientras,hacer,salir,raiz,mas,menos,por,
+mayor,menor,mayorIgual,menorIgual,igual,diferente,or,xor,and,not,puntoComa,id,corcheteA,corcheteC,disminuir,para,
+dosPuntos,imprimir,verdadero,falso,igualDoble,potencia,llaveA,llaveC,signo,ERROR,numero,parseInt,aumentar,dividido,
+cadena,parseDouble,intStr,doubleStr,concat,length,mover,atacar,girar,punto,caracter,entero,
+nuevo,extension,var,incluir,nott,hereda,als,llamar,llamarHK;
+
+non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,INSTRUC,TIPO,ATRIBUTO,S,ACCION,
+VARLOCAL,INSTANCIA,IF,ELSEIF,ELSE,CICLO,SWITCH,PARAMETROS,PARAM,OP,CASO,VALORES,IMPRIMIR,MasVARIABLE,ASIGNACION,
+INSTRUCCION,OPCION,VARIABLE,DEFECTO,E,MATRIZ,ValorMATRIZ,vMATRIZ,ASIGNAR,PARA,PARSEAR,
+FuncionSTRING,ALS,FUNCION,AccesoASL,CrearASL,ARREGLO,ARR,ATRIBUTOS;
+
+precedence left mas, menos;
+precedence left por, dividido;
+precedence left potencia;
+precedence left or,xor,and,not;
+precedence left mayor,menor,mayorIgual,menorIgual;
+precedence left aumentar,disminuir;
+precedence left igual,diferente,igualDoble;
+precedence left tipoInt, tipoString, tipoChar, tipoDouble, tipoBool;
+precedence left si,sino;
+precedence left mientras;
+precedence left id, entero; 
+precedence left imprimir;
+precedence left coma;
+
+start with INICIO;
+
+INICIO::=ENTRADA{::};
+
+ENTRADA::=IMPORT INSTRUCCION{::}
+|INSTRUCCION{::};
+
+IMPORT::= IMPORT importar id punto extension signo{::}
+|IMPORT incluir id signo{::}
+|importar id punto extension signo{::}
+|incluir id signo{::};
+
+VISIBILIDAD::=protegido
+|privado
+|publico;
+
+INSTRUCCION ::= INSTRUCCION OPCION
+|OPCION;
+
+OPCION::=IMPRIMIR
+|METODO
+|SWITCH
+|CICLO
+|IF
+|VARIABLE
+|ASIGNACION
+|PARA
+|ACCION
+|ALS
+|CrearASL
+|salir signo
+|INSTANCIA signo
+|retornar OP signo
+|ATRIBUTOS;
+
+TIPO::=tipoString
+|tipoInt
+|tipoChar
+|tipoBool
+|tipoDouble
+|tipoVoid;
+
+PARAMETROS::=PARAMETROS coma TIPO id
+|TIPO id;
+
+IMPRIMIR::=imprimir parentesisA OP parentesisC signo;
+
+VARIABLE::=var TIPO id dosPuntos VISIBILIDAD signo
+|var TIPO id dosPuntos VISIBILIDAD MasVARIABLE signo
+|var TIPO id MATRIZ dosPuntos VISIBILIDAD signo
+|var TIPO id MATRIZ dosPuntos VISIBILIDAD MasVARIABLE signo
+|var TIPO id signo
+|var TIPO id ASIGNAR dosPuntos VISIBILIDAD signo
+|var TIPO id ASIGNAR dosPuntos VISIBILIDAD MasVARIABLE signo
+|var TIPO id MATRIZ ASIGNAR dosPuntos VISIBILIDAD signo
+|var TIPO id MATRIZ ASIGNAR dosPuntos VISIBILIDAD MasVARIABLE signo
+|var TIPO id MATRIZ ASIGNAR signo 
+|var TIPO id MATRIZ signo 
+|var TIPO id ASIGNAR signo;
+
+MasVARIABLE::= MasVARIABLE coma id dosPuntos VISIBILIDAD
+|MasVARIABLE coma id ASIGNAR dosPuntos VISIBILIDAD
+|coma id dosPuntos VISIBILIDAD
+|coma id ASIGNAR dosPuntos VISIBILIDAD;
+
+ASIGNACION::=id ASIGNAR signo
+|ARREGLO ASIGNAR signo;
+
+MATRIZ::= MATRIZ corcheteA OP corcheteC
+|MATRIZ corcheteA corcheteC
+|corcheteA OP corcheteC
+|corcheteA corcheteC;
+
+ASIGNAR ::= igual OP
+|igual ValorMATRIZ ;
+
+ValorMATRIZ::= llaveA ValorMATRIZ llaveC
+|ValorMATRIZ coma ValorMATRIZ
+|ValorMATRIZ llaveA llaveC
+|llaveA VALORES llaveC
+|llaveA llaveC;
+
+VALORES ::= VALORES coma OP
+|OP;
+
+ALS::= als id dosPuntos VISIBILIDAD llaveA INSTRUCCION llaveC
+|als id hereda id llaveA INSTRUCCION llaveC;
+
+METODO ::= TIPO id parentesisA PARAMETROS parentesisC dosPuntos VISIBILIDAD llaveA INSTRUCCION llaveC
+|TIPO id parentesisA parentesisC dosPuntos VISIBILIDAD llaveA INSTRUCCION llaveC
+|TIPO id parentesisA PARAMETROS parentesisC llaveA INSTRUCCION llaveC
+|TIPO id parentesisA parentesisC llaveA INSTRUCCION llaveC;
+
+IF::=si parentesisA OP parentesisC llaveA INSTRUCCION llaveC
+|si parentesisA OP parentesisC llaveA INSTRUCCION llaveC ELSEIF
+|si parentesisA OP parentesisC llaveA INSTRUCCION llaveC ELSEIF ELSE
+|si parentesisA OP parentesisC llaveA INSTRUCCION llaveC ELSE;
+
+ELSEIF::=ELSEIF sino si parentesisA OP parentesisC llaveA INSTRUCCION llaveC
+|sino si parentesisA OP parentesisC llaveA INSTRUCCION llaveC;
+
+ELSE::=sino llaveA INSTRUCCION llaveC;
+
+CICLO::=mientras parentesisA OP parentesisC llaveA INSTRUCCION llaveC
+|hacer llaveA INSTRUCCION llaveC mientras parentesisA OP parentesisC puntoComa ;
+
+SWITCH::=interrumpir parentesisA OP parentesisC llaveA S CASO llaveC
+|interrumpir parentesisA OP parentesisC llaveA  S CASO DEFECTO llaveC
+|interrumpir parentesisA OP parentesisC llaveA S DEFECTO llaveC
+|interrumpir parentesisA OP parentesisC llaveA CASO llaveC
+|interrumpir parentesisA OP parentesisC llaveA CASO DEFECTO llaveC
+|interrumpir parentesisA OP parentesisC llaveA DEFECTO llaveC;
+
+S::= VARIABLE
+|ASIGNACION
+|IMPRIMIR;
+
+CASO::=CASO caso OP dosPuntos INSTRUCCION
+|caso OP dosPuntos INSTRUCCION;
+
+DEFECTO::=defecto dosPuntos INSTRUCCION ;
+
+PARA::= para parentesisA id igual OP dosPuntos OP dosPuntos OP parentesisC llaveA INSTRUCCION llaveC
+|para parentesisA id dosPuntos OP dosPuntos OP parentesisC llaveA INSTRUCCION llaveC;
+
+ACCION::=mover parentesisA OP parentesisC puntoComa
+|girar parentesisA OP parentesisC puntoComa
+|atacar parentesisA OP parentesisC puntoComa;
+
+PARSEAR::= parseInt parentesisA OP parentesisC 
+|parseDouble parentesisA OP parentesisC 
+|intStr parentesisA OP parentesisC 
+|doubleStr parentesisA OP parentesisC ;
+
+FuncionSTRING::= id punto length parentesisA parentesisC
+|id punto concat parentesisA OP parentesisC;
+
+INSTANCIA::=llamar id parentesisA parentesisC{::}
+|llamar id parentesisA VALORES parentesisC{::}
+|llamarHK id parentesisA parentesisC{::}
+|llamarHK id parentesisA VALORES parentesisC{::}
+|llamarHK parentesisA id parentesisA VALORES parentesisC parentesisC{::};
+
+CrearASL::= var id id igual nuevo id parentesisA parentesisC signo
+|id id igual nuevo id parentesisA parentesisC signo;
+
+AccesoASL::= id punto id signo
+|id punto id;
+
+ARREGLO::= id corcheteA OP corcheteC ARR
+|id corcheteA corcheteC ARR
+|id corcheteA OP corcheteC
+|id corcheteA corcheteC;
+
+ARR::= ARR corcheteA OP corcheteC
+|ARR corcheteA corcheteC
+| corcheteA OP corcheteC
+| corcheteA  corcheteC;
+
+ATRIBUTOS::=id punto id igual OP signo
+|id punto id parentesisA parentesisC signo;
+
+
+
+OP::=E:e{::};
+
+E::=parentesisA E:a parentesisC{::}
+|E:a mas E:b{: :}
+|E:a menos E:b{: :}
+|E:a por E:b{: :}
+|E:a dividido E:b{: :}
+|E:a aumentar{: :}
+|E:a disminuir{: :} 
+|E:a mayor E:b{: :}
+|E:a menor E:b{: :}
+|E:a mayorIgual E:b{: :}
+|E:a menorIgual E:b{: :}
+|E:a igual E:b{: :}
+|E:a igualDoble E:b{: :}
+|E diferente E{: :}
+|verdadero:t{: :}
+|falso:f{: :}
+|E:a or E:b
+|E:a xor E:b{: :}
+|E:a and E:b{: :}
+|E:b not{: :}
+|E potencia E {::}
+|cadena{::}
+|caracter{::}
+|id{::}
+|PARSEAR
+|numero:n{::}
+|INSTANCIA{::}
+|ARREGLO{::}
+|FuncionSTRING{::}
+|AccesoASL{::};
+

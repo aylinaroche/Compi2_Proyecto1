@@ -1,9 +1,16 @@
 
-package GraphiK;
+package Graphik;
 
+import Haskell.*;
 
+/**
+ *
+ * @author Aroche
+ */
 public class Caracter {
     String token;
     String valor;
-    int val;
+    String texto;
+    Double val;
+    Boolean cadena;
 }

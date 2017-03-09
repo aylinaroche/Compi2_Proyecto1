@@ -10,63 +10,64 @@ public class sym {
   /* terminals */
   public static final int decc = 3;
   public static final int mod = 6;
-  public static final int igualDoble = 37;
-  public static final int dosPuntos = 34;
+  public static final int igualDoble = 38;
+  public static final int dosPuntos = 35;
   public static final int corcheteC = 32;
-  public static final int par = 53;
+  public static final int par = 54;
   public static final int corcheteA = 31;
-  public static final int asc = 42;
+  public static final int asc = 43;
   public static final int coma = 17;
-  public static final int entonces = 55;
+  public static final int entonces = 56;
   public static final int igual = 14;
   public static final int dollar = 7;
-  public static final int calcular = 41;
-  public static final int caracter = 44;
-  public static final int let = 40;
+  public static final int calcular = 42;
+  public static final int caracter = 45;
+  public static final int let = 41;
   public static final int succ = 2;
   public static final int menorIgual = 25;
-  public static final int sum = 49;
-  public static final int end = 39;
-  public static final int si = 45;
-  public static final int length = 54;
+  public static final int sum = 50;
+  public static final int end = 40;
+  public static final int si = 46;
+  public static final int length = 55;
   public static final int numero = 9;
-  public static final int interrumpir = 47;
-  public static final int max = 56;
+  public static final int interrumpir = 48;
+  public static final int max = 57;
   public static final int menos = 19;
   public static final int menor = 23;
   public static final int porcentaje = 12;
   public static final int EOF = 0;
   public static final int mas = 18;
-  public static final int revers = 51;
-  public static final int verdadero = 35;
+  public static final int revers = 52;
+  public static final int verdadero = 36;
   public static final int mayorIgual = 24;
   public static final int error = 1;
   public static final int mayor = 22;
   public static final int or = 27;
   public static final int pot = 4;
   public static final int por = 20;
-  public static final int ERROR = 59;
+  public static final int ERROR = 60;
   public static final int llaveC = 13;
   public static final int id = 8;
   public static final int puntoComa = 30;
   public static final int llaveA = 11;
-  public static final int product = 50;
-  public static final int falso = 36;
+  public static final int product = 51;
+  public static final int falso = 37;
   public static final int sqrt = 5;
-  public static final int caso = 48;
-  public static final int impr = 52;
+  public static final int caso = 49;
+  public static final int impr = 53;
   public static final int posicion = 33;
-  public static final int desc = 43;
+  public static final int desc = 44;
   public static final int diferente = 26;
   public static final int and = 28;
+  public static final int salto = 34;
   public static final int not = 29;
   public static final int parentesisC = 16;
   public static final int parentesisA = 15;
-  public static final int concatenar = 58;
+  public static final int concatenar = 59;
   public static final int div = 21;
-  public static final int min = 57;
-  public static final int decimal = 38;
-  public static final int sino = 46;
+  public static final int min = 58;
+  public static final int decimal = 39;
+  public static final int sino = 47;
   public static final int cadena = 10;
   public static final String[] terminalNames = new String[] {
   "EOF",
@@ -103,6 +104,7 @@ public class sym {
   "corcheteA",
   "corcheteC",
   "posicion",
+  "salto",
   "dosPuntos",
   "verdadero",
   "falso",
