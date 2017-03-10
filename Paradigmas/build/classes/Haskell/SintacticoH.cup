@@ -2,6 +2,7 @@ package Haskell;
 import java.io.*;
 import java_cup.runtime.*;
 import java.util.ArrayList;
+import Haskell.Ejecutar.Nodo;
 
 init with {:
 
@@ -56,331 +57,543 @@ start with INICIO;
 
 INICIO::=FUNCIONES;
 
-FUNCIONES::= FUNCIONES FUNCION
-|FUNCION;
 
-FUNCION::= id PARAMETRO igual INSTRUCCIONES end
-|id igual INSTRUCCIONES end
-|SALTOS;
-
-PARAMETRO::= PARAMETRO coma id
-|id;
-
-INSTRUCCIONES::=INSTRUCCIONES INSTRUCCION
-|INSTRUCCION;
-
-INSTRUCCION::=SWITCH
-|IF
-|OP
-|LISTA
-|SALTOS;
-
-LISTA::= let id igual MATRIZ 
-|let id igual ELEMENTO ;
-
-MATRIZ::=MATRIZ coma corcheteA ELEMENTO corcheteC
-|corcheteA ELEMENTO corcheteC
-|corcheteA MATRIZ corcheteC
-|corcheteA corcheteC;
-
-ELEMENTO::= ELEMENTO coma ELEMENTO
-|OP;
-
-CALCULAR::= dollar calcular OP dollar;
-
-OPERACION_LISTA::=dollar NOMBRE_OP MATRIZ dollar
-|dollar NOMBRE_OP OP dollar
-|dollar id POSICION dollar;
-
-NOMBRE_OP ::= sum
-|product
-|revers
-|impr
-|asc
-|desc
-|par
-|length;
-
-POSICION::=POSICION posicion OP
-|posicion OP;
-
-IF::= si OP entonces salto INSTRUCCIONES sino salto INSTRUCCIONES salto end;
-
-SWITCH::= caso CALCULAR  CASO salto end
-|caso id CASO salto end;
-
-CASO::=CASO salto VALOR_PUNTUAL dosPuntos INSTRUCCIONES puntoComa
-|salto VALOR_PUNTUAL dosPuntos INSTRUCCIONES puntoComa;
-
-VALOR_PUNTUAL::=id
-|numero;
-
-LLAMADA::= dollar id llaveA ELEMENTO llaveC dollar;
-
-SALTOS::= SALTOS salto
-|salto;
-
-
-OP::=E:a{:
+FUNCIONES::= FUNCIONES:m FUNCION:n{:
     RESULT = new Caracter();
-    RESULT.valor = a.valor;
-    RESULT.texto =  a.texto;
+    //RESULT.texto = m.texto ;
+:}
+|FUNCION:n{:
+    RESULT = new Caracter();
+    Metodo_FuncionHK.parametros.clear();
 :};
 
-E::=parentesisA E:a parentesisC{:
+FUNCION::= id:i PARAMETRO:p igual INSTRUCCIONES:m end{:
     RESULT = new Caracter();
-    RESULT.valor = a.valor;
-    RESULT.texto =  "(" + a.texto + ")";
+    Metodo_FuncionHK.agregarMF(i,m.nodo,Metodo_FuncionHK.parametros);
 :}
-|E:a mas E:b{: 
+|id:i igual INSTRUCCIONES:m end{:
     RESULT = new Caracter();
-    RESULT.texto =  a.texto + "+" + b.texto;
-    try{
-        if(a.cadena==false && b.cadena==false){
-            RESULT.val = Double.parseDouble(a.valor) + Double.parseDouble(b.valor);
-            RESULT.valor = String.valueOf(RESULT.val);
-            RESULT.cadena = false;
-        }else{
-            RESULT.valor =a.valor+b.valor;
-            RESULT.cadena = true;
-        }      
-    }catch(Exception e){
-        System.out.println("ERROR al operar (+) "+e);
-    }
+    Metodo_FuncionHK.agregarMF(i,m.nodo,Metodo_FuncionHK.parametros);
 :}
-|E:a menos E:b{:
+|SALTOS:n{:
     RESULT = new Caracter();
-    RESULT.texto =  a.texto + "-" + b.texto;
-    try{
-       // System.out.println("Menos ="+(a.valor)+","+(b.valor));
-        RESULT.val = Double.parseDouble(a.valor) - Double.parseDouble(b.valor);
-        RESULT.valor = String.valueOf(RESULT.val);
-        RESULT.cadena = false;
-    }catch(Exception e){
-        System.out.println("ERROR al operar (-) "+e);
-    }
- :}
-|E:a por E:b{: 
+    //RESULT.texto = n.texto;
+:};
+
+
+PARAMETRO::= PARAMETRO:p coma id:n{:
     RESULT = new Caracter();
-    RESULT.texto =  a.texto + "*" + b.texto;
-    try{
-        RESULT.val = Double.parseDouble(a.valor) * Double.parseDouble(b.valor);
-        RESULT.valor = String.valueOf(RESULT.val);
-        RESULT.cadena = false;
-    }catch(Exception e){
-        System.out.println("ERROR al operar (*) "+e);
-    }
+    Nodo E = new Nodo("PARAMETRO");
+    E.insertar(p.nodo);  E.insertar(new Nodo(",")); E.insertar(new Nodo(n));
+    RESULT.nodo = E;
 :}
-|E:a div E:b{: 
+|id:n{:
     RESULT = new Caracter();
-    RESULT.texto =  a.texto + " / " + b.texto;
-    try{
-        RESULT.val = Double.parseDouble(a.valor) / Double.parseDouble(b.valor);
-        RESULT.valor = String.valueOf(RESULT.val);
-        RESULT.cadena = false;
-    }catch(Exception e){
-        System.out.println("ERROR al operar (/) "+e);
-    }
+    Nodo E = new Nodo("PARAMETRO");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:};
+
+
+INSTRUCCIONES::=INSTRUCCIONES:m INSTRUCCION:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("INSTRUCCIONES");
+    E.insertar(m.nodo); E.insertar(n.nodo);
+    RESULT.nodo = E;
 :}
-|E:a mayor E:b{: 
+|INSTRUCCION:n{:
     RESULT = new Caracter();
-    RESULT.texto =  a.texto + " > " + b.texto;
-    try{
-       if( Double.parseDouble(a.valor) > Double.parseDouble(b.valor)){
-            RESULT.valor = "true";
-       }else{
-            RESULT.valor = "false";
-       }
-    }catch(Exception e){
-        System.out.println("ERROR al operar (>) "+e);
-    }
+    Nodo E = new Nodo("INSTRUCCIONES");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:};
+
+
+INSTRUCCION::=SWITCH:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("INSTRUCCION");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
 :}
-|E:a menor E:b{: 
+|IF:n{:
     RESULT = new Caracter();
-    RESULT.texto =  a.texto + " < " + b.texto;
-    try{
-       if( Double.parseDouble(a.valor) < Double.parseDouble(b.valor)){
-            RESULT.valor = "true";
-       }else{
-            RESULT.valor = "false";
-       }
-    }catch(Exception e){
-        System.out.println("ERROR al operar (<) "+e);
-    }
+    Nodo E = new Nodo("INSTRUCCION");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
 :}
-|E:a mayorIgual E:b{:
+|OP:n{:
     RESULT = new Caracter();
-    RESULT.texto =  a.texto + " >= " + b.texto;
-    try{
-       if( Double.parseDouble(a.valor) >= Double.parseDouble(b.valor)){
-            RESULT.valor = "true";
-       }else{
-            RESULT.valor = "false";
-       }
-    }catch(Exception e){
-        System.out.println("ERROR al operar (>=) "+e);
-    }
- :}
-|E:a menorIgual E:b{: 
-    RESULT = new Caracter();
-    RESULT.texto =  a.texto + " <= " + b.texto;
-    try{
-       if( Double.parseDouble(a.valor) <= Double.parseDouble(b.valor)){
-            RESULT.valor = "true";
-       }else{
-            RESULT.valor = "false";
-       }
-    }catch(Exception e){
-        System.out.println("ERROR al operar (<=) "+e);
-    }
+    Nodo E = new Nodo("INSTRUCCION");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
 :}
-|E:a igual E:b{: 
+|LISTA:n{:
     RESULT = new Caracter();
-    RESULT.valor = a.valor;
-    RESULT.texto =  a.texto + " = " + b.texto;
+    Nodo E = new Nodo("INSTRUCCION");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
 :}
-|E:a igualDoble E:b{:
+|SALTOS:n{:
     RESULT = new Caracter();
-    RESULT.valor = a.valor;
-    RESULT.texto =  a.texto + " == " + b.texto;
- :}
-|E:a diferente E:b{: 
+    Nodo E = new Nodo("INSTRUCCION");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:};
+
+
+LISTA::= let id:i igual MATRIZ:m{:
     RESULT = new Caracter();
-    RESULT.valor = a.valor;
-    RESULT.texto =  a.texto + " != " + b.texto;
+    Nodo E = new Nodo("LISTA");
+    E.insertar(new Nodo("let")); E.insertar(new Nodo(i)); E.insertar(new Nodo("="));  E.insertar(m.nodo);
+    RESULT.nodo = E;
 :}
-|verdadero:t{:
-    RESULT= new Caracter();
-    RESULT.valor = "true";
-    RESULT.cadena = true;
-    RESULT.texto = "true";
- :}
-|falso:f{:
+|let id:i igual ELEMENTO:m{:
     RESULT = new Caracter();
-    RESULT.valor = "false";
-    RESULT.cadena = true;
-    RESULT.texto =  "false";
- :}
-|E:a or E:b{:
+    Nodo E = new Nodo("LISTA");
+    E.insertar(new Nodo("let")); E.insertar(new Nodo(i)); E.insertar(new Nodo("="));  E.insertar(m.nodo);
+    RESULT.nodo = E;
+:};
+
+
+MATRIZ::=MATRIZ:m coma corcheteA ELEMENTO:n corcheteC{:
     RESULT = new Caracter();
-    RESULT.valor = a.valor;
-    RESULT.texto =  a.texto + " || " + b.texto +")";
+    Nodo E = new Nodo("MATRIZ");
+    E.insertar(m.nodo);  E.insertar(new Nodo(",")); E.insertar(new Nodo("[")); E.insertar(n.nodo); E.insertar(new Nodo("]"));
+    RESULT.nodo = E;
 :}
-|E:a and E:b{:
+|corcheteA ELEMENTO:m corcheteC{:
     RESULT = new Caracter();
-    RESULT.valor = a.valor;
-    RESULT.texto =  a.texto + " %% " + b.texto +")";
- :}
-|not E:b{: 
-    RESULT = new Caracter();
-    RESULT.valor = "a";
-    RESULT.texto = "! " + b.texto;
+    Nodo E = new Nodo("MATRIZ");
+    E.insertar(new Nodo("[")); E.insertar(m.nodo); E.insertar(new Nodo("]"));
+    RESULT.nodo = E;
 :}
-|E:a mod E:b{:
+|corcheteA MATRIZ:m corcheteC{:
     RESULT = new Caracter();
-    RESULT.texto = "potencia (" + a.texto + "," + b.texto +")";
-    try{
-        if(a.cadena==false && b.cadena==false){
-            RESULT.val = Math.pow(Double.parseDouble(a.valor), Double.parseDouble(b.valor));
-            RESULT.valor = String.valueOf(RESULT.val);
-           
-        }else{
-            RESULT.valor =a.valor+b.valor;
-           
-        }      
-    }catch(Exception e){
-        System.out.println("ERROR al operar (p) "+e);
-    }
+    Nodo E = new Nodo("MATRIZ");
+    E.insertar(new Nodo("[")); E.insertar(m.nodo); E.insertar(new Nodo("]"));
+    RESULT.nodo = E;
 :}
-|E:a sqrt E:b{:
+|corcheteA corcheteC{:
     RESULT = new Caracter();
-    RESULT.texto = "raiz (" + a.texto + "," + b.texto +")";
-    try{
-        if(a.cadena==false && b.cadena==false){
-            //RESULT.val = Metodo_Funcion.raiz(Double.parseDouble(a.valor),Double.parseDouble(b.valor));
-            RESULT.valor = String.valueOf(RESULT.val);
-            RESULT.cadena = false;
-        }else{
-            RESULT.valor =a.valor+b.valor;
-            RESULT.cadena = true;
-        }      
-    }catch(Exception e){
-        System.out.println("ERROR al operar (r) "+e);
-    }
+    Nodo E = new Nodo("MATRIZ");
+    E.insertar(new Nodo("["));E.insertar(new Nodo("]"));
+    RESULT.nodo = E;
+:};
+
+
+ELEMENTO::= ELEMENTO:a coma ELEMENTO:b{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("ELEMENTO");
+    E.insertar(a.nodo);  E.insertar(b.nodo);
+    RESULT.nodo = E;
 :}
-|E:a pot E:b{:
+|OP:n{:
     RESULT = new Caracter();
-    RESULT.texto = "potencia (" + a.texto + "," + b.texto +")";
-    try{
-        if(a.cadena==false && b.cadena==false){
-            RESULT.val = Math.pow(Double.parseDouble(a.valor), Double.parseDouble(b.valor));
-            RESULT.valor = String.valueOf(RESULT.val);
-           
-        }else{
-            RESULT.valor =a.valor+b.valor;
-           
-        }      
-    }catch(Exception e){
-        System.out.println("ERROR al operar (p) "+e);
-    }
+    Nodo E = new Nodo("ELEMENTO");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:};
+
+
+CALCULAR::= dollar calcular OP:n dollar{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("CALCULAR");
+    E.insertar(new Nodo("Calcular")); E.insertar(n.nodo); 
+    RESULT.nodo = E;
 :}
-|menos E{:
+|calcular OP:n {:
     RESULT = new Caracter();
-    RESULT.valor = "1";
-    RESULT.texto = "";
+    Nodo E = new Nodo("CALCULAR");
+    E.insertar(new Nodo("Calcular")); E.insertar(n.nodo);
+    RESULT.nodo = E;
+:};
+
+
+OPERACION_LISTA::=dollar NOMBRE_OP:n MATRIZ:m dollar{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("OPERACION_LISTA");
+     E.insertar(n.nodo); E.insertar(m.nodo); 
+    RESULT.nodo = E;
 :}
-|cadena:n{:
+|dollar NOMBRE_OP:n OP:o dollar{:
     RESULT = new Caracter();
-    RESULT.valor = n.replace("\"","");
-    RESULT.texto = n;
+    Nodo E = new Nodo("OPERACION_LISTA");
+     E.insertar(n.nodo); E.insertar(o.nodo); 
+    RESULT.nodo = E;
 :}
-|caracter:n{:
+|dollar id:i POSICION:p dollar{:
     RESULT = new Caracter();
-    RESULT.valor = n.replace("'","");
-    RESULT.cadena = true;
-    RESULT.texto = n;
+    Nodo E = new Nodo("OPERACION_LISTA");
+     E.insertar(new Nodo(i)); E.insertar(p.nodo); 
+    RESULT.nodo = E;
+:};
+
+
+NOMBRE_OP ::= sum:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:}
+|product:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:}
+|revers:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:}
+|impr:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:}
+|asc:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:}
+|desc:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:}
+|par:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:}
+|length:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("NOMBRE_OP");
+    E.insertar(new Nodo(n));
+    RESULT.nodo = E;
+:};
+
+
+POSICION::=POSICION:p posicion OP:o{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("POSICION");
+    E.insertar(p.nodo); E.insertar(new Nodo("!!"));E.insertar(o.nodo);
+    RESULT.nodo = E;
+:}
+|posicion OP:o{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("POSICION");
+    E.insertar(new Nodo("!!")); E.insertar(o.nodo);
+    RESULT.nodo = E;
+:};
+
+
+IF::= si OP:o entonces salto INSTRUCCIONES:n sino salto INSTRUCCIONES:m salto end{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("IF");
+    E.insertar(new Nodo("si")); E.insertar(o.nodo); E.insertar(new Nodo("then")); E.insertar(n.nodo); E.insertar(new Nodo("sino"));
+    E.insertar(m.nodo); E.insertar(new Nodo("end"));
+    RESULT.nodo = E;
+:};
+
+
+SWITCH::= caso CALCULAR:c CASO:s salto end{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("SWITCH");
+    E.insertar(new Nodo("case")); E.insertar(c.nodo);E.insertar(s.nodo);E.insertar(new Nodo("end"));
+    RESULT.nodo = E;
+:}
+|caso id:i CASO:c salto end{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("SWITCH");
+    E.insertar(new Nodo("case")); E.insertar(new Nodo(i));E.insertar(c.nodo);E.insertar(new Nodo("end"));
+    RESULT.nodo = E;
+:};
+
+
+CASO::=CASO:c salto VALOR_PUNTUAL:v dosPuntos INSTRUCCIONES:n puntoComa{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("CASO");
+    E.insertar(c.nodo); E.insertar(v.nodo); E.insertar(new Nodo(":")); E.insertar(n.nodo); E.insertar(new Nodo(";"));
+    RESULT.nodo = E;
+:}
+|salto VALOR_PUNTUAL:v dosPuntos INSTRUCCIONES:n puntoComa{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("CASO");
+    E.insertar(v.nodo); E.insertar(new Nodo(":")); E.insertar(n.nodo); E.insertar(new Nodo(";"));
+    RESULT.nodo = E;
+:};
+
+
+VALOR_PUNTUAL::=id:n{:
+    RESULT = new Caracter();
+    Nodo VALOR_PUNTUAL = new Nodo("VALOR_PUNTUAL");
+    VALOR_PUNTUAL.insertar(new Nodo(n));
+    RESULT.nodo = VALOR_PUNTUAL;
 :}
 |numero:n{:
     RESULT = new Caracter();
-    RESULT.valor = n;
-    RESULT.texto = n;
-:}
-|id:i{:
-    RESULT = new Caracter();
-    RESULT.valor = "1";
-    RESULT.texto = i;
-:}
-|CALCULAR{:
-    RESULT = new Caracter();
-    RESULT.valor = "1";
-    RESULT.texto = "";
-:}
-|EXTRAS{:
-    RESULT = new Caracter();
-    RESULT.valor = "1";
-    RESULT.texto = "";
-:}
-|LLAMADA{:
-    RESULT = new Caracter();
-    RESULT.valor = "1";
-    RESULT.texto = "";
-:}
-|OPERACION_LISTA{:
-    RESULT = new Caracter();
-    RESULT.valor = "1";
-    RESULT.texto = "";
+    Nodo VALOR_PUNTUAL = new Nodo("VALOR_PUNTUAL");
+    VALOR_PUNTUAL.insertar(new Nodo(n));
+    RESULT.nodo = VALOR_PUNTUAL;
 :};
 
 
-EXTRAS::= dollar succ E dollar
-|dollar decc E dollar
-|dollar succ porcentaje dollar
-|dollar decc porcentaje dollar
-|dollar min corcheteA ELEMENTO corcheteC dollar
-|dollar min ELEMENTO dollar
-|dollar max corcheteA ELEMENTO corcheteC dollar
-|dollar max ELEMENTO dollar
-|E concatenar E;
+LLAMADA::= dollar id:i llaveA ELEMENTO:n llaveC dollar{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("LLAMADA");
+     E.insertar(new Nodo(i)); E.insertar(new Nodo("{")); E.insertar(n.nodo); E.insertar(new Nodo("}"));
+    RESULT.nodo = E;
+:};
+
+SALTOS::= SALTOS:s salto{:
+    RESULT = new Caracter();
+   // RESULT.texto = s.texto +"\n";
+:}
+|salto{:
+    RESULT = new Caracter();
+    //RESULT.texto = "\n";
+:};
+
+
+OP::=E:a{:
+    Nodo OP = new Nodo("OP");
+    RESULT = new Caracter();
+    OP.insertar(a.nodo);
+    RESULT.nodo = OP;
+:};
+
+E::=parentesisA E:a parentesisC{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(new Nodo("(")); E.insertar(a.nodo); E.insertar(new Nodo(")"));
+    RESULT.nodo = E;
+:}
+|E:a mas E:b{: 
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("+")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a menos E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("-")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a por E:b{: 
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("*")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a div E:b{: 
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("/")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a mayor E:b{: 
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo(">")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a menor E:b{: 
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("<")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a mayorIgual E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo(">=")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a menorIgual E:b{: 
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("<=")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a igualDoble E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("==")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a diferente E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("!=")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|verdadero:t{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(new Nodo("true","cadena"));
+    RESULT.nodo = E;
+ :}
+|falso:f{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(new Nodo("false","cadena"));
+    RESULT.nodo = E;
+ :}
+|E:a or E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("||")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a and E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("%%")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|not E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(new Nodo("!")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a mod E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("'mod'")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a sqrt E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("'sqrt'")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a pot E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new Nodo("'pot'")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|menos E:b{:
+    Nodo E = new Nodo("E");
+    RESULT = new Caracter();
+    E.insertar(new Nodo("-")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|cadena:n{:
+    RESULT = new Caracter();
+    n = n.replace("\"","");
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(n,"cadena"));
+    RESULT.nodo = E;
+:}
+|caracter:n{:
+    RESULT = new Caracter();
+    n = n.replace("'","");
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(n,"caracter"));
+    RESULT.nodo = E;
+:}
+|numero:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(n,"numero"));
+    RESULT.nodo = E;
+:}
+|id:i{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(i,"id"));
+    RESULT.nodo = E;
+:}
+|CALCULAR:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|EXTRAS:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|LLAMADA:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|OPERACION_LISTA:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:};
+
+
+EXTRAS::= dollar succ E:e dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Succ")); EXTRAS.insertar(e.nodo);
+    RESULT.nodo = EXTRAS;
+:}
+|dollar decc E:e dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(e.nodo); 
+    RESULT.nodo = EXTRAS;
+:}
+|dollar succ porcentaje dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Succ")); EXTRAS.insertar(new Nodo("%")); 
+    RESULT.nodo = EXTRAS;
+:}
+|dollar decc porcentaje dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(new Nodo("%"));
+    RESULT.nodo = EXTRAS;
+:}
+|dollar min corcheteA ELEMENTO:e corcheteC dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Min")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));
+    RESULT.nodo = EXTRAS;
+:}
+|dollar min ELEMENTO:e dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo); 
+    RESULT.nodo = EXTRAS;
+:}
+|dollar max corcheteA ELEMENTO:e corcheteC dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));
+    RESULT.nodo = EXTRAS;
+:}
+|dollar max ELEMENTO:e dollar{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+     EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo);
+    RESULT.nodo = EXTRAS;
+:}
+|E:a concatenar E:b{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("EXTRAS");
+    EXTRAS.insertar((a.nodo)); EXTRAS.insertar(new Nodo("++")); EXTRAS.insertar(a.nodo);
+    RESULT.nodo = EXTRAS;
+:};
 
 
 

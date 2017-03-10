@@ -1,13 +1,11 @@
 
-package Haskell;
+package Haskell.Ejecutar;
 
-import Haskell.Ejecutar.Nodo;
 
 /**
  *
  * @author Aroche
  */
 public class Caracter {
-   // String texto;
     Nodo nodo;
 }

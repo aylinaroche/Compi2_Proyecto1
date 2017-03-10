@@ -1,4 +1,6 @@
-package Arbol;
+package Haskell.Ejecutar;
+
+import Arbol.*;
 
 public class Nodo {
 

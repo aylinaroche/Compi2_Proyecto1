@@ -1,11 +1,13 @@
 package paradigmas;
 
 import Haskell.*;
+import Haskell.Ejecutar.*;
 import Graphik.*;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import java.awt.Color;
 import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -61,6 +63,8 @@ public class Interfaz extends javax.swing.JFrame {
         btnCrearProyecto = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtConsola = new javax.swing.JTextPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -157,9 +161,20 @@ public class Interfaz extends javax.swing.JFrame {
         });
         getContentPane().add(btnCrearProyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 50, 50));
 
+        txtConsola.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtConsolaKeyReleased(evt);
+            }
+        });
         jScrollPane2.setViewportView(txtConsola);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 380, 570, 190));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 380, 360, 190));
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 370, -1, -1));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/a.jpg"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 680, 590));
@@ -259,7 +274,7 @@ public class Interfaz extends javax.swing.JFrame {
             } catch (Exception ex) {
                 Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else if ("gk".equals(pes.tipo)) {
+        } else if ("gk".equals(pes.tipo)) {
             try {
                 Graphik.Analizar(texto.getText());
             } catch (Exception ex) {
@@ -305,6 +320,21 @@ public class Interfaz extends javax.swing.JFrame {
     private void btnReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnReportesActionPerformed
+
+    private void txtConsolaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConsolaKeyReleased
+        //System.out.println("Soltó la tecla: " + KeyEvent.getKeyText(evt.getKeyCode()));
+        if("Enter".equals(KeyEvent.getKeyText(evt.getKeyCode()))){
+          //  System.out.println("Entro bitch");
+            String texto[] = txtConsola.getText().split("\n");
+            String linea = texto[texto.length-1];
+            System.out.println(linea);
+            try {
+                EjecutarHK.Analizar(linea);
+            } catch (Exception ex) {
+                Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_txtConsolaKeyReleased
 
     public void continuarSegunArchivo() {
         switch (opcion) {
@@ -523,8 +553,10 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton btnReportes;
     private javax.swing.JButton btnTraducir;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane txtConsola;
     // End of variables declaration//GEN-END:variables
 }

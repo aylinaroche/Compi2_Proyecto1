@@ -1,8 +1,7 @@
-package Haskell;
+package Haskell.Ejecutar;
 import java.io.*;
 import java_cup.runtime.*;
 import java.util.ArrayList;
-import Haskell.Ejecutar.Nodo;
 
 init with {:
 
@@ -55,45 +54,13 @@ precedence right caso;
 
 start with INICIO;
 
-INICIO::=FUNCIONES;
-
-
-FUNCIONES::= FUNCIONES:m FUNCION:n{:
+INICIO::=INSTRUCCIONES:n{:
     RESULT = new Caracter();
-    //RESULT.texto = m.texto ;
-:}
-|FUNCION:n{:
-    RESULT = new Caracter();
-    Metodo_FuncionHK.parametros.clear();
-:};
-
-FUNCION::= id:i PARAMETRO:p igual INSTRUCCIONES:m end{:
-    RESULT = new Caracter();
-    Metodo_FuncionHK.agregarMF(i,m.nodo,Metodo_FuncionHK.parametros);
-:}
-|id:i igual INSTRUCCIONES:m end{:
-    RESULT = new Caracter();
-    Metodo_FuncionHK.agregarMF(i,m.nodo,Metodo_FuncionHK.parametros);
-:}
-|SALTOS:n{:
-    RESULT = new Caracter();
-    //RESULT.texto = n.texto;
-:};
-
-
-PARAMETRO::= PARAMETRO:p coma id:n{:
-    RESULT = new Caracter();
-    Nodo E = new Nodo("PARAMETRO");
-    E.insertar(p.nodo);  E.insertar(new Nodo(",")); E.insertar(new Nodo(n));
+    Nodo E = new Nodo("INICIO");
+    E.insertar(n.nodo);
     RESULT.nodo = E;
+    EjecutarHK.raiz=E;
 :}
-|id:n{:
-    RESULT = new Caracter();
-    Nodo E = new Nodo("PARAMETRO");
-    E.insertar(new Nodo(n));
-    RESULT.nodo = E;
-:};
-
 
 INSTRUCCIONES::=INSTRUCCIONES:m INSTRUCCION:n{:
     RESULT = new Caracter();
@@ -184,7 +151,7 @@ MATRIZ::=MATRIZ:m coma corcheteA ELEMENTO:n corcheteC{:
 ELEMENTO::= ELEMENTO:a coma ELEMENTO:b{:
     RESULT = new Caracter();
     Nodo E = new Nodo("ELEMENTO");
-    E.insertar(a.nodo);  E.insertar(b.nodo);
+    E.insertar(a.nodo); E.insertar(new Nodo("$")); E.insertar(b.nodo);
     RESULT.nodo = E;
 :}
 |OP:n{:
@@ -198,7 +165,7 @@ ELEMENTO::= ELEMENTO:a coma ELEMENTO:b{:
 CALCULAR::= dollar calcular OP:n dollar{:
     RESULT = new Caracter();
     Nodo E = new Nodo("CALCULAR");
-    E.insertar(new Nodo("Calcular")); E.insertar(n.nodo); 
+    E.insertar(new Nodo("$")); E.insertar(new Nodo("Calcular")); E.insertar(n.nodo); E.insertar(new Nodo("$"));
     RESULT.nodo = E;
 :}
 |calcular OP:n {:
@@ -212,19 +179,19 @@ CALCULAR::= dollar calcular OP:n dollar{:
 OPERACION_LISTA::=dollar NOMBRE_OP:n MATRIZ:m dollar{:
     RESULT = new Caracter();
     Nodo E = new Nodo("OPERACION_LISTA");
-     E.insertar(n.nodo); E.insertar(m.nodo); 
+    E.insertar(new Nodo("$")); E.insertar(n.nodo); E.insertar(m.nodo); E.insertar(new Nodo("$"));
     RESULT.nodo = E;
 :}
 |dollar NOMBRE_OP:n OP:o dollar{:
     RESULT = new Caracter();
     Nodo E = new Nodo("OPERACION_LISTA");
-     E.insertar(n.nodo); E.insertar(o.nodo); 
+    E.insertar(new Nodo("$")); E.insertar(n.nodo); E.insertar(o.nodo); E.insertar(new Nodo("$"));
     RESULT.nodo = E;
 :}
 |dollar id:i POSICION:p dollar{:
     RESULT = new Caracter();
     Nodo E = new Nodo("OPERACION_LISTA");
-     E.insertar(new Nodo(i)); E.insertar(p.nodo); 
+    E.insertar(new Nodo("$")); E.insertar(new Nodo(i)); E.insertar(p.nodo); E.insertar(new Nodo("$"));
     RESULT.nodo = E;
 :};
 
@@ -347,7 +314,7 @@ VALOR_PUNTUAL::=id:n{:
 LLAMADA::= dollar id:i llaveA ELEMENTO:n llaveC dollar{:
     RESULT = new Caracter();
     Nodo E = new Nodo("LLAMADA");
-     E.insertar(new Nodo(i)); E.insertar(new Nodo("{")); E.insertar(n.nodo); E.insertar(new Nodo("}"));
+    E.insertar(new Nodo("$")); E.insertar(new Nodo(i)); E.insertar(new Nodo("{")); E.insertar(n.nodo); E.insertar(new Nodo("}"));E.insertar(new Nodo("$"));
     RESULT.nodo = E;
 :};
 
@@ -543,49 +510,49 @@ E::=parentesisA E:a parentesisC{:
 EXTRAS::= dollar succ E:e dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Succ")); EXTRAS.insertar(e.nodo);
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Succ")); EXTRAS.insertar(e.nodo);EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar decc E:e dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(e.nodo); 
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar succ porcentaje dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Succ")); EXTRAS.insertar(new Nodo("%")); 
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Succ")); EXTRAS.insertar(new Nodo("%")); EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar decc porcentaje dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(new Nodo("%"));
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(new Nodo("%"));EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar min corcheteA ELEMENTO:e corcheteC dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Min")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Min")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar min ELEMENTO:e dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo); 
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar max corcheteA ELEMENTO:e corcheteC dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar max ELEMENTO:e dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo);
+    EXTRAS.insertar(new Nodo("$")); EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo);EXTRAS.insertar(new Nodo("$"));
     RESULT.nodo = EXTRAS;
 :}
 |E:a concatenar E:b{:
