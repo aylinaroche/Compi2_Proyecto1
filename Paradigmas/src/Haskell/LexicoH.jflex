@@ -102,6 +102,8 @@ public String lexeme;
 {Letra}({Letra}|{Digito})* {lexeme=yytext(); return new Symbol(sym.id,yycolumn, yyline, new String(yytext()));}
 {TiposComentarios} {  }
 
-. {return new Symbol(sym.ERROR,yycolumn, yyline,new String(yytext()));}
+. {//return new Symbol(sym.ERROR,yycolumn, yyline,new String(yytext()));
+paradigmas.ReporteError.agregarError(yytext(), "Error Lexico", "No pertenece al lenguaje",0,0);
+}
 
 

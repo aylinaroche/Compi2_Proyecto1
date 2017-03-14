@@ -4,7 +4,6 @@ import Haskell.Ejecutar.EjecutarHK;
 import java.io.File;
 import java.io.StringReader;
 import java_cup.runtime.Symbol;
-import paradigmas.Atributos;
 
 /**
  *
@@ -13,6 +12,8 @@ import paradigmas.Atributos;
 public class Haskell {
 
     public static void main(String[] args) throws Exception {
+        //paradigmas.ReporteError.agregarError("",",","",0,0);
+
         String path_Lexico = System.getProperty("user.dir").replace("\\", "/") + "/src/Haskell/LexicoH.jflex";
 //Genera el LEXICO
         File f = new File(path_Lexico);
@@ -35,15 +36,14 @@ public class Haskell {
         }
 
         Analizar("IncrementaSegunN n,Val = if n<=$Calcular 1$ then\n"
-                + "		$Succ $calcular 1$$\n"
-                //+ "		let lista3 = [ [1,2],[3,4]]\n"
-                + "		let lista3 = [ $Calcular 5$,$Calcular 8$]"
+                + "		$Succ $Calcular 1$$\n"
+                + "		let Lista1 = [ $Calcular 5$,$Calcular 8$]"
+                + "		let Lista1 = [ $Calcular 5$,$Calcular 8$]"
+                + "             let Lista2 = ['a','b']"
+                + " $Impr Lista1$"
+                + " $Impr Lista2$"
                 + "             $Impr Lista1 ++ Lista2$"
-                + "		$Succ a*b$\n"
-                + "             $Succ $Calcular a*b$$\n"
-                + "\n"
-                + "         	y < a*b\n"
-                + "     	Y < $Calcular a*b$"
+                + "$Sum"
                 + "	else\n"
                 + "		$Succ $IncrementaSegunN {$Calcular n-1 $,Val}$$\n"
                 + "	end\n"
@@ -71,24 +71,24 @@ public class Haskell {
                 + "					    end"
                 + "");
         System.out.println("\n * * * ** * * ** * ** * * ** ** * ** * ** ** * *  * *\n");
-        
+
         EjecutarHK.Analizar("Calcular 75*3-20+3'pot'4\n"
                 //  + ">286\n"
-                + "ConjuntoFuncPolinomial 3,%\n"
+                //+ "ConjuntoFuncPolinomial 3,%\n"
                 //+ ">6690675214\n"
                 + "IncrementaSegunN 3,70-5+2\n"
-                //+ ">70\n"
-                + "ConjuntoFuncPolinomial 1,7\n"
-                //+ ">50420\n"
-                + "ConjuntoFuncPolinomial 2,-3\n"
-                // + ">44.33333\n"
-                + "ConjuntoFuncPolinomial 4,5*4\n"
-                //     + ">8316\n"
-                + "ObtenerModa [5,$Calcular %-80*10$,700,230,14]\n"
+                //                //+ ">70\n"
+                //    + "ConjuntoFuncPolinomial 1,7\n"
+                //                //+ ">50420\n"
+                //+ "ConjuntoFuncPolinomial 2,-3\n"
+                //                // + ">44.33333\n"
+                // + "ConjuntoFuncPolinomial 4,5*4\n"
+                //                //     + ">8316\n"
+                //                + "ObtenerModa [5,$Calcular 80*10$,700,230,14]\n"
                 //   + ">700\n"
-                + "let listaProm = [1,5,70,9,20,45,23,90]\n"
-                //    + ">[1,5,70,9,20,45,23,90]\n"
-                + "ObtenerPromedio listaProm");
+                //   + "let listaProm = [1,5,70,9,20,45,23,90]>[1,5,70,9,20,45,23,90]\n"
+                //   + "ObtenerPromedio listaProm"
+                + "");
 
     }
 

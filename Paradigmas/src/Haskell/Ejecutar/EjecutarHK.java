@@ -33,22 +33,22 @@ public class EjecutarHK {
         } catch (Exception e) {
             System.out.println(e);
         }
-        Analizar("Calcular 75*3-20+3’pot’4\n"
-              //  + ">286\n"
-                + "ConjuntoFuncPolinomial 3,%\n"
+        Analizar("Calcular 75*3-20+3'pot'4\n"
+                //  + ">286\n"
+                + "ConjuntoFuncPolinomial 3,2\n"
                 //+ ">6690675214\n"
                 + "IncrementaSegunN 3,70-5+2\n"
                 //+ ">70\n"
                 + "ConjuntoFuncPolinomial 1,7\n"
                 //+ ">50420\n"
                 + "ConjuntoFuncPolinomial 2,-3\n"
-               // + ">44.33333\n"
+                // + ">44.33333\n"
                 + "ConjuntoFuncPolinomial 4,5*4\n"
-           //     + ">8316\n"
-                + "ObtenerModa [5,$Calcular %-80*10$,700,230,14]\n"
-            //   + ">700\n"
+                //     + ">8316\n"
+                + "ObtenerModa [5,$Calcular 80*10$,700,230,14]"
+                //   + ">700\n"
                 + "let listaProm = [1,5,70,9,20,45,23,90]\n"
-            //    + ">[1,5,70,9,20,45,23,90]\n"
+                //    + ">[1,5,70,9,20,45,23,90]\n"
                 + "ObtenerPromedio listaProm");
     }
 

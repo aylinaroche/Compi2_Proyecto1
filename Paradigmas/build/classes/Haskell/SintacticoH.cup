@@ -70,10 +70,12 @@ FUNCIONES::= FUNCIONES:m FUNCION:n{:
 FUNCION::= id:i PARAMETRO:p igual INSTRUCCIONES:m end{:
     RESULT = new Caracter();
     Metodo_FuncionHK.agregarMF(i,m.nodo,Metodo_FuncionHK.parametros);
+    Metodo_FuncionHK.parametros.clear();
 :}
 |id:i igual INSTRUCCIONES:m end{:
     RESULT = new Caracter();
     Metodo_FuncionHK.agregarMF(i,m.nodo,Metodo_FuncionHK.parametros);
+    Metodo_FuncionHK.parametros.clear();
 :}
 |SALTOS:n{:
     RESULT = new Caracter();
@@ -86,12 +88,14 @@ PARAMETRO::= PARAMETRO:p coma id:n{:
     Nodo E = new Nodo("PARAMETRO");
     E.insertar(p.nodo);  E.insertar(new Nodo(",")); E.insertar(new Nodo(n));
     RESULT.nodo = E;
+    Metodo_FuncionHK.parametros.add(n);
 :}
 |id:n{:
     RESULT = new Caracter();
     Nodo E = new Nodo("PARAMETRO");
     E.insertar(new Nodo(n));
     RESULT.nodo = E;
+    Metodo_FuncionHK.parametros.add(n);
 :};
 
 
@@ -148,6 +152,18 @@ LISTA::= let id:i igual MATRIZ:m{:
     RESULT.nodo = E;
 :}
 |let id:i igual ELEMENTO:m{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("LISTA");
+    E.insertar(new Nodo("let")); E.insertar(new Nodo(i)); E.insertar(new Nodo("="));  E.insertar(m.nodo);
+    RESULT.nodo = E;
+:}
+|dollar let id:i igual MATRIZ:m dollar{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("LISTA");
+    E.insertar(new Nodo("let")); E.insertar(new Nodo(i)); E.insertar(new Nodo("="));  E.insertar(m.nodo);
+    RESULT.nodo = E;
+:}
+|dollar let id:i igual ELEMENTO:m dollar{:
     RESULT = new Caracter();
     Nodo E = new Nodo("LISTA");
     E.insertar(new Nodo("let")); E.insertar(new Nodo(i)); E.insertar(new Nodo("="));  E.insertar(m.nodo);
@@ -302,16 +318,10 @@ IF::= si OP:o entonces salto INSTRUCCIONES:n sino salto INSTRUCCIONES:m salto en
 :};
 
 
-SWITCH::= caso CALCULAR:c CASO:s salto end{:
+SWITCH::= caso OP:c CASO:s salto end{:
     RESULT = new Caracter();
     Nodo E = new Nodo("SWITCH");
     E.insertar(new Nodo("case")); E.insertar(c.nodo);E.insertar(s.nodo);E.insertar(new Nodo("end"));
-    RESULT.nodo = E;
-:}
-|caso id:i CASO:c salto end{:
-    RESULT = new Caracter();
-    Nodo E = new Nodo("SWITCH");
-    E.insertar(new Nodo("case")); E.insertar(new Nodo(i));E.insertar(c.nodo);E.insertar(new Nodo("end"));
     RESULT.nodo = E;
 :};
 
@@ -329,17 +339,16 @@ CASO::=CASO:c salto VALOR_PUNTUAL:v dosPuntos INSTRUCCIONES:n puntoComa{:
     RESULT.nodo = E;
 :};
 
-
 VALOR_PUNTUAL::=id:n{:
     RESULT = new Caracter();
     Nodo VALOR_PUNTUAL = new Nodo("VALOR_PUNTUAL");
-    VALOR_PUNTUAL.insertar(new Nodo(n));
+    VALOR_PUNTUAL.insertar(new Nodo(n,"id"));
     RESULT.nodo = VALOR_PUNTUAL;
 :}
 |numero:n{:
     RESULT = new Caracter();
     Nodo VALOR_PUNTUAL = new Nodo("VALOR_PUNTUAL");
-    VALOR_PUNTUAL.insertar(new Nodo(n));
+    VALOR_PUNTUAL.insertar(new Nodo(n,"numero"));
     RESULT.nodo = VALOR_PUNTUAL;
 :};
 
@@ -537,6 +546,12 @@ E::=parentesisA E:a parentesisC{:
     Nodo E = new Nodo("E");
     E.insertar(n.nodo);
     RESULT.nodo = E;
+:}
+|porcentaje {:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo("%"));
+    RESULT.nodo = E;
 :};
 
 
@@ -550,18 +565,6 @@ EXTRAS::= dollar succ E:e dollar{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
      EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(e.nodo); 
-    RESULT.nodo = EXTRAS;
-:}
-|dollar succ porcentaje dollar{:
-    RESULT = new Caracter();
-    Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Succ")); EXTRAS.insertar(new Nodo("%")); 
-    RESULT.nodo = EXTRAS;
-:}
-|dollar decc porcentaje dollar{:
-    RESULT = new Caracter();
-    Nodo EXTRAS = new Nodo("EXTRAS");
-     EXTRAS.insertar(new Nodo("Decc")); EXTRAS.insertar(new Nodo("%"));
     RESULT.nodo = EXTRAS;
 :}
 |dollar min corcheteA ELEMENTO:e corcheteC dollar{:
@@ -591,7 +594,7 @@ EXTRAS::= dollar succ E:e dollar{:
 |E:a concatenar E:b{:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-    EXTRAS.insertar((a.nodo)); EXTRAS.insertar(new Nodo("++")); EXTRAS.insertar(a.nodo);
+    EXTRAS.insertar((a.nodo)); EXTRAS.insertar(new Nodo("++")); EXTRAS.insertar(b.nodo);
     RESULT.nodo = EXTRAS;
 :};
 
