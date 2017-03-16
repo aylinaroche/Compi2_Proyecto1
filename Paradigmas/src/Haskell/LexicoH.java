@@ -866,11 +866,11 @@ paradigmas.ReporteError.agregarError(yytext(), "Error Lexico", "No pertenece al 
             }
           case 90: break;
           case 31: 
-            { return new Symbol(sym.menorIgual, yycolumn, yyline,new String(yytext()));
+            { return new Symbol(sym.mayorIgual, yycolumn, yyline,new String(yytext()));
             }
           case 91: break;
           case 32: 
-            { return new Symbol(sym.mayorIgual, yycolumn, yyline,new String(yytext()));
+            { return new Symbol(sym.menorIgual, yycolumn, yyline,new String(yytext()));
             }
           case 92: break;
           case 33: 

@@ -1,18 +1,15 @@
 package Haskell.Ejecutar;
 
 import Haskell.Metodo_FuncionHK;
-import java.util.Arrays;
 
 public class RecorridoHK {
-    
-    public static int tam = 0;
+
     public static String valorSwitch = "";
-    public static int dimension = 0;
-    public static int DimY = 0;
     public static String lista = "";
-    public static String imprimir = "";
     public static String ultimoValor = "";
-    
+    public static String caso = "";
+    public static Boolean boolLista = false;
+
     public String Recorrido(Nodo raiz) {
         String result = null;
         // Nodo nodo = null;
@@ -44,12 +41,15 @@ public class RecorridoHK {
                             }
                             break;
                     }
+                    result = ultimoValor;
                     break;
                 case "LISTA":
                     switch (raiz.cantidadHijos) {
                         case 4:
-                        case 6:
                             result = Recorrido(raiz.hijos[3]);
+                            if (result == null) {
+                                result = "";
+                            }
                             MatrizHK.crearMatriz(raiz.hijos[1].texto, result);
                             break;
                     }
@@ -61,8 +61,8 @@ public class RecorridoHK {
                             break;
                         case 3:
                             if (raiz.hijos[0].texto.equals("MATRIZ")) {
-                                String Dim1 = Recorrido(raiz.hijos[1]);
-                                String Dim2 = Recorrido(raiz.hijos[5]);
+                                String Dim1 = Recorrido(raiz.hijos[0]);
+                                String Dim2 = Recorrido(raiz.hijos[2]);
                                 result = Dim1 + ";" + Dim2;
                             } else {
                                 result = Recorrido(raiz.hijos[1]);
@@ -73,16 +73,30 @@ public class RecorridoHK {
                 case "ELEMENTO":
                     switch (raiz.cantidadHijos) {
                         case 1:
-                            dimension = 0;
-                            dimension++;
                             lista = Recorrido(raiz.hijos[0]) + ",";
                             result = lista;
                             break;
                         case 2:
                             Recorrido(raiz.hijos[0]);
-                            lista += Recorrido(raiz.hijos[1]);
+                            lista += Recorrido(raiz.hijos[1]) + ",";
                             result = lista;
-                            dimension++;
+                            break;
+                    }
+                    break;
+                case "PARAMETRO":
+                    switch (raiz.cantidadHijos) {
+                        case 1:
+                            result = Recorrido(raiz.hijos[0]);
+                            break;
+                        case 3:
+                            if (raiz.hijos[0].texto.equals("PARAMETRO")) {
+                                String Dim1 = Recorrido(raiz.hijos[0]);
+                                String Dim2 = Recorrido(raiz.hijos[2]);
+                                result = Dim1 + ";" + Dim2;
+                            } else {
+                                result = Recorrido(raiz.hijos[1]) + "/";
+                                boolLista = true;
+                            }
                             break;
                     }
                     break;
@@ -90,6 +104,9 @@ public class RecorridoHK {
                     switch (raiz.cantidadHijos) {
                         case 2:
                             result = Recorrido(raiz.hijos[1]);
+                            System.out.println("RESULT");
+                            System.out.println(result);
+                            System.out.println(Operacion.tipo);
                             String dato[] = result.split(",");
                             for (int i = 0; i < dato.length; i++) {
                                 Metodo_FuncionHK.agregarParametro(dato[i], "");
@@ -107,7 +124,7 @@ public class RecorridoHK {
                             Metodo_FuncionHK.parametros.clear();
                             break;
                     }
-                    
+
                     break;
                 case "CALCULAR":
                     result = Recorrido(raiz.hijos[1]);
@@ -119,24 +136,31 @@ public class RecorridoHK {
                                 String ope = Recorrido(raiz.hijos[0]);
                                 String m = Recorrido(raiz.hijos[1]);
                                 result = MatrizHK.operacionMatriz(ope, m, "");
-                            } else {
-                                Recorrido(raiz.hijos[1]);
                             }
-                            
                             break;
                     }
                     break;
                 case "NOMBRE_OP":
                     result = raiz.hijos[0].texto;
                     break;
+                case "POSICION_LISTA":
+                    switch (raiz.cantidadHijos) {
+                        case 2:
+                            String m = Recorrido(raiz.hijos[1]);
+                            result = MatrizHK.posicion(raiz.hijos[0].texto, m);
+                            break;
+                    }
+                    break;
                 case "POSICION":
                     switch (raiz.cantidadHijos) {
                         case 2:
-                            Recorrido(raiz.hijos[1]);
+                            lista = Recorrido(raiz.hijos[1]);
+                            result = lista += "!";
                             break;
                         case 3:
                             Recorrido(raiz.hijos[0]);
-                            Recorrido(raiz.hijos[2]);
+                            lista += Recorrido(raiz.hijos[2]);
+                            result = lista;
                             break;
                     }
                     break;
@@ -145,12 +169,15 @@ public class RecorridoHK {
                     switch (raiz.cantidadHijos) {
                         case 7:
                             VariableHK.pilaAmbito.push("If");
+                            VariableHK.nivelAmbito++;
                             condicion = Recorrido(raiz.hijos[1]);
                             if (condicion.equals("true")) { //Si es true, hacer istruccion
-                                Recorrido(raiz.hijos[3]);
+                                result = Recorrido(raiz.hijos[3]);
                             } else {
-                                Recorrido(raiz.hijos[5]);
+                                result = Recorrido(raiz.hijos[5]);
                             }
+                            VariableHK.eliminarVariable();
+                            VariableHK.nivelAmbito--;
                             VariableHK.pilaAmbito.pop();
                             break;
                     }
@@ -159,8 +186,19 @@ public class RecorridoHK {
                     switch (raiz.cantidadHijos) {
                         case 4:
                             VariableHK.pilaAmbito.push("Switch");
+                            VariableHK.nivelAmbito++;
                             valorSwitch = Recorrido(raiz.hijos[1]);
-                            Recorrido(raiz.hijos[2]);
+                            result = Recorrido(raiz.hijos[2]);
+                            if ("false".equals(caso)) {
+                                try {
+                                    int v = Integer.parseInt(valorSwitch);
+                                    result = "0";
+                                } catch (Exception e) {
+                                    result = "";
+                                }
+                            }
+                            VariableHK.eliminarVariable();
+                            VariableHK.nivelAmbito--;
                             VariableHK.pilaAmbito.pop();
                             break;
                     }
@@ -168,20 +206,20 @@ public class RecorridoHK {
                 case "CASO":
                     switch (raiz.cantidadHijos) {
                         case 4:
+                            caso = "false";
                             String val = Recorrido(raiz.hijos[0]);
                             if (val.equals(valorSwitch)) {
-                                Recorrido(raiz.hijos[2]);
-                                result = "true";
+                                result = Recorrido(raiz.hijos[2]);
+                                caso = "true";
                             }
-                            result = "false";
                             break;
                         case 5:
                             result = Recorrido(raiz.hijos[0]);
-                            if (result.equals("false")) {
+                            if (caso.equals("false")) {
                                 val = Recorrido(raiz.hijos[1]);
                                 if (val.equals(valorSwitch)) {
-                                    Recorrido(raiz.hijos[3]);
-                                    result = "true";
+                                    result = Recorrido(raiz.hijos[3]);
+                                    caso = "true";
                                 }
                             }
                             break;
@@ -200,7 +238,7 @@ public class RecorridoHK {
                 case "E":
                     result = Operacion.resolverOperacion(raiz);
                     break;
-                
+
                 case "EXTRAS":
                     result = Operacion.resolverExtras(raiz);
                     break;
@@ -208,5 +246,5 @@ public class RecorridoHK {
         }
         return result;
     }
-    
+
 }

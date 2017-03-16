@@ -31,7 +31,7 @@ public class Metodo_FuncionHK {
 
             if (mf.nombre.equals(id)) {
                 VariableHK.pilaAmbito.push(id);
-
+                VariableHK.nivelAmbito++;
                 if (parametro.isEmpty() && mf.parametro.isEmpty()) {
                     parametro.clear();
                     RecorridoHK r = new RecorridoHK();
@@ -50,6 +50,7 @@ public class Metodo_FuncionHK {
                     VariableHK.eliminarVariable();
                     return retorno;
                 }
+                VariableHK.nivelAmbito--;
                 VariableHK.pilaAmbito.pop();
             }
         }

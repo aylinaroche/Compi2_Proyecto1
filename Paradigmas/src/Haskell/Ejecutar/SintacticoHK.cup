@@ -39,7 +39,8 @@ concatenar,ERROR;
 
 
 non terminal Caracter INICIO,OP,E,INSTRUCCION,INSTRUCCIONES,LISTA,ELEMENTO,
-CALCULAR,MATRIZ,EXTRAS,OPERACION_LISTA,NOMBRE_OP,POSICION,LLAMADA,OPCION,ELEM;
+CALCULAR,MATRIZ,EXTRAS,OPERACION_LISTA,NOMBRE_OP,POSICION,LLAMADA,OPCION,
+POSICION_LISTA,PARAMETRO;
 
 precedence left mas, menos;
 precedence left por, div;
@@ -105,6 +106,12 @@ INSTRUCCION::=LISTA:n{:
     Nodo E = new Nodo("INSTRUCCION");
     E.insertar(n.nodo);
     RESULT.nodo = E;
+:}
+|POSICION_LISTA:m{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("INSTRUCCION");
+    E.insertar(m.nodo);
+    RESULT.nodo = E;
 :};
 
 
@@ -125,7 +132,6 @@ LISTA::= let id:i igual MATRIZ:m{:
 MATRIZ::=MATRIZ:m coma MATRIZ:n{:
     RESULT = new Caracter();
     Nodo E = new Nodo("MATRIZ");
-    //E.insertar(m.nodo);  E.insertar(new Nodo(",")); E.insertar(new Nodo("[")); E.insertar(n.nodo); E.insertar(new Nodo("]"));
     E.insertar(m.nodo);  E.insertar(new Nodo(",")); E.insertar(n.nodo);
     RESULT.nodo = E;
 :}
@@ -156,14 +162,33 @@ ELEMENTO::= ELEMENTO:a coma OP:b{:
     RESULT.nodo = E;
 :};
 
+PARAMETRO::=PARAMETRO:m coma PARAMETRO:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("MATRIZ");
+    E.insertar(m.nodo);  E.insertar(new Nodo(",")); E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|corcheteA PARAMETRO:m corcheteC{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("MATRIZ");
+    E.insertar(new Nodo("[")); E.insertar(m.nodo); E.insertar(new Nodo("]"));
+    RESULT.nodo = E;
+:}
+|ELEMENTO:m{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("MATRIZ");
+    E.insertar(m.nodo);
+    RESULT.nodo = E;
+:};
 
-LLAMADA::=  id:i llaveA MATRIZ:n llaveC {:
+
+LLAMADA::=  id:i llaveA PARAMETRO:n llaveC {:
     RESULT = new Caracter();
     Nodo E = new Nodo("LLAMADA");
      E.insertar(new Nodo(i)); E.insertar(new Nodo("{")); E.insertar(n.nodo); E.insertar(new Nodo("}"));
     RESULT.nodo = E;
 :}
-|id:i MATRIZ:n  {:
+|id:i PARAMETRO:n  {:
     RESULT = new Caracter();
     Nodo E = new Nodo("LLAMADA");
     E.insertar(new Nodo(i));E.insertar(n.nodo); 
@@ -184,12 +209,6 @@ OPERACION_LISTA::= NOMBRE_OP:n MATRIZ:m {:
     RESULT = new Caracter();
     Nodo E = new Nodo("OPERACION_LISTA");
      E.insertar(n.nodo); E.insertar(m.nodo); 
-    RESULT.nodo = E;
-:}
-| id:i POSICION:p {:
-    RESULT = new Caracter();
-    Nodo E = new Nodo("OPERACION_LISTA");
-     E.insertar(new Nodo(i)); E.insertar(p.nodo); 
     RESULT.nodo = E;
 :};
 
@@ -243,6 +262,19 @@ NOMBRE_OP ::= sum:n{:
     RESULT.nodo = E;
 :};
 
+POSICION_LISTA::= id:i POSICION:p {:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("POSICION_LISTA");
+     E.insertar(new Nodo(i)); E.insertar(p.nodo); 
+    RESULT.nodo = E;
+:}
+|dollar id:i POSICION:p dollar{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("POSICION_LISTA");
+     E.insertar(new Nodo(i)); E.insertar(p.nodo); 
+    RESULT.nodo = E;
+:};
+
 
 POSICION::=POSICION:p posicion OP:o{:
     RESULT = new Caracter();
@@ -258,14 +290,13 @@ POSICION::=POSICION:p posicion OP:o{:
 :};
 
 
-
-
 OP::=E:a{:
     Nodo OP = new Nodo("OP");
     RESULT = new Caracter();
     OP.insertar(a.nodo);
     RESULT.nodo = OP;
 :};
+
 
 E::=parentesisA E:a parentesisC{:
     Nodo E = new Nodo("E");
@@ -424,7 +455,8 @@ E::=parentesisA E:a parentesisC{:
     Nodo E = new Nodo("E");
     E.insertar(new Nodo("%"));
     RESULT.nodo = E;
-:};
+:}
+;
 
 
 OPCION::=EXTRAS:n {:
@@ -468,19 +500,19 @@ EXTRAS::=  succ E:e {:
 | min corcheteA ELEMENTO:e corcheteC {:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-    EXTRAS.insertar(new Nodo("Min")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));
+    EXTRAS.insertar(new Nodo("Min")); EXTRAS.insertar(e.nodo);
     RESULT.nodo = EXTRAS;
 :}
 | min ELEMENTO:e {:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-    EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo);
+    EXTRAS.insertar(new Nodo("Min")); EXTRAS.insertar(e.nodo);
     RESULT.nodo = EXTRAS;
 :}
 | max corcheteA ELEMENTO:e corcheteC {:
     RESULT = new Caracter();
     Nodo EXTRAS = new Nodo("EXTRAS");
-    EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(new Nodo("[")); EXTRAS.insertar(e.nodo); EXTRAS.insertar(new Nodo("]"));
+   EXTRAS.insertar(new Nodo("Max")); EXTRAS.insertar(e.nodo);
     RESULT.nodo = EXTRAS;
 :}
 | max ELEMENTO:e {:

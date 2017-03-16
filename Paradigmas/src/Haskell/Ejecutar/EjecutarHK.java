@@ -70,6 +70,7 @@ public class EjecutarHK {
         } catch (Exception e) {
 
         }
+VariableHK.pilaAmbito.push("Global");
 
         RecorridoHK r = new RecorridoHK();
         r.Recorrido(raiz);
