@@ -6,5 +6,6 @@ public class Atributos {
 
     public static String lenguaje = "";
     //public static LexicoH analizador = null;
-    public static ArrayList imprimirConsola = new ArrayList();
+   public static ArrayList imprimirHaskell = new ArrayList();
+   public static ArrayList imprimirGraphik = new ArrayList();
 }

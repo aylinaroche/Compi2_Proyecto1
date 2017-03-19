@@ -40,6 +40,7 @@ public String lexeme;
 /* PALABRAS RESERVADAS */
 "gk" {return new Symbol(sym.extension, yycolumn, yyline, new String(yytext()));}
 "hereda" {return new Symbol(sym.hereda, yycolumn, yyline, new String(yytext()));}
+"inicio" {return new Symbol(sym.inicio, yycolumn, yyline, new String(yytext()));}
 "nuevo" {return new Symbol(sym.nuevo, yycolumn, yyline, new String(yytext()));}
 "llamar" {return new Symbol(sym.llamar, yycolumn, yyline, new String(yytext()));}
 "llamarHK" {return new Symbol(sym.llamarHK, yycolumn, yyline, new String(yytext()));}
@@ -50,6 +51,7 @@ public String lexeme;
 "protegido" {return new Symbol(sym.protegido, yycolumn, yyline,new String(yytext()));}
 "importar" {return new Symbol(sym.importar, yycolumn, yyline,new String(yytext()));}
 "incluir_HK" {return new Symbol(sym.incluir, yycolumn, yyline, new String(yytext()));}
+"flotante" {return new Symbol(sym.tipoFloat, yycolumn, yyline, new String(yytext()));}
 "vacio" {return new Symbol(sym.tipoVoid, yycolumn, yyline, new String(yytext()));}
 "entero" {return new Symbol(sym.tipoInt, yycolumn, yyline,new String(yytext()));}
 "caracter" {return new Symbol(sym.tipoChar, yycolumn, yyline,new String(yytext()));}
@@ -58,7 +60,6 @@ public String lexeme;
 "bool" {return new Symbol(sym.tipoBool, yycolumn, yyline,new String(yytext()));}
 "imprimir" {return new Symbol(sym.imprimir, yycolumn, yyline,new String(yytext()));}
 "retornar" {return new Symbol(sym.retornar, yycolumn, yyline,new String(yytext()));}
-"main" {return new Symbol(sym.main, yycolumn, yyline,new String(yytext()));}
 "Si" {return new Symbol(sym.si, yycolumn, yyline,new String(yytext()));}
 "Sino" {return new Symbol(sym.sino, yycolumn, yyline,new String(yytext()));}
 "raiz" {return new Symbol(sym.raiz, yycolumn, yyline,new String(yytext()));}
@@ -68,9 +69,10 @@ public String lexeme;
 "Mientras" {return new Symbol(sym.mientras, yycolumn, yyline,new String(yytext()));}
 "Hacer" {return new Symbol(sym.hacer, yycolumn, yyline,new String(yytext()));}
 "Para" {return new Symbol(sym.para, yycolumn, yyline,new String(yytext()));}
-"break" {return new Symbol(sym.salir, yycolumn, yyline,new String(yytext()));}
-"true" {return new Symbol(sym.verdadero, yycolumn, yyline,new String(yytext()));}
-"false" {return new Symbol(sym.falso, yycolumn, yyline,new String(yytext()));}
+"Terminar" {return new Symbol(sym.salir, yycolumn, yyline,new String(yytext()));}
+"Continuar" {return new Symbol(sym.continuar, yycolumn, yyline,new String(yytext()));}
+"verdadero" {return new Symbol(sym.verdadero, yycolumn, yyline,new String(yytext()));}
+"falso" {return new Symbol(sym.falso, yycolumn, yyline,new String(yytext()));}
 "+" {return new Symbol(sym.mas, yycolumn, yyline, new String(yytext()));}
 "*" {return new Symbol(sym.por, yycolumn, yyline,new String(yytext()));}
 "-" {return new Symbol(sym.menos, yycolumn, yyline,new String(yytext()));}
@@ -80,8 +82,8 @@ public String lexeme;
 "++" {return new Symbol(sym.aumentar, yycolumn, yyline,new String(yytext()));}
 ">" {return new Symbol(sym.mayor, yycolumn, yyline,new String(yytext()));}
 "<" {return new Symbol(sym.menor, yycolumn, yyline,new String(yytext()));}
-"<=" {return new Symbol(sym.mayorIgual, yycolumn, yyline,new String(yytext()));}
-">=" {return new Symbol(sym.menorIgual, yycolumn, yyline,new String(yytext()));}
+"<=" {return new Symbol(sym.menorIgual, yycolumn, yyline,new String(yytext()));}
+">=" {return new Symbol(sym.mayorIgual, yycolumn, yyline,new String(yytext()));}
 "=" {return new Symbol(sym.igual, yycolumn, yyline,new String(yytext()));}
 "==" {return new Symbol(sym.igualDoble, yycolumn, yyline,new String(yytext()));}
 "!=" {return new Symbol(sym.diferente, yycolumn, yyline,new String(yytext()));}
@@ -93,16 +95,12 @@ public String lexeme;
 "!" {return new Symbol(sym.not, yycolumn, yyline,new String(yytext()));}
 ":" {return new Symbol(sym.dosPuntos, yycolumn, yyline,new String(yytext()));}
 "," {return new Symbol(sym.coma, yycolumn, yyline,new String(yytext()));}
-";" {return new Symbol(sym.puntoComa, yycolumn, yyline,new String(yytext()));}
 "[" {return new Symbol(sym.corcheteA, yycolumn, yyline,new String(yytext()));}
 "]" {return new Symbol(sym.corcheteC, yycolumn, yyline,new String(yytext()));}
 "{" {return new Symbol(sym.llaveA, yycolumn, yyline,new String(yytext()));}
 "}" {return new Symbol(sym.llaveC, yycolumn, yyline,new String(yytext()));}
 "." {return new Symbol(sym.punto, yycolumn, yyline,new String(yytext()));}
 "?" {return new Symbol(sym.signo, yycolumn, yyline, new String(yytext()));}
-"move" {return new Symbol(sym.mover, yycolumn, yyline,new String(yytext()));}
-"atack" {return new Symbol(sym.atacar, yycolumn, yyline,new String(yytext()));}
-"turn" {return new Symbol(sym.girar, yycolumn, yyline,new String(yytext()));}
 "ParseInt" {return new Symbol(sym.parseInt, yycolumn, yyline,new String(yytext()));}
 "ParseDouble" {return new Symbol(sym.parseDouble, yycolumn, yyline,new String(yytext()));}
 "Int2Str" {return new Symbol(sym.intStr, yycolumn, yyline,new String(yytext()));}

@@ -1,8 +1,9 @@
 package Graphik;
 
-import java.io.*;
+//import java.io.*;
 import java_cup.runtime.*;
 import java.util.ArrayList;
+import Graphik.Ejecutar.*;
 
 init with {:
 
@@ -29,17 +30,17 @@ action code
 {:
 :}
 
-terminal String publico,privado,protegido,programa,importar,tipoVoid,tipoString,tipoInt,tipoChar,tipoBool,tipoDouble,
-parentesisA,parentesisC,coma,retornar,main,si,sino,interrumpir,caso,defecto,mientras,hacer,salir,raiz,mas,menos,por,
-mayor,menor,mayorIgual,menorIgual,igual,diferente,or,xor,and,not,puntoComa,id,corcheteA,corcheteC,disminuir,para,
-dosPuntos,imprimir,verdadero,falso,igualDoble,potencia,llaveA,llaveC,signo,ERROR,numero,parseInt,aumentar,dividido,
-cadena,parseDouble,intStr,doubleStr,concat,length,mover,atacar,girar,punto,caracter,entero,
-nuevo,extension,var,incluir,nott,hereda,als,llamar,llamarHK;
+terminal String publico,privado,protegido,importar,tipoVoid,tipoString,tipoInt,tipoChar,tipoBool,tipoDouble,
+parentesisA,parentesisC,coma,retornar,si,sino,interrumpir,caso,defecto,mientras,hacer,salir,raiz,mas,menos,por,
+mayor,menor,mayorIgual,menorIgual,igual,diferente,or,xor,and,not,id,corcheteA,corcheteC,disminuir,para,
+dosPuntos,imprimir,verdadero,falso,igualDoble,potencia,llaveA,llaveC,signo,ERROR,numero,parseInt,aumentar,
+dividido,cadena,parseDouble,intStr,doubleStr,concat,length,punto,caracter,inicio,tipoFloat,continuar,
+nuevo,extension,var,incluir,hereda,als,llamar,llamarHK;
 
-non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,INSTRUC,TIPO,ATRIBUTO,S,ACCION,
-VARLOCAL,INSTANCIA,IF,ELSEIF,ELSE,CICLO,SWITCH,PARAMETROS,PARAM,OP,CASO,VALORES,IMPRIMIR,MasVARIABLE,ASIGNACION,
-INSTRUCCION,OPCION,VARIABLE,DEFECTO,E,MATRIZ,ValorMATRIZ,vMATRIZ,ASIGNAR,PARA,PARSEAR,
-FuncionSTRING,ALS,FUNCION,AccesoASL,CrearASL,ARREGLO,ARR,ATRIBUTOS;
+non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,TIPO,ACCION,
+INSTANCIA,IF,ELSE,CICLO,SWITCH,PARAMETROS,OP,CASO,VALORES,IMPRIMIR,MasVARIABLE,ASIGNACION,
+INSTRUCCION,OPCION,VARIABLE,DEFECTO,E,MATRIZ,ValorMATRIZ,ASIGNAR,PARA,PRINCIPAL,
+ALS,AccesoASL,CrearASL,ARREGLO,ARR,MasMATRIZ,GLOBAL,A;
 
 precedence left mas, menos;
 precedence left por, dividido;
@@ -51,204 +52,845 @@ precedence left igual,diferente,igualDoble;
 precedence left tipoInt, tipoString, tipoChar, tipoDouble, tipoBool;
 precedence left si,sino;
 precedence left mientras;
-precedence left id, entero; 
+precedence left id; 
 precedence left imprimir;
-precedence left coma;
+precedence left coma,signo;
 
 start with INICIO;
 
 INICIO::=ENTRADA{::};
 
-ENTRADA::=IMPORT INSTRUCCION{::}
-|INSTRUCCION{::};
+ENTRADA::=IMPORT A{::};
+
+A::= A ALS{::}
+|ALS{::};
 
 IMPORT::= IMPORT importar id punto extension signo{::}
 |IMPORT incluir id signo{::}
 |importar id punto extension signo{::}
 |incluir id signo{::};
 
-VISIBILIDAD::=protegido
-|privado
-|publico;
+VISIBILIDAD::=dosPuntos VISIBILIDAD:n{:
+    NodoG VISIBILIDAD = new NodoG("VISIBILIDAD");
+    RESULT = new Caracter();
+    VISIBILIDAD.insertar(n.nodo); 
+    RESULT.nodo = VISIBILIDAD;
+:}
+|protegido{:
+    NodoG VISIBILIDAD = new NodoG("VISIBILIDAD");
+    RESULT = new Caracter();
+    VISIBILIDAD.insertar(new NodoG("protegido")); 
+    RESULT.nodo = VISIBILIDAD;
+:}
+|privado{:
+    NodoG VISIBILIDAD = new NodoG("VISIBILIDAD");
+    RESULT = new Caracter();
+    VISIBILIDAD.insertar(new NodoG("privado")); 
+    RESULT.nodo = VISIBILIDAD;
+:}
+|publico{:
+    NodoG VISIBILIDAD = new NodoG("VISIBILIDAD");
+    RESULT = new Caracter();
+    VISIBILIDAD.insertar(new NodoG("publico")); 
+    RESULT.nodo = VISIBILIDAD;
+:}
+|{:
+    NodoG VISIBILIDAD = new NodoG("VISIBILIDAD");
+    RESULT = new Caracter();
+    VISIBILIDAD.insertar(new NodoG("publico")); 
+    RESULT.nodo = VISIBILIDAD;
+:};
 
-INSTRUCCION ::= INSTRUCCION OPCION
-|OPCION;
 
-OPCION::=IMPRIMIR
-|METODO
-|SWITCH
-|CICLO
-|IF
-|VARIABLE
-|ASIGNACION
-|PARA
-|ACCION
-|ALS
-|CrearASL
-|salir signo
-|INSTANCIA signo
-|retornar OP signo
-|ATRIBUTOS;
+INSTRUCCIONES ::= INSTRUCCIONES:i GLOBAL:n  {:
+    RESULT = new Caracter();
+    NodoG INSTRUCCION = new NodoG("INSTRUCCION");
+    INSTRUCCION.insertar(i.nodo); INSTRUCCION.insertar(n.nodo);
+    RESULT.nodo = INSTRUCCION;
+:}
+|GLOBAL:n{:
+    NodoG INSTRUCCION = new NodoG("INSTRUCCION");
+    RESULT = new Caracter();
+    INSTRUCCION.insertar(n.nodo); 
+    RESULT.nodo = INSTRUCCION;
+:};
 
-TIPO::=tipoString
-|tipoInt
-|tipoChar
-|tipoBool
-|tipoDouble
-|tipoVoid;
 
-PARAMETROS::=PARAMETROS coma TIPO id
-|TIPO id;
+GLOBAL::=PRINCIPAL:n{:
+    NodoG OPCION = new NodoG("GLOBAL");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|METODO:n{:
+    NodoG OPCION = new NodoG("GLOBAL");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|VARIABLE:n{:
+    NodoG OPCION = new NodoG("GLOBAL");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+    VariableG.variableGlobal.add(n.nodo);
+:};
 
-IMPRIMIR::=imprimir parentesisA OP parentesisC signo;
 
-VARIABLE::=var TIPO id dosPuntos VISIBILIDAD signo
-|var TIPO id dosPuntos VISIBILIDAD MasVARIABLE signo
-|var TIPO id MATRIZ dosPuntos VISIBILIDAD signo
-|var TIPO id MATRIZ dosPuntos VISIBILIDAD MasVARIABLE signo
-|var TIPO id signo
-|var TIPO id ASIGNAR dosPuntos VISIBILIDAD signo
-|var TIPO id ASIGNAR dosPuntos VISIBILIDAD MasVARIABLE signo
-|var TIPO id MATRIZ ASIGNAR dosPuntos VISIBILIDAD signo
-|var TIPO id MATRIZ ASIGNAR dosPuntos VISIBILIDAD MasVARIABLE signo
-|var TIPO id MATRIZ ASIGNAR signo 
-|var TIPO id MATRIZ signo 
-|var TIPO id ASIGNAR signo;
-
-MasVARIABLE::= MasVARIABLE coma id dosPuntos VISIBILIDAD
-|MasVARIABLE coma id ASIGNAR dosPuntos VISIBILIDAD
-|coma id dosPuntos VISIBILIDAD
-|coma id ASIGNAR dosPuntos VISIBILIDAD;
-
-ASIGNACION::=id ASIGNAR signo
-|ARREGLO ASIGNAR signo;
-
-MATRIZ::= MATRIZ corcheteA OP corcheteC
-|MATRIZ corcheteA corcheteC
-|corcheteA OP corcheteC
-|corcheteA corcheteC;
-
-ASIGNAR ::= igual OP
-|igual ValorMATRIZ ;
-
-ValorMATRIZ::= llaveA ValorMATRIZ llaveC
-|ValorMATRIZ coma ValorMATRIZ
-|ValorMATRIZ llaveA llaveC
-|llaveA VALORES llaveC
-|llaveA llaveC;
-
-VALORES ::= VALORES coma OP
-|OP;
-
-ALS::= als id dosPuntos VISIBILIDAD llaveA INSTRUCCION llaveC
-|als id hereda id llaveA INSTRUCCION llaveC;
-
-METODO ::= TIPO id parentesisA PARAMETROS parentesisC dosPuntos VISIBILIDAD llaveA INSTRUCCION llaveC
-|TIPO id parentesisA parentesisC dosPuntos VISIBILIDAD llaveA INSTRUCCION llaveC
-|TIPO id parentesisA PARAMETROS parentesisC llaveA INSTRUCCION llaveC
-|TIPO id parentesisA parentesisC llaveA INSTRUCCION llaveC;
-
-IF::=si parentesisA OP parentesisC llaveA INSTRUCCION llaveC
-|si parentesisA OP parentesisC llaveA INSTRUCCION llaveC ELSEIF
-|si parentesisA OP parentesisC llaveA INSTRUCCION llaveC ELSEIF ELSE
-|si parentesisA OP parentesisC llaveA INSTRUCCION llaveC ELSE;
-
-ELSEIF::=ELSEIF sino si parentesisA OP parentesisC llaveA INSTRUCCION llaveC
-|sino si parentesisA OP parentesisC llaveA INSTRUCCION llaveC;
-
-ELSE::=sino llaveA INSTRUCCION llaveC;
-
-CICLO::=mientras parentesisA OP parentesisC llaveA INSTRUCCION llaveC
-|hacer llaveA INSTRUCCION llaveC mientras parentesisA OP parentesisC puntoComa ;
-
-SWITCH::=interrumpir parentesisA OP parentesisC llaveA S CASO llaveC
-|interrumpir parentesisA OP parentesisC llaveA  S CASO DEFECTO llaveC
-|interrumpir parentesisA OP parentesisC llaveA S DEFECTO llaveC
-|interrumpir parentesisA OP parentesisC llaveA CASO llaveC
-|interrumpir parentesisA OP parentesisC llaveA CASO DEFECTO llaveC
-|interrumpir parentesisA OP parentesisC llaveA DEFECTO llaveC;
-
-S::= VARIABLE
-|ASIGNACION
-|IMPRIMIR;
-
-CASO::=CASO caso OP dosPuntos INSTRUCCION
-|caso OP dosPuntos INSTRUCCION;
-
-DEFECTO::=defecto dosPuntos INSTRUCCION ;
-
-PARA::= para parentesisA id igual OP dosPuntos OP dosPuntos OP parentesisC llaveA INSTRUCCION llaveC
-|para parentesisA id dosPuntos OP dosPuntos OP parentesisC llaveA INSTRUCCION llaveC;
-
-ACCION::=mover parentesisA OP parentesisC puntoComa
-|girar parentesisA OP parentesisC puntoComa
-|atacar parentesisA OP parentesisC puntoComa;
-
-PARSEAR::= parseInt parentesisA OP parentesisC 
-|parseDouble parentesisA OP parentesisC 
-|intStr parentesisA OP parentesisC 
-|doubleStr parentesisA OP parentesisC ;
-
-FuncionSTRING::= id punto length parentesisA parentesisC
-|id punto concat parentesisA OP parentesisC;
-
-INSTANCIA::=llamar id parentesisA parentesisC{::}
-|llamar id parentesisA VALORES parentesisC{::}
-|llamarHK id parentesisA parentesisC{::}
-|llamarHK id parentesisA VALORES parentesisC{::}
-|llamarHK parentesisA id parentesisA VALORES parentesisC parentesisC{::};
-
-CrearASL::= var id id igual nuevo id parentesisA parentesisC signo
-|id id igual nuevo id parentesisA parentesisC signo;
-
-AccesoASL::= id punto id signo
-|id punto id;
-
-ARREGLO::= id corcheteA OP corcheteC ARR
-|id corcheteA corcheteC ARR
-|id corcheteA OP corcheteC
-|id corcheteA corcheteC;
-
-ARR::= ARR corcheteA OP corcheteC
-|ARR corcheteA corcheteC
-| corcheteA OP corcheteC
-| corcheteA  corcheteC;
-
-ATRIBUTOS::=id punto id igual OP signo
-|id punto id parentesisA parentesisC signo;
+ALS::= als id:i VISIBILIDAD:v llaveA INSTRUCCIONES:n llaveC{:
+    NodoG E = new NodoG("ALS");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("ALS")); E.insertar(new NodoG(i));E.insertar(v.nodo); E.insertar(new NodoG("{")); E.insertar(n.nodo); E.insertar(new NodoG("}"));
+    RESULT.nodo = E;
+:}
+|als id:i hereda id:j llaveA INSTRUCCIONES:n llaveC{:
+    NodoG E = new NodoG("AccesoASL");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("ALS")); E.insertar(new NodoG(i)); E.insertar(new NodoG("hereda")); E.insertar(new NodoG(j));
+    E.insertar(new NodoG("{")); E.insertar(n.nodo); E.insertar(new NodoG("}"));
+    RESULT.nodo = E;
+:};
 
 
 
-OP::=E:e{::};
+INSTRUCCION ::= INSTRUCCION:i OPCION:n  {:
+    RESULT = new Caracter();
+    NodoG INSTRUCCION = new NodoG("INSTRUCCION");
+    INSTRUCCION.insertar(i.nodo); INSTRUCCION.insertar(n.nodo);
+    RESULT.nodo = INSTRUCCION;
+:}
+|OPCION:n{:
+    NodoG INSTRUCCION = new NodoG("INSTRUCCION");
+    RESULT = new Caracter();
+    INSTRUCCION.insertar(n.nodo); 
+    RESULT.nodo = INSTRUCCION;
+:};
 
-E::=parentesisA E:a parentesisC{::}
-|E:a mas E:b{: :}
-|E:a menos E:b{: :}
-|E:a por E:b{: :}
-|E:a dividido E:b{: :}
-|E:a aumentar{: :}
-|E:a disminuir{: :} 
-|E:a mayor E:b{: :}
-|E:a menor E:b{: :}
-|E:a mayorIgual E:b{: :}
-|E:a menorIgual E:b{: :}
-|E:a igual E:b{: :}
-|E:a igualDoble E:b{: :}
-|E diferente E{: :}
-|verdadero:t{: :}
-|falso:f{: :}
-|E:a or E:b
-|E:a xor E:b{: :}
-|E:a and E:b{: :}
-|E:b not{: :}
-|E potencia E {::}
-|cadena{::}
-|caracter{::}
-|id{::}
-|PARSEAR
-|numero:n{::}
-|INSTANCIA{::}
-|ARREGLO{::}
-|FuncionSTRING{::}
-|AccesoASL{::};
+
+OPCION::=IMPRIMIR:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|SWITCH:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|CICLO:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|IF:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|VARIABLE:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|ASIGNACION:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|PARA:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|ACCION:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|CrearASL:n{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|INSTANCIA:n signo{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(n.nodo);
+    RESULT.nodo = OPCION;
+:}
+|salir signo{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(new NodoG("Terminar")); OPCION.insertar(new NodoG("?"));
+    RESULT.nodo = OPCION;
+:}
+|continuar signo{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(new NodoG("Continuar")); OPCION.insertar(new NodoG("?"));
+    RESULT.nodo = OPCION;
+:}
+|retornar signo{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(new NodoG("retornar")); OPCION.insertar(new NodoG("?"));
+    RESULT.nodo = OPCION;
+:}
+|retornar OP:n signo{:
+    NodoG OPCION = new NodoG("OPCION");
+    RESULT = new Caracter();
+    OPCION.insertar(new NodoG("retornar")); OPCION.insertar(n.nodo); OPCION.insertar(new NodoG("?"));
+    RESULT.nodo = OPCION;
+:};
+
+
+PRINCIPAL::=tipoVoid inicio parentesisA parentesisC llaveA INSTRUCCION:n llaveC{:
+    NodoG E = new NodoG("PRINCIPAL");
+    RESULT = new Caracter();
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+    ArrayList parametros = new ArrayList();
+    Metodo_FuncionG.agregarMF("inicio",n.nodo,parametros);
+:};
+
+
+TIPO::=tipoString:n{: 
+    NodoG TIPO = new NodoG("TIPO");
+    RESULT = new Caracter();
+    TIPO.insertar(new NodoG("cadena")); 
+    RESULT.nodo = TIPO;
+:}
+|tipoInt:n{: 
+    NodoG TIPO = new NodoG("TIPO");
+    RESULT = new Caracter();
+    TIPO.insertar(new NodoG("entero")); 
+    RESULT.nodo = TIPO;
+:}
+|tipoChar:n{: 
+    NodoG TIPO = new NodoG("TIPO");
+    RESULT = new Caracter();
+    TIPO.insertar(new NodoG("char")); 
+    RESULT.nodo = TIPO;
+:}
+|tipoBool:n{: 
+    NodoG TIPO = new NodoG("TIPO");
+    RESULT = new Caracter();
+    TIPO.insertar(new NodoG("bool")); 
+    RESULT.nodo = TIPO;
+:}
+|tipoDouble:n{: 
+    NodoG TIPO = new NodoG("TIPO");
+    RESULT = new Caracter();
+    TIPO.insertar(new NodoG("decimal")); 
+    RESULT.nodo = TIPO;
+:}
+|tipoVoid{:
+    NodoG TIPO = new NodoG("TIPO");
+    RESULT = new Caracter();
+    TIPO.insertar(new NodoG("vacio")); 
+    RESULT.nodo = TIPO;
+:}
+|tipoFloat{::};
+
+
+IMPRIMIR::=imprimir parentesisA OP:n parentesisC signo{:
+    NodoG IMPRIMIR = new NodoG("IMPRIMIR");
+    RESULT = new Caracter();
+    IMPRIMIR.insertar(new NodoG("imprimir")); IMPRIMIR.insertar(new NodoG("(")); IMPRIMIR.insertar(n.nodo);
+    IMPRIMIR.insertar(new NodoG(")")); IMPRIMIR.insertar(new NodoG("?")); 
+    RESULT.nodo = IMPRIMIR;
+:};
+
+
+VARIABLE::=var TIPO:t MasVARIABLE:m signo{://6
+    NodoG V = new NodoG("VARIABLE");
+    RESULT = new Caracter();
+    V.insertar(new NodoG("var")); V.insertar(t.nodo);V.insertar(m.nodo); V.insertar(new NodoG("?")); 
+    RESULT.nodo = V;
+:}
+|var TIPO:t MasMATRIZ:m signo{://7
+    NodoG V = new NodoG("VARIABLE");
+    RESULT = new Caracter();
+    V.insertar(new NodoG("var")); V.insertar(t.nodo); V.insertar(m.nodo); V.insertar(new NodoG("?")); 
+    RESULT.nodo = V;
+:};
+
+
+MasVARIABLE::= MasVARIABLE:m coma id:i VISIBILIDAD:v{: //4
+    NodoG MasVARIABLE = new NodoG("MasVARIABLE");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:}
+|MasVARIABLE:m coma id:i ASIGNAR:a VISIBILIDAD:v{: //5
+    NodoG MasVARIABLE = new NodoG("MasVARIABLE");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:}
+|id:i VISIBILIDAD:v{: //2
+    NodoG MasVARIABLE = new NodoG("MasVARIABLE");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:}
+|id:i ASIGNAR:a VISIBILIDAD:v{: //3
+    NodoG MasVARIABLE = new NodoG("MasVARIABLE");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(new NodoG(i));  MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:};
+
+
+MasMATRIZ::= MasMATRIZ:m coma id:i MATRIZ:z VISIBILIDAD:v{: //4
+    NodoG MasVARIABLE = new NodoG("MasMATRIZ");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:}
+|MasMATRIZ:m coma id:i MATRIZ:z ASIGNAR:a VISIBILIDAD:v {: //5
+    NodoG MasVARIABLE = new NodoG("MasMATRIZ");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:}
+|id:i MATRIZ:z VISIBILIDAD:v{: //3
+    NodoG MasVARIABLE = new NodoG("MasMATRIZ");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:}
+|id:i MATRIZ:z ASIGNAR:a VISIBILIDAD:v {: //4
+    NodoG MasVARIABLE = new NodoG("MasMATRIZ");
+    RESULT = new Caracter();
+    MasVARIABLE.insertar(new NodoG(i));  MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
+    RESULT.nodo = MasVARIABLE;
+:};
+
+
+ASIGNACION::=id:i ASIGNAR:a signo{: //2 (?)
+    NodoG ASIGNACION = new NodoG("ASIGNACION");
+    RESULT = new Caracter();
+    ASIGNACION.insertar(new NodoG(i));  ASIGNACION.insertar(a.nodo); 
+    RESULT.nodo = ASIGNACION;
+:}
+|ARREGLO:m ASIGNAR:a signo{: //4
+    NodoG ASIGNACION = new NodoG("ASIGNACION");
+    RESULT = new Caracter();
+    ASIGNACION.insertar(m.nodo);  ASIGNACION.insertar(a.nodo); ASIGNACION.insertar(new NodoG("?")); 
+    RESULT.nodo = ASIGNACION;
+:};
+
+
+MATRIZ::= MATRIZ:m corcheteA OP:n corcheteC{:
+    NodoG MATRIZ = new NodoG("MATRIZ");
+    RESULT = new Caracter();
+    MATRIZ.insertar(m.nodo); MATRIZ.insertar(new NodoG("["));  MATRIZ.insertar(n.nodo); MATRIZ.insertar(new NodoG("]")); 
+    RESULT.nodo = MATRIZ;
+:}
+|MATRIZ:n corcheteA corcheteC{:
+    NodoG MATRIZ = new NodoG("MATRIZ");
+    RESULT = new Caracter();
+    MATRIZ.insertar(n.nodo);  MATRIZ.insertar(new NodoG("[")); MATRIZ.insertar(new NodoG("]")); 
+    RESULT.nodo = MATRIZ;
+:}
+|corcheteA OP:n corcheteC{:
+    NodoG MATRIZ = new NodoG("MATRIZ");
+    RESULT = new Caracter();
+    MATRIZ.insertar(new NodoG("["));  MATRIZ.insertar(n.nodo); MATRIZ.insertar(new NodoG("]")); 
+    RESULT.nodo = MATRIZ;
+:}
+|corcheteA corcheteC{:
+    NodoG MATRIZ = new NodoG("MATRIZ");
+    RESULT = new Caracter();
+    MATRIZ.insertar(new NodoG("[")); MATRIZ.insertar(new NodoG("]"));  
+    RESULT.nodo = MATRIZ;
+:};
+
+
+ASIGNAR ::= igual OP:n{:
+    NodoG ASIGNAR = new NodoG("ASIGNAR");
+    RESULT = new Caracter();
+    ASIGNAR.insertar(new NodoG("="));  ASIGNAR.insertar(n.nodo);
+    RESULT.nodo = ASIGNAR;
+:}
+|igual ValorMATRIZ:v{:
+    NodoG ASIGNAR = new NodoG("ASIGNAR");
+    RESULT = new Caracter();
+    ASIGNAR.insertar(new NodoG("="));  ASIGNAR.insertar(v.nodo);
+    RESULT.nodo = ASIGNAR;
+:} ;
+
+
+ValorMATRIZ::= llaveA ValorMATRIZ:v llaveC{:
+    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
+    RESULT = new Caracter();
+    ValorMATRIZ.insertar(new NodoG("{"));  ValorMATRIZ.insertar(v.nodo); ValorMATRIZ.insertar(new NodoG("}")); 
+    RESULT.nodo = ValorMATRIZ;
+:} 
+|ValorMATRIZ:v1 coma ValorMATRIZ:v2{:
+    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
+    RESULT = new Caracter();
+    ValorMATRIZ.insertar(v1.nodo);  ValorMATRIZ.insertar(new NodoG(",")); ValorMATRIZ.insertar(v2.nodo); 
+    RESULT.nodo = ValorMATRIZ;
+:} 
+|ValorMATRIZ:v llaveA llaveC{:
+    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
+    RESULT = new Caracter();
+    ValorMATRIZ.insertar(v.nodo); ValorMATRIZ.insertar(new NodoG("{"));  ValorMATRIZ.insertar(new NodoG("}")); 
+    RESULT.nodo = ValorMATRIZ;
+:} 
+|llaveA VALORES:v llaveC{:
+    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
+    RESULT = new Caracter();
+    ValorMATRIZ.insertar(new NodoG("{"));  ValorMATRIZ.insertar(v.nodo); ValorMATRIZ.insertar(new NodoG("}")); 
+    RESULT.nodo = ValorMATRIZ;
+:} 
+|llaveA llaveC{:
+    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
+    RESULT = new Caracter();
+    ValorMATRIZ.insertar(new NodoG("{")); ValorMATRIZ.insertar(new NodoG("}")); 
+    RESULT.nodo = ValorMATRIZ;
+:};
+
+
+VALORES ::= VALORES:v coma OP:n{:
+    NodoG VALORES = new NodoG("VALORES");
+    RESULT = new Caracter();
+    VALORES.insertar(v.nodo); VALORES.insertar(new NodoG(",")); VALORES.insertar(n.nodo); 
+    RESULT.nodo = VALORES;
+:}
+|OP:n{:
+    NodoG VALORES = new NodoG("VALORES");
+    RESULT = new Caracter();
+    VALORES.insertar(n.nodo); 
+    RESULT.nodo = VALORES;
+:};
+
+
+
+
+METODO ::= TIPO:t id:i parentesisA PARAMETROS:p parentesisC VISIBILIDAD:v llaveA INSTRUCCION:n llaveC{:
+    NodoG E = new NodoG("AccesoASL");
+    RESULT = new Caracter();
+    E.insertar(t.nodo); E.insertar(new NodoG(i)); E.insertar(new NodoG("(")); E.insertar(p.nodo); E.insertar(new NodoG(")"));
+    E.insertar(v.nodo); E.insertar(new NodoG("{")); E.insertar(n.nodo); E.insertar(new NodoG("}"));
+    RESULT.nodo = E;
+
+    Metodo_FuncionG.agregarMF(i,n.nodo,Metodo_FuncionG.parametros);
+    Metodo_FuncionG.parametros.clear();
+:}
+|TIPO:t id:i parentesisA parentesisC VISIBILIDAD:v llaveA INSTRUCCION:n llaveC{:
+    NodoG E = new NodoG("AccesoASL");
+    RESULT = new Caracter();
+    E.insertar(t.nodo); E.insertar(new NodoG(i)); E.insertar(new NodoG("(")); E.insertar(new NodoG(")"));
+    E.insertar(v.nodo); E.insertar(new NodoG("{")); E.insertar(n.nodo); E.insertar(new NodoG("}"));
+    RESULT.nodo = E;
+    Metodo_FuncionG.agregarMF(i,n.nodo,Metodo_FuncionG.parametros);
+    Metodo_FuncionG.parametros.clear();
+:};
+
+
+PARAMETROS::=PARAMETROS:n coma TIPO:t id:i{: 
+    NodoG PARAMETROS = new NodoG("PARAMETROS");
+    RESULT = new Caracter();
+    PARAMETROS.insertar(new NodoG("parametro")); 
+    RESULT.nodo = PARAMETROS;
+    Metodo_FuncionG.agregarParametro(t.nodo.texto,i);
+:}
+|TIPO:t id:i{: 
+    NodoG PARAMETROS = new NodoG("PARAMETROS");
+    RESULT = new Caracter();
+    PARAMETROS.insertar(new NodoG("parametro")); 
+    RESULT.nodo = PARAMETROS;
+    Metodo_FuncionG.agregarParametro(t.nodo.texto,i);
+:};
+
+
+IF::=si parentesisA OP:n parentesisC llaveA INSTRUCCION:i llaveC{://7
+    NodoG IF = new NodoG("IF");
+    RESULT = new Caracter();
+    IF.insertar(new NodoG("if")); IF.insertar(new NodoG("(")); IF.insertar(n.nodo); IF.insertar(new NodoG(")")); IF.insertar(new NodoG("{")); 
+    IF.insertar(i.nodo); IF.insertar(new NodoG("}")); 
+    RESULT.nodo = IF;
+:}
+|si parentesisA OP:n parentesisC llaveA INSTRUCCION:i llaveC ELSE:l{://8
+    NodoG IF = new NodoG("IF");
+    RESULT = new Caracter();
+    IF.insertar(new NodoG("if")); IF.insertar(new NodoG("(")); IF.insertar(n.nodo); IF.insertar(new NodoG(")")); IF.insertar(new NodoG("{")); 
+    IF.insertar((i.nodo)); IF.insertar(new NodoG("}"));IF.insertar(l.nodo); 
+    RESULT.nodo = IF;    
+:};
+
+
+ELSE::=sino llaveA INSTRUCCION:i llaveC{: //4
+    NodoG ELSE = new NodoG("ELSE");
+    RESULT = new Caracter();
+    ELSE.insertar(new NodoG("else")); ELSE.insertar(new NodoG("{")); ELSE.insertar((i.nodo)); ELSE.insertar(new NodoG("}")); 
+    RESULT.nodo = ELSE;
+:};
+
+
+CICLO::=mientras parentesisA OP:n parentesisC llaveA INSTRUCCION:i llaveC{://7
+    NodoG CICLO = new NodoG("CICLO");
+    RESULT = new Caracter();
+    CICLO.insertar(new NodoG("while")); CICLO.insertar(new NodoG("(")); CICLO.insertar(n.nodo); CICLO.insertar(new NodoG(")")); CICLO.insertar(new NodoG("{"));
+    CICLO.insertar(i.nodo); CICLO.insertar(new NodoG("}"));
+    RESULT.nodo = CICLO;
+:}
+|hacer llaveA INSTRUCCION:i llaveC mientras parentesisA OP:n parentesisC signo{: //9
+    NodoG CICLO = new NodoG("CICLO");
+    RESULT = new Caracter();
+    CICLO.insertar(new NodoG("do")); CICLO.insertar(new NodoG("{")); CICLO.insertar(i.nodo); CICLO.insertar(new NodoG("}")); CICLO.insertar(new NodoG("while")); 
+    CICLO.insertar(new NodoG("(")); CICLO.insertar(n.nodo); CICLO.insertar(new NodoG(")")); CICLO.insertar(new NodoG("?"));
+    RESULT.nodo = CICLO;
+:};
+
+
+SWITCH::=interrumpir parentesisA OP:n parentesisC llaveA CASO:c llaveC{://7
+    NodoG SWITCH = new NodoG("SWITCH");
+    RESULT = new Caracter();
+    SWITCH.insertar(new NodoG("Seleccion")); SWITCH.insertar(new NodoG("(")); SWITCH.insertar(n.nodo); SWITCH.insertar(new NodoG(")")); SWITCH.insertar(new NodoG("{"));
+    SWITCH.insertar(c.nodo); SWITCH.insertar(new NodoG("}"));
+    RESULT.nodo = SWITCH;
+:}
+|interrumpir parentesisA OP:n parentesisC llaveA CASO:c DEFECTO:d llaveC{://8
+    NodoG SWITCH = new NodoG("SWITCH");
+    RESULT = new Caracter();
+    SWITCH.insertar(new NodoG("Seleccion")); SWITCH.insertar(new NodoG("(")); SWITCH.insertar(n.nodo); SWITCH.insertar(new NodoG(")")); SWITCH.insertar(new NodoG("{"));
+    SWITCH.insertar(c.nodo); SWITCH.insertar(d.nodo); SWITCH.insertar(new NodoG("}"));
+    RESULT.nodo = SWITCH;
+:}
+|interrumpir parentesisA OP:n parentesisC llaveA DEFECTO:d llaveC{://7
+    NodoG SWITCH = new NodoG("SWITCH");
+    RESULT = new Caracter();
+    SWITCH.insertar(new NodoG("Seleccion")); SWITCH.insertar(new NodoG("(")); SWITCH.insertar(n.nodo); SWITCH.insertar(new NodoG(")")); SWITCH.insertar(new NodoG("{"));
+    SWITCH.insertar(d.nodo); SWITCH.insertar(new NodoG("}"));
+    RESULT.nodo = SWITCH;
+:};
+
+
+CASO::=CASO:c caso OP:n dosPuntos INSTRUCCION:i{:
+    NodoG CASO = new NodoG("CASO");
+    RESULT = new Caracter();
+    CASO.insertar(c.nodo); CASO.insertar(new NodoG("case")); CASO.insertar(n.nodo); CASO.insertar(new NodoG(":")); CASO.insertar(i.nodo);
+    RESULT.nodo = CASO;
+:}
+|caso OP:n dosPuntos INSTRUCCION:i{:
+    NodoG CASO = new NodoG("CASO");
+    RESULT = new Caracter();
+    CASO.insertar(new NodoG("case")); CASO.insertar(n.nodo); CASO.insertar(new NodoG(":")); CASO.insertar(i.nodo);
+    RESULT.nodo = CASO;
+:};
+
+
+DEFECTO::=defecto dosPuntos INSTRUCCION:i{:
+    NodoG DEFECTO = new NodoG("DEFECTO");
+    RESULT = new Caracter();
+    DEFECTO.insertar(new NodoG("default")); DEFECTO.insertar(new NodoG(":")); DEFECTO.insertar(i.nodo);
+    RESULT.nodo = DEFECTO;
+:};
+
+
+PARA::= para parentesisA VARIABLE:a dosPuntos OP:n1 dosPuntos OP:n2 parentesisC llaveA INSTRUCCION:i llaveC{:  //11
+    NodoG PARA = new NodoG("PARA");
+    RESULT = new Caracter();
+    PARA.insertar(new NodoG("Para")); PARA.insertar(new NodoG("(")); PARA.insertar(a.nodo);  PARA.insertar(new NodoG(";")); PARA.insertar(n1.nodo); PARA.insertar(new NodoG(";"));
+    PARA.insertar(n2.nodo); PARA.insertar(new NodoG(")")); PARA.insertar(new NodoG("{"));  PARA.insertar(i.nodo);  PARA.insertar(new NodoG("}"));
+    RESULT.nodo = PARA;
+:}
+|para parentesisA id:d ASIGNAR:a dosPuntos OP:n1 dosPuntos OP:n2 parentesisC llaveA INSTRUCCION:i llaveC{:  //12
+    NodoG PARA = new NodoG("PARA");
+    RESULT = new Caracter();
+    PARA.insertar(new NodoG("Para")); PARA.insertar(new NodoG("("));  PARA.insertar(new NodoG(d));  PARA.insertar(a.nodo);PARA.insertar(new NodoG(";")); PARA.insertar(n1.nodo);  PARA.insertar(new NodoG(";"));
+    PARA.insertar(n2.nodo); PARA.insertar(new NodoG(")")); PARA.insertar(new NodoG("{"));  PARA.insertar(i.nodo);  PARA.insertar(new NodoG("}"));
+    RESULT.nodo = PARA;
+:};
+
+
+INSTANCIA::=llamar id:i parentesisA parentesisC{:
+    NodoG INSTANCIA = new NodoG("INSTANCIA");
+    RESULT = new Caracter();
+    INSTANCIA.insertar(new NodoG("llamar")); INSTANCIA.insertar(new NodoG(i)); INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(new NodoG(")")); 
+    RESULT.nodo = INSTANCIA;
+:}
+|llamar id:i parentesisA VALORES:n parentesisC{:
+    NodoG INSTANCIA = new NodoG("INSTANCIA");
+    RESULT = new Caracter();
+    INSTANCIA.insertar(new NodoG("llamar")); INSTANCIA.insertar(new NodoG(i)); INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(n.nodo); INSTANCIA.insertar(new NodoG(")")); 
+    RESULT.nodo = INSTANCIA;
+:}
+|llamarHK id:i parentesisA parentesisC{:
+    NodoG INSTANCIA = new NodoG("INSTANCIA");
+    RESULT = new Caracter();
+    INSTANCIA.insertar(new NodoG("llamarHK")); INSTANCIA.insertar(new NodoG(i)); INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(new NodoG(")")); 
+    RESULT.nodo = INSTANCIA;
+:}
+|llamarHK id:i parentesisA VALORES:n parentesisC{:
+    NodoG INSTANCIA = new NodoG("INSTANCIA");
+    RESULT = new Caracter();
+    INSTANCIA.insertar(new NodoG("llamarHK")); INSTANCIA.insertar(new NodoG(i)); INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(n.nodo); INSTANCIA.insertar(new NodoG(")")); 
+    RESULT.nodo = INSTANCIA;
+:};
+
+
+CrearASL::= var id:a id:b igual nuevo id:c parentesisA parentesisC signo{:
+    NodoG E = new NodoG("CrearASL");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("var")); E.insertar(new NodoG(a));  E.insertar(new NodoG(b)); E.insertar(new NodoG("=")); E.insertar(new NodoG("nuevo")); 
+    E.insertar(new NodoG(c)); E.insertar(new NodoG("(")); E.insertar(new NodoG(")")); E.insertar(new NodoG("?")); 
+    RESULT.nodo = E;
+:}
+|id:a id:b igual nuevo id:c parentesisA parentesisC signo{:
+    NodoG E = new NodoG("CrearASL");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(a));  E.insertar(new NodoG(b)); E.insertar(new NodoG("=")); E.insertar(new NodoG("nuevo")); 
+    E.insertar(new NodoG(c));E.insertar(new NodoG("(")); E.insertar(new NodoG(")")); E.insertar(new NodoG("?")); 
+    RESULT.nodo = E;
+:};
+
+
+AccesoASL::= AccesoASL:a signo{:
+    NodoG E = new NodoG("AccesoASL");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("?"));
+    RESULT.nodo = E;
+:}
+|id:a punto id:b{:
+    NodoG E = new NodoG("AccesoASL");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(a)); E.insertar(new NodoG("."));  E.insertar(new NodoG(b)); 
+    RESULT.nodo = E;
+:}
+|id:a punto id:b parentesisA VALORES:n parentesisC{:
+    NodoG E = new NodoG("AccesoASL");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(a)); E.insertar(new NodoG("."));  E.insertar(new NodoG(b)); E.insertar(new NodoG("(")); E.insertar(n.nodo); E.insertar(new NodoG(")"));
+    RESULT.nodo = E;
+:};
+
+
+ARREGLO::= id:a ARR:n{:
+    NodoG E = new NodoG("ARREGLO");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(a)); E.insertar(n.nodo); 
+    RESULT.nodo = E;
+:};
+
+
+ARR::= ARR:a corcheteA OP:n corcheteC{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("(")); E.insertar(n.nodo); E.insertar(new NodoG(")"));
+    RESULT.nodo = E;
+:}
+|ARR:a corcheteA corcheteC{:
+    NodoG E = new NodoG("ARR");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("(")); E.insertar(new NodoG(")"));
+    RESULT.nodo = E;
+:}
+|corcheteA OP:n corcheteC{:
+    NodoG E = new NodoG("ARR");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("[")); E.insertar(n.nodo); E.insertar(new NodoG("]"));
+    RESULT.nodo = E;
+:}
+|corcheteA  corcheteC{:
+    NodoG E = new NodoG("ARR");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("[")); E.insertar(new NodoG("]"));
+    RESULT.nodo = E;
+:};
+
+
+
+OP::=E:e{:
+    NodoG OP = new NodoG("OP");
+    RESULT = new Caracter();
+    OP.insertar(e.nodo);
+    RESULT.nodo = OP;
+:};
+
+
+E::=parentesisA E:a parentesisC{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("(")); E.insertar(a.nodo); E.insertar(new NodoG(")"));
+    RESULT.nodo = E;
+:}
+|E:a mas E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("+")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a menos E:b{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("-")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a por E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("*")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a dividido E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("/")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a aumentar{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("++"));
+    RESULT.nodo = E;
+:}
+|E:a disminuir{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("--"));
+    RESULT.nodo = E;
+:} 
+|E:a mayor E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG(">")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a menor E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("<")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a mayorIgual E:b{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG(">=")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a menorIgual E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("<=")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a igualDoble E:b{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("==")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+|E:a diferente E:b{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("!=")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|verdadero:t{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("true","cadena"));
+    RESULT.nodo = E;
+ :}
+|falso:f{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("false","cadena"));
+    RESULT.nodo = E;
+ :}
+|E:a or E:b{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("||")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+ :}
+
+|E:a xor E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("&|")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a and E:b{: 
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("&&")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:b not{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("!")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|E:a potencia E:b {:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); E.insertar(new NodoG("'pot'")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|menos E:b{:
+    NodoG E = new NodoG("E");
+    RESULT = new Caracter();
+    E.insertar(new NodoG("-")); E.insertar(b.nodo);
+    RESULT.nodo = E;
+:}
+|cadena:n{:
+    RESULT = new Caracter();
+    n = n.replace("\"","");
+    NodoG E = new NodoG("E");
+    E.insertar(new NodoG(n,"cadena"));
+    RESULT.nodo = E;
+:}
+|caracter:n{:
+    RESULT = new Caracter();
+    n = n.replace("'","");
+    NodoG E = new NodoG("E");
+    E.insertar(new NodoG(n,"caracter"));
+    RESULT.nodo = E;
+:}
+|numero:n{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("E");
+    E.insertar(new NodoG(n,"numero"));
+    RESULT.nodo = E;
+:}
+|id:i{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("E");
+    E.insertar(new NodoG(i,"id"));
+    RESULT.nodo = E;
+:}
+|INSTANCIA:n{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("E");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|ARREGLO:n{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("E");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|AccesoASL:n{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("E");
+    E.insertar(n.nodo);
+    RESULT.nodo = E;
+:};
 

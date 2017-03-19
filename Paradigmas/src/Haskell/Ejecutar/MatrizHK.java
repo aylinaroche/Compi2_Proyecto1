@@ -99,7 +99,7 @@ public class MatrizHK {
 
     public static String imprimir(String matriz) {
         String m = matriz.replace(";", ",");
-        paradigmas.Atributos.imprimirConsola.add(m);
+        paradigmas.Atributos.imprimirHaskell.add(m);
         return m;
     }
 
