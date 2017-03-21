@@ -13,7 +13,6 @@ public class sym {
   public static final int menor = 29;
   public static final int tipoChar = 9;
   public static final int disminuir = 41;
-  public static final int length = 62;
   public static final int punto = 63;
   public static final int tipoVoid = 6;
   public static final int importar = 5;
@@ -33,6 +32,7 @@ public class sym {
   public static final int privado = 3;
   public static final int menorIgual = 31;
   public static final int sino = 17;
+  public static final int decimal = 61;
   public static final int caso = 19;
   public static final int ERROR = 52;
   public static final int incluir = 71;
@@ -68,6 +68,7 @@ public class sym {
   public static final int continuar = 67;
   public static final int diferente = 33;
   public static final int si = 16;
+  public static final int entero = 62;
   public static final int extension = 69;
   public static final int als = 73;
   public static final int salir = 23;
@@ -79,7 +80,6 @@ public class sym {
   public static final int coma = 14;
   public static final int not = 37;
   public static final int igual = 32;
-  public static final int concat = 61;
   public static final int corcheteC = 40;
   public static final int corcheteA = 39;
   public static final int var = 70;
@@ -146,8 +146,8 @@ public class sym {
   "parseDouble",
   "intStr",
   "doubleStr",
-  "concat",
-  "length",
+  "decimal",
+  "entero",
   "punto",
   "caracter",
   "inicio",

@@ -22,22 +22,22 @@ public class ReporteError {
         System.out.println("-> " + t + ": " + l + "," + d + "," + c);
     }
 
-    public void reporteErrores(ArrayList tabla) {
+    public static void reporteErrores() {
         File f;
         FileWriter escritorArchivo;
 
-        if (tabla.isEmpty()) {
+        if (errores.isEmpty()) {
             System.out.println("Esta vacio");
         }
         try {
-            f = new File("C:\\Users\\Aylin\\Documents\\NetBeansProjects\\ServidorInteligencia\\Errores.html");
+            f = new File("C:\\Users\\Aylin\\Documents\\NetBeansProjects\\Paradigmas\\Errores.html");
             escritorArchivo = new FileWriter(f);
             BufferedWriter bw = new BufferedWriter(escritorArchivo);
             try (PrintWriter salida = new PrintWriter(bw)) {
                 salida.write("<html>");
                 salida.write("<head><title>Reporte de Errores</title></head>");
                 salida.write("<body bgcolor=\"black\">");
-                salida.write("<h1><center><FONT COLOR=silver>PROYECTO 2: FRRE 2 PLAY<FONT></center></h1>\"");
+                salida.write("<h1><center><FONT COLOR=silver>PROYECTO 1<FONT></center></h1>\"");
                 salida.write("<h1><center><FONT COLOR=81426E> REPORTE DE ERRORES <FONT></center></h1>");
                 salida.write("<br>");
                 salida.write("<center>");
@@ -50,8 +50,8 @@ public class ReporteError {
 //                salida.write("<th><font color=\"#24AAFF\" face=\"courier new\"> ROL </font></th>");
                 salida.write("</tr>");
 
-                for (int i = 0; i < tabla.size(); i++) {
-                    Errror s = (Errror) tabla.get(i);
+                for (int i = 0; i < errores.size(); i++) {
+                    Errror s = (Errror) errores.get(i);
                     salida.write("<tr>");
                     salida.write("<th><font color=\"white\">" + s.tipo + "</font></th>");
                     salida.write("<th><font color=\"white\">" + s.lexema + "</font></th>");
@@ -66,6 +66,22 @@ public class ReporteError {
         } catch (IOException e) {
             System.out.println("Error" + e.getMessage());
             System.out.println("No ha podido ser creado el fichero");
+        }
+
+        try {
+          //  File archivo = menu_bar.nom_arch;
+            Runtime runTime = Runtime.getRuntime();
+            Process p = runTime.exec("C:\\Program~1\\Google\\Chrome\\Application\\chrome.exe " + "C:\\Users\\Aylin\\Documents\\NetBeansProjects\\Paradigmas\\Errores.html");
+        } catch (IOException e1) {
+            System.out.print(e1.toString());
+        }
+    }
+
+    public static void imprimirError() {
+        for (int i = 0; i < errores.size(); i++) {
+            Errror e = (Errror) errores.get(i);
+            System.out.println("> " + e.descripcion);
+
         }
     }
 }

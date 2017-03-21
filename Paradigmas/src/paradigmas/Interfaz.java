@@ -63,8 +63,6 @@ public class Interfaz extends javax.swing.JFrame {
         btnCrearProyecto = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtConsola = new javax.swing.JTextPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -168,13 +166,7 @@ public class Interfaz extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(txtConsola);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 380, 360, 190));
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 370, -1, -1));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 380, 570, 190));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/a.jpg"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 680, 590));
@@ -201,7 +193,7 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
-        // TODO add your handling code here:
+        Atributos.reporteSimbolo();
     }//GEN-LAST:event_btnImportarActionPerformed
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
@@ -318,20 +310,44 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btnTraducirActionPerformed
 
     private void btnReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportesActionPerformed
-        // TODO add your handling code here:
+        ReporteError.reporteErrores();
     }//GEN-LAST:event_btnReportesActionPerformed
 
     private void txtConsolaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConsolaKeyReleased
         //System.out.println("Soltó la tecla: " + KeyEvent.getKeyText(evt.getKeyCode()));
-        if("Enter".equals(KeyEvent.getKeyText(evt.getKeyCode()))){
-          //  System.out.println("Entro bitch");
+        if ("Enter".equals(KeyEvent.getKeyText(evt.getKeyCode()))) {
+            //  System.out.println("Entro bitch");
             String texto[] = txtConsola.getText().split("\n");
-            String linea = texto[texto.length-1];
+            String linea = texto[texto.length - 1];
             System.out.println(linea);
             try {
                 EjecutarHK.Analizar(linea);
             } catch (Exception ex) {
                 Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            int ind = jTabbedPane1.getSelectedIndex();
+            Pestania pes = (Pestania) pestania.get(ind);
+            if ("hk".equals(pes.tipo)) {
+
+                for (int i = 0; i < Atributos.imprimirHaskell.size(); i++) {
+                    String s = ">> " + Atributos.imprimirHaskell.get(i) + "\n";
+                    try {
+                        txtConsola.getStyledDocument().insertString(txtConsola.getStyledDocument().getLength(), s, null);
+                    } catch (BadLocationException ex) {
+                        System.out.println("Error de consola = " + ex);
+                    }
+                }
+                Atributos.imprimirHaskell.clear();
+            } else {
+                for (int i = 0; i < Atributos.imprimirGraphik.size(); i++) {
+                    String s = ">> " + Atributos.imprimirGraphik.get(i) + "\n";
+                    try {
+                        txtConsola.getStyledDocument().insertString(txtConsola.getStyledDocument().getLength(), s, null);
+                    } catch (BadLocationException ex) {
+                        System.out.println("Error de consola = " + ex);
+                    }
+                }
+                Atributos.imprimirGraphik.clear();
             }
         }
     }//GEN-LAST:event_txtConsolaKeyReleased
@@ -553,10 +569,8 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton btnReportes;
     private javax.swing.JButton btnTraducir;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane txtConsola;
     // End of variables declaration//GEN-END:variables
 }

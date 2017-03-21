@@ -29,7 +29,8 @@ public class VariableG {
         v.ambito = pilaAmbito.peek();
         listaVariables.add(v);
     }
-  public static void crearVariable(String tipo, String nombre, Object valor, String visib, String tamanio) {
+
+    public static void crearVariable(String tipo, String nombre, Object valor, String visib, int tamanio[]) {
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
             if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito) {
@@ -42,6 +43,7 @@ public class VariableG {
         v.tipo = tipo;
         v.valor = valor;
         v.visibilidad = visib;
+        v.tamanio = tamanio;
         v.nivel = nivelAmbito;
         v.ambito = pilaAmbito.peek();
         listaVariables.add(v);
@@ -57,7 +59,7 @@ public class VariableG {
             }
         }
         if (existe == false) {
-            paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "No existe la variable "+nombre, 0, 0);
+            paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "No existe la variable " + nombre, 0, 0);
         }
     }
 
@@ -79,7 +81,7 @@ public class VariableG {
     }
 
     public static Object obtenerValor(String nombre) {
-        
+
         String valor = "";
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
@@ -102,6 +104,47 @@ public class VariableG {
         return s;
     }
 
+    public static Object obtenerValorMatriz(String nombre, ArrayList coord) {
+        Boolean existe = false;
+        ArrayList datos = new ArrayList();
+        Variable var = new Variable();
+        for (int i = 0; i < listaVariables.size(); i++) {
+            var = (Variable) listaVariables.get(i);
+            if (var.nombre.equals(nombre)) {
+                datos = (ArrayList) var.valor;
+                existe = true;
+                break;
+            }
+        }
+        if (existe == false) {
+            paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "No existe la matriz " + nombre, 0, 0);
+            return "";
+        }
+        int pos = posicion(coord.size(), coord, var.tamanio);
+        Object dato = datos.get(pos - 1);
+
+//        if (coord.size() == 2) {
+//            int i1 = (int) coord.get(0);
+//            int i2 = (int) coord.get(1);
+//            int n2 = var.tamanio[1] + 1;
+//            int posicion = (i1 * n2) + i2;
+//        }
+        return dato;
+    }
+
+    public static int posicion(int cantidad, ArrayList coord, int tamanio[]) {
+
+        if (cantidad == 1) {
+            int i1 = (int) coord.get(cantidad - 1);
+            return i1;
+        } else {
+            int i2 = (int) coord.get(cantidad - 1);
+            int n2 = tamanio[cantidad - 1] + 1;
+            int formula = (posicion(cantidad - 1, coord, tamanio)) * n2 + i2;
+            return formula;
+        }
+    }
+
 }
 
 class Variable {
@@ -113,6 +156,6 @@ class Variable {
     public Object valor;
     public String tipo;
     public String visibilidad;
-    public ArrayList valores= new ArrayList();
-    public int tamanio;
+    public ArrayList valores = new ArrayList();
+    public int tamanio[];
 }

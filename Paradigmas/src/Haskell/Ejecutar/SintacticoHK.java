@@ -1026,7 +1026,7 @@ class CUP$SintacticoHK$actions {
 		Caracter n = (Caracter)((java_cup.runtime.Symbol) CUP$SintacticoHK$stack.peek()).value;
 		
     RESULT = new Caracter();
-    Nodo E = new Nodo("MATRIZ");
+    Nodo E = new Nodo("PARAMETRO");
     E.insertar(m.nodo);  E.insertar(new Nodo(",")); E.insertar(n.nodo);
     RESULT.nodo = E;
 
@@ -1043,7 +1043,7 @@ class CUP$SintacticoHK$actions {
 		Caracter m = (Caracter)((java_cup.runtime.Symbol) CUP$SintacticoHK$stack.elementAt(CUP$SintacticoHK$top-1)).value;
 		
     RESULT = new Caracter();
-    Nodo E = new Nodo("MATRIZ");
+    Nodo E = new Nodo("PARAMETRO");
     E.insertar(new Nodo("[")); E.insertar(m.nodo); E.insertar(new Nodo("]"));
     RESULT.nodo = E;
 
@@ -1060,7 +1060,7 @@ class CUP$SintacticoHK$actions {
 		Caracter m = (Caracter)((java_cup.runtime.Symbol) CUP$SintacticoHK$stack.peek()).value;
 		
     RESULT = new Caracter();
-    Nodo E = new Nodo("MATRIZ");
+    Nodo E = new Nodo("PARAMETRO");
     E.insertar(m.nodo);
     RESULT.nodo = E;
 

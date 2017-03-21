@@ -105,12 +105,11 @@ public String lexeme;
 "ParseDouble" {return new Symbol(sym.parseDouble, yycolumn, yyline,new String(yytext()));}
 "Int2Str" {return new Symbol(sym.intStr, yycolumn, yyline,new String(yytext()));}
 "Double2Str" {return new Symbol(sym.doubleStr, yycolumn, yyline,new String(yytext()));}
-"Length" {return new Symbol(sym.length, yycolumn, yyline,new String(yytext()));}
-"concat" {return new Symbol(sym.concat, yycolumn, yyline,new String(yytext()));}
 
 }
 {Letra}({Letra}|{Digito}|"_")* {lexeme=yytext(); return new Symbol(sym.id, yycolumn, yyline,new String(yytext()));}
-{Digito}+("."{Digito}+)? {lexeme=yytext(); return new Symbol(sym.numero, yycolumn, yyline,new String(yytext()));}
+{Digito}+ {lexeme=yytext(); return new Symbol(sym.entero, yycolumn, yyline,new String(yytext()));}
+{Digito}+("."{Digito}+) {lexeme=yytext(); return new Symbol(sym.decimal, yycolumn, yyline,new String(yytext()));}
 
 {CadenaDoble} {lexeme=yytext(); return new Symbol(sym.cadena ,yycolumn, yyline,new String(yytext()));}
 {CadenaSimple} {lexeme=yytext(); return new Symbol(sym.caracter ,yycolumn, yyline,new String(yytext()));}

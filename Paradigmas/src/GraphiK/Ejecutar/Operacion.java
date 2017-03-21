@@ -26,7 +26,7 @@ public class Operacion {
                     case "AccesoASL":
                     case "E":
                         RecorridoG r = new RecorridoG();
-                        String result = r.Recorrido(nodo.hijos[0]).toString();
+                        Object result = r.Recorrido(nodo.hijos[0]);
                         return result;
                     default:
                         String tipoDato = nodo.hijos[0].tipo;
@@ -36,7 +36,10 @@ public class Operacion {
                             case "caracter":
                                 char caracter = (char) dato.charAt(0);
                                 return caracter;
-                            case "numero":
+                            case "entero":
+                                int ent = Integer.parseInt(dato);
+                                return ent;
+                            case "decimal":
                                 Double num = Double.parseDouble(dato);
                                 return num;
                             case "id":
@@ -48,7 +51,10 @@ public class Operacion {
                                     return "";
                                 }
                             case "bool":
-                                return dato;
+                                if (dato.equals("verdadero")) {
+                                    return true;
+                                }
+                                return false;
 
                             default:
                                 return "";
@@ -94,22 +100,46 @@ public class Operacion {
                     case "+": //E+E
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
+                        try {
 
-                        if (E1 instanceof Double && E2 instanceof Double) {
-                            try {
-                                Double v1 = (Double) E1;
-                                Double v2 = (Double) E2;
-                                Double r = v1 + v2;
+                            if ((E1 instanceof Double) || (E2 instanceof Double)) {
+                                if ((E1 instanceof Integer) || (E2 instanceof Integer) || E1 instanceof Double || E2 instanceof Double) {
+                                    Double v1 = (Double) E1;
+                                    Double v2 = (Double) E2;
+                                    return v1 + v2;
+                                } else if ((E1 instanceof Character) || (E2 instanceof Character)) {
+                                    if (E1 instanceof Character) {
+                                        String c = (String) E1;
+                                        int v1 =c.codePointAt(0);
+                                        Double v2 = (Double) E2;
+                                        return v2 + v1;
+                                    }else{
+                                        String c = (String) E2;
+                                        int v1 =c.codePointAt(0);
+                                        Double v2 = (Double) E1;
+                                        return v2 + v1; 
+                                    }
+                                } else if ((E1 instanceof Boolean) || (E2 instanceof Boolean)) {
+                                    if(E1 instanceof Boolean){
+                                    if((Boolean)E1 ==true){
+                                        
+                                    }
+                                }
+                                }
+
+                            } else if ((E1 instanceof Integer) || (E2 instanceof Integer)) {
+
+                            } else if (E1 instanceof String || E2 instanceof String) {
+                                String v1 = String.valueOf(E1);
+                                String v2 = (String.valueOf(E2));
+                                String r = v1 + v2;
                                 return r;
-                            } catch (Exception e) {
-                                System.out.println("E+");
-                                return "";
+                            } else if ((E1 instanceof Boolean) && (E2 instanceof Boolean)) {
+                                return (Boolean) E1 == true || (Boolean) E2 == true;
                             }
-                        } else if (E1 instanceof String || E2 instanceof String) {
-                            String v1 = String.valueOf(E1);
-                            String v2 = (String.valueOf(E2));
-                            String r = v1 + v2;
-                            return r;
+                        } catch (Exception e) {
+                            System.out.println("E+");
+                            return "";
                         }
                         break;
                     case "-": //E-E
@@ -343,7 +373,7 @@ public class Operacion {
                                 var1 = (Double) (E1);
                                 var2 = (Double) (E2);
 
-                                if (var1 != var2) {
+                                if (!Objects.equals(var1, var2)) {
                                     return "true";
                                 } else {
                                     return "false";

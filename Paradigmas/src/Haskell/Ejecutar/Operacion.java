@@ -28,6 +28,8 @@ public class Operacion {
                     case "OPERACION_LISTA":
                     case "CALCULAR":
                     case "POSICION_LISTA":
+                    case "MATRIZ":
+                    case "MATRIZZ":
                     case "E":
                         RecorridoHK r = new RecorridoHK();
                         String result = r.Recorrido(nodo.hijos[0]);
@@ -44,7 +46,9 @@ public class Operacion {
                                     char c = dato.charAt(i);
                                     cadena += c + ",";
                                 }
-                                cadena += dato.charAt(dato.length() - 1);
+                                RecorridoHK.tipo.add("Lista");
+                                cadena = ";" + cadena + dato.charAt(dato.length() - 1);
+                                RecorridoHK.boolLista = true;
                                 return cadena;
                             case "caracter":
                                 Operacion.tipo = "lista";
@@ -61,9 +65,15 @@ public class Operacion {
                                     Matriz m = MatrizHK.obtenerMatriz(dato);
                                     if (m != null) {
                                         Operacion.tipo = "lista";
-                                        System.out.println("*" + m.dim2 + "*");
+                                        RecorridoHK.tipo.add("Lista");
                                         if (m.dim2.isEmpty() || m.dim2 == null || "".equals(m.dim2)) {
-                                            String sub = m.dim1.substring(0, m.dim1.length() - 1);
+                                            if (m.dim1.length() > 1) {
+                                                if (m.dim1.substring(m.dim1.length() - 1, m.dim1.length()).equals(",")) {
+                                                    m.dim1 = m.dim1.substring(0, m.dim1.length() - 1);
+                                                }
+                                            }
+                                            //String sub = m.dim1.substring(0, m.dim1.length() - 1) + ";";
+                                            String sub = m.dim1 + ";";
                                             return sub;
                                         } else {
                                             return m.dim1 + ";" + m.dim2;
@@ -457,12 +467,12 @@ public class Operacion {
                             }
                         } else {
                             RecorridoHK r = new RecorridoHK();
-                            String result = r.Recorrido(nodo.hijos[0]);
+                            String result = r.Recorrido(nodo.hijos[1]);
                             try {
                                 Double res = Double.parseDouble(result) - 1;
                                 return res.toString();
                             } catch (Exception e) {
-                                System.out.println("Error en Succ");
+                                System.out.println("Error en Decc");
                                 return "0";
                             }
                         }
@@ -488,8 +498,13 @@ public class Operacion {
                     try {
                         String E1 = expresion(nodo.hijos[0]);
                         String E2 = expresion(nodo.hijos[2]);
-
-                        return E1 + "," + E2;
+                        String E = E1 + "," + E2;
+                        String datos[] = E.split(";");
+                        E = "";
+                        for (int i = 0; i < datos.length; i++) {
+                            E += datos[i];
+                        }
+                        return E;
                     } catch (Exception e) {
                         System.out.println("E-()");
                     }

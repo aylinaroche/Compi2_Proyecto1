@@ -34,7 +34,7 @@ terminal String publico,privado,protegido,importar,tipoVoid,tipoString,tipoInt,t
 parentesisA,parentesisC,coma,retornar,si,sino,interrumpir,caso,defecto,mientras,hacer,salir,raiz,mas,menos,por,
 mayor,menor,mayorIgual,menorIgual,igual,diferente,or,xor,and,not,id,corcheteA,corcheteC,disminuir,para,
 dosPuntos,imprimir,verdadero,falso,igualDoble,potencia,llaveA,llaveC,signo,ERROR,numero,parseInt,aumentar,
-dividido,cadena,parseDouble,intStr,doubleStr,concat,length,punto,caracter,inicio,tipoFloat,continuar,
+dividido,cadena,parseDouble,intStr,doubleStr,decimal,entero,punto,caracter,inicio,tipoFloat,continuar,
 nuevo,extension,var,incluir,hereda,als,llamar,llamarHK;
 
 non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,TIPO,ACCION,
@@ -351,28 +351,28 @@ MasVARIABLE::= MasVARIABLE:m coma id:i VISIBILIDAD:v{: //4
 :};
 
 
-MasMATRIZ::= MasMATRIZ:m coma id:i MATRIZ:z VISIBILIDAD:v{: //4
+MasMATRIZ::= MasMATRIZ:m coma id:i MATRIZ:z VISIBILIDAD:v{: //5
     NodoG MasVARIABLE = new NodoG("MasMATRIZ");
     RESULT = new Caracter();
-    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(v.nodo); 
+    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i));  MasVARIABLE.insertar(z.nodo);  MasVARIABLE.insertar(v.nodo); 
     RESULT.nodo = MasVARIABLE;
 :}
-|MasMATRIZ:m coma id:i MATRIZ:z ASIGNAR:a VISIBILIDAD:v {: //5
+|MasMATRIZ:m coma id:i MATRIZ:z ASIGNAR:a VISIBILIDAD:v {: //6
     NodoG MasVARIABLE = new NodoG("MasMATRIZ");
     RESULT = new Caracter();
-    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
+    MasVARIABLE.insertar(m.nodo);  MasVARIABLE.insertar(new NodoG(",")); MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(z.nodo);  MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
     RESULT.nodo = MasVARIABLE;
 :}
 |id:i MATRIZ:z VISIBILIDAD:v{: //3
     NodoG MasVARIABLE = new NodoG("MasMATRIZ");
     RESULT = new Caracter();
-    MasVARIABLE.insertar(new NodoG(i)); MasVARIABLE.insertar(v.nodo); 
+    MasVARIABLE.insertar(new NodoG(i));  MasVARIABLE.insertar(z.nodo); MasVARIABLE.insertar(v.nodo); 
     RESULT.nodo = MasVARIABLE;
 :}
 |id:i MATRIZ:z ASIGNAR:a VISIBILIDAD:v {: //4
     NodoG MasVARIABLE = new NodoG("MasMATRIZ");
     RESULT = new Caracter();
-    MasVARIABLE.insertar(new NodoG(i));  MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
+    MasVARIABLE.insertar(new NodoG(i));  MasVARIABLE.insertar(z.nodo);  MasVARIABLE.insertar(a.nodo);  MasVARIABLE.insertar(v.nodo); 
     RESULT.nodo = MasVARIABLE;
 :};
 
@@ -397,22 +397,22 @@ MATRIZ::= MATRIZ:m corcheteA OP:n corcheteC{:
     MATRIZ.insertar(m.nodo); MATRIZ.insertar(new NodoG("["));  MATRIZ.insertar(n.nodo); MATRIZ.insertar(new NodoG("]")); 
     RESULT.nodo = MATRIZ;
 :}
-|MATRIZ:n corcheteA corcheteC{:
-    NodoG MATRIZ = new NodoG("MATRIZ");
-    RESULT = new Caracter();
-    MATRIZ.insertar(n.nodo);  MATRIZ.insertar(new NodoG("[")); MATRIZ.insertar(new NodoG("]")); 
-    RESULT.nodo = MATRIZ;
-:}
 |corcheteA OP:n corcheteC{:
     NodoG MATRIZ = new NodoG("MATRIZ");
     RESULT = new Caracter();
     MATRIZ.insertar(new NodoG("["));  MATRIZ.insertar(n.nodo); MATRIZ.insertar(new NodoG("]")); 
     RESULT.nodo = MATRIZ;
 :}
+|MATRIZ:n corcheteA corcheteC{:
+    NodoG MATRIZ = new NodoG("MATRIZ");
+    RESULT = new Caracter();
+    MATRIZ.insertar(n.nodo);  MATRIZ.insertar(new NodoG("["));
+    RESULT.nodo = MATRIZ;
+:}
 |corcheteA corcheteC{:
     NodoG MATRIZ = new NodoG("MATRIZ");
     RESULT = new Caracter();
-    MATRIZ.insertar(new NodoG("[")); MATRIZ.insertar(new NodoG("]"));  
+    MATRIZ.insertar(new NodoG("["));  
     RESULT.nodo = MATRIZ;
 :};
 
@@ -431,34 +431,22 @@ ASIGNAR ::= igual OP:n{:
 :} ;
 
 
-ValorMATRIZ::= llaveA ValorMATRIZ:v llaveC{:
+ValorMATRIZ::= llaveA ValorMATRIZ:v llaveC{://1
+    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
+    RESULT = new Caracter();
+    ValorMATRIZ.insertar(v.nodo); 
+    RESULT.nodo = ValorMATRIZ;
+:} 
+|ValorMATRIZ:v1 coma ValorMATRIZ:v2{: //5
+    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
+    RESULT = new Caracter();
+    ValorMATRIZ.insertar(v1.nodo); ValorMATRIZ.insertar(v2.nodo); 
+    RESULT.nodo = ValorMATRIZ;
+:} 
+|llaveA VALORES:v llaveC{://6
     NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
     RESULT = new Caracter();
     ValorMATRIZ.insertar(new NodoG("{"));  ValorMATRIZ.insertar(v.nodo); ValorMATRIZ.insertar(new NodoG("}")); 
-    RESULT.nodo = ValorMATRIZ;
-:} 
-|ValorMATRIZ:v1 coma ValorMATRIZ:v2{:
-    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
-    RESULT = new Caracter();
-    ValorMATRIZ.insertar(v1.nodo);  ValorMATRIZ.insertar(new NodoG(",")); ValorMATRIZ.insertar(v2.nodo); 
-    RESULT.nodo = ValorMATRIZ;
-:} 
-|ValorMATRIZ:v llaveA llaveC{:
-    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
-    RESULT = new Caracter();
-    ValorMATRIZ.insertar(v.nodo); ValorMATRIZ.insertar(new NodoG("{"));  ValorMATRIZ.insertar(new NodoG("}")); 
-    RESULT.nodo = ValorMATRIZ;
-:} 
-|llaveA VALORES:v llaveC{:
-    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
-    RESULT = new Caracter();
-    ValorMATRIZ.insertar(new NodoG("{"));  ValorMATRIZ.insertar(v.nodo); ValorMATRIZ.insertar(new NodoG("}")); 
-    RESULT.nodo = ValorMATRIZ;
-:} 
-|llaveA llaveC{:
-    NodoG ValorMATRIZ = new NodoG("ValorMATRIZ");
-    RESULT = new Caracter();
-    ValorMATRIZ.insertar(new NodoG("{")); ValorMATRIZ.insertar(new NodoG("}")); 
     RESULT.nodo = ValorMATRIZ;
 :};
 
@@ -475,8 +463,6 @@ VALORES ::= VALORES:v coma OP:n{:
     VALORES.insertar(n.nodo); 
     RESULT.nodo = VALORES;
 :};
-
-
 
 
 METODO ::= TIPO:t id:i parentesisA PARAMETROS:p parentesisC VISIBILIDAD:v llaveA INSTRUCCION:n llaveC{:
@@ -688,27 +674,15 @@ ARREGLO::= id:a ARR:n{:
 
 
 ARR::= ARR:a corcheteA OP:n corcheteC{:
-    NodoG E = new NodoG("E");
-    RESULT = new Caracter();
-    E.insertar(a.nodo); E.insertar(new NodoG("(")); E.insertar(n.nodo); E.insertar(new NodoG(")"));
-    RESULT.nodo = E;
-:}
-|ARR:a corcheteA corcheteC{:
     NodoG E = new NodoG("ARR");
     RESULT = new Caracter();
-    E.insertar(a.nodo); E.insertar(new NodoG("(")); E.insertar(new NodoG(")"));
+    E.insertar(a.nodo); E.insertar(new NodoG("(")); E.insertar(n.nodo); E.insertar(new NodoG(")"));
     RESULT.nodo = E;
 :}
 |corcheteA OP:n corcheteC{:
     NodoG E = new NodoG("ARR");
     RESULT = new Caracter();
     E.insertar(new NodoG("[")); E.insertar(n.nodo); E.insertar(new NodoG("]"));
-    RESULT.nodo = E;
-:}
-|corcheteA  corcheteC{:
-    NodoG E = new NodoG("ARR");
-    RESULT = new Caracter();
-    E.insertar(new NodoG("[")); E.insertar(new NodoG("]"));
     RESULT.nodo = E;
 :};
 
@@ -863,10 +837,16 @@ E::=parentesisA E:a parentesisC{:
     E.insertar(new NodoG(n,"caracter"));
     RESULT.nodo = E;
 :}
-|numero:n{:
+|entero:n{:
     RESULT = new Caracter();
     NodoG E = new NodoG("E");
-    E.insertar(new NodoG(n,"numero"));
+    E.insertar(new NodoG(n,"entero"));
+    RESULT.nodo = E;
+:}
+|decimal:n{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("E");
+    E.insertar(new NodoG(n,"decimal"));
     RESULT.nodo = E;
 :}
 |id:i{:

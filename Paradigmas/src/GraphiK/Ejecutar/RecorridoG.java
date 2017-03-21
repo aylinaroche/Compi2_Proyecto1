@@ -10,10 +10,11 @@ public class RecorridoG {
     public static String valorSwitch = "";
     public static String lista = "";
     public static ArrayList variables = new ArrayList();
-    public Boolean retornar = false, continuar = false, salir = false;
+    public static Boolean retornar = false, continuar = false, salir = false;
+    public static int contador = 0;
     //
     //
-    public static String tamanio = "";
+    public static int tamanio[] = new int[10];
     public static ArrayList valores = new ArrayList();
     public static String visible = "";
     public static String tipo = "";
@@ -125,13 +126,21 @@ public class RecorridoG {
                     result = raiz.hijos[0].texto;
                     break;
                 case "VARIABLE":
+                    System.out.println("Hola");
                     switch (raiz.cantidadHijos) {
                         case 4:
                             tipo = Recorrido(raiz.hijos[1]).toString();
                             Recorrido(raiz.hijos[2]);
-                            for (int i = 0; i < variables.size(); i++) {
-                                Variable v = (Variable) variables.get(i);
-                                VariableG.crearVariable(tipo, v.nombre, v.valor, v.visibilidad);
+                            if (raiz.hijos[2].texto.equals("MasVariable")) {
+                                for (int i = 0; i < variables.size(); i++) {
+                                    Variable v = (Variable) variables.get(i);
+                                    VariableG.crearVariable(tipo, v.nombre, v.valor, v.visibilidad);
+                                }
+                            } else {
+                                for (int i = 0; i < variables.size(); i++) {
+                                    Variable v = (Variable) variables.get(i);
+                                    VariableG.crearVariable(tipo, v.nombre, v.valor, v.visibilidad, v.tamanio);
+                                }
                             }
                             variables.clear();
                     }
@@ -171,35 +180,46 @@ public class RecorridoG {
                     break;
                 case "MasMATRIZ":
                     switch (raiz.cantidadHijos) {
-                        case 2:
+                        case 3:
                             Variable v1 = new Variable();
                             v1.nombre = raiz.hijos[0].texto;
-                            v1.visibilidad = Recorrido(raiz.hijos[1]).toString();
+                            Recorrido(raiz.hijos[1]);
+                            v1.tamanio = tamanio;
+                            v1.visibilidad = Recorrido(raiz.hijos[2]).toString();
+                            v1.valor = valores;
                             variables.add(v1);
                             break;
-                        case 3:
+                        case 4:
                             Variable v2 = new Variable();
                             v2.nombre = raiz.hijos[0].texto;
-                            v2.valor = Recorrido(raiz.hijos[1]);
-                            v2.visibilidad = Recorrido(raiz.hijos[2]).toString();
+                            Recorrido(raiz.hijos[1]).toString();
+                            v2.tamanio = tamanio;
+                            v2.valor = Recorrido(raiz.hijos[2]);
+                            v2.visibilidad = Recorrido(raiz.hijos[3]).toString();
+                            v2.valor = valores;
                             variables.add(v2);
-                            break;
-                        case 4:
-                            Recorrido(raiz.hijos[0]).toString();
-                            Variable v3 = new Variable();
-                            v3.nombre = raiz.hijos[2].texto;
-                            v3.visibilidad = Recorrido(raiz.hijos[3]).toString();
-                            variables.add(v3);
                             break;
                         case 5:
                             Recorrido(raiz.hijos[0]);
+                            Variable v3 = new Variable();
+                            v3.nombre = raiz.hijos[2].texto;
+                            v3.tamanio = tamanio;
+                            v3.visibilidad = Recorrido(raiz.hijos[4]).toString();
+                            v3.valor = valores;
+                            variables.add(v3);
+                            break;
+                        case 6:
+                            Recorrido(raiz.hijos[0]);
                             Variable v4 = new Variable();
                             v4.nombre = raiz.hijos[2].texto;
-                            v4.valor = Recorrido(raiz.hijos[3]);
-                            v4.visibilidad = Recorrido(raiz.hijos[4]).toString();
+                            v4.tamanio = tamanio;
+                            v4.valor = Recorrido(raiz.hijos[4]);
+                            v4.visibilidad = Recorrido(raiz.hijos[5]).toString();
+                            v4.valor = valores;
                             variables.add(v4);
                             break;
                     }
+                    tamanio = new int[10];
                     break;
                 case "ASIGNACION":
                     switch (raiz.cantidadHijos) {
@@ -218,23 +238,36 @@ public class RecorridoG {
                 case "MATRIZ":
                     switch (raiz.cantidadHijos) {
                         case 1:
-                            result = "";
+                            contador = 0;
+                            tamanio[contador] = 0;
+                            result = tamanio;
+                            contador++;
                             break;
                         case 2:
-                            result = "";
+                            Recorrido(raiz.hijos[0]);
+                            tamanio[contador] = 0;
+                            contador++;
                             break;
                         case 3:
-                            tamanio += Recorrido(raiz.hijos[1]).toString() + ",";
-                            result = tamanio;
+                            contador = 0;
+                            result = Recorrido(raiz.hijos[1]);
+                            int v = 0;
+                            if (result instanceof Double) {
+                                v = (int) ((Double) result).doubleValue();
+                            }
+                            tamanio[contador] = v;
+                            contador++;
                             break;
                         case 4:
-                            Recorrido(raiz.hijos[0]).toString();
-                            tamanio += Recorrido(raiz.hijos[2]).toString() + ",";
-                            result = tamanio;
+                            Recorrido(raiz.hijos[0]);
+                            result = Recorrido(raiz.hijos[2]);
+                            int val = 0;
+                            if (result instanceof Double) {
+                                val = (int) ((Double) result).doubleValue();
+                            }
+                            tamanio[contador] = val;
                             break;
                     }
-                    break;
-                case "M":
                     break;
                 case "ASIGNAR":
                     switch (raiz.cantidadHijos) {
@@ -243,13 +276,20 @@ public class RecorridoG {
                             break;
                     }
                     break;
-                case "ValorMATRIZ": //
+                case "ValorMATRIZ":
                     switch (raiz.cantidadHijos) {
+                        case 1:
+                            result = Recorrido(raiz.hijos[0]);
+                            break;
                         case 2:
-                            result = "0";
+                            result = Recorrido(raiz.hijos[0]);
+                            result = Recorrido(raiz.hijos[1]);
                             break;
                         case 3:
-                            result = "0";
+                            String v = Recorrido(raiz.hijos[1]).toString();
+                            String valor[] = v.split(",");
+                            valores.addAll(Arrays.asList(valor));
+                            result = valores;
                             break;
                     }
                     break;
@@ -487,11 +527,25 @@ public class RecorridoG {
                             break;
                     }
                     break;
-                case "POSICION_LISTA":
+                case "ARREGLO":
                     switch (raiz.cantidadHijos) {
                         case 2:
-                            String m = Recorrido(raiz.hijos[1]).toString();
-//                            result = MatrizG.posicion(raiz.hijos[0].texto, m);
+                            ArrayList coordenada = (ArrayList) Recorrido(raiz.hijos[1]);
+                            VariableG.obtenerValorMatriz(raiz.hijos[0].texto, coordenada);
+                            break;
+                    }
+                    break;
+                case "ARR":
+                    switch (raiz.cantidadHijos) {
+                        case 3:
+                            ArrayList coord = new ArrayList();
+                            coord.add(Recorrido(raiz.hijos[1]));
+                            result = coord;
+                            break;
+                        case 4:
+                            ArrayList coord2 = (ArrayList) Recorrido(raiz.hijos[0]);
+                            coord2.add(Recorrido(raiz.hijos[2]));
+                            result = coord2;
                             break;
                     }
                     break;

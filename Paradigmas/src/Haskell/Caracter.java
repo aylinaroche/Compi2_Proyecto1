@@ -10,4 +10,5 @@ import Haskell.Ejecutar.Nodo;
 public class Caracter {
    // String texto;
     Nodo nodo;
+    String error;
 }

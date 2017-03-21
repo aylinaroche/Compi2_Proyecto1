@@ -162,21 +162,22 @@ ELEMENTO::= ELEMENTO:a coma OP:b{:
     RESULT.nodo = E;
 :};
 
+
 PARAMETRO::=PARAMETRO:m coma PARAMETRO:n{:
     RESULT = new Caracter();
-    Nodo E = new Nodo("MATRIZ");
+    Nodo E = new Nodo("PARAMETRO");
     E.insertar(m.nodo);  E.insertar(new Nodo(",")); E.insertar(n.nodo);
     RESULT.nodo = E;
 :}
 |corcheteA PARAMETRO:m corcheteC{:
     RESULT = new Caracter();
-    Nodo E = new Nodo("MATRIZ");
+    Nodo E = new Nodo("PARAMETRO");
     E.insertar(new Nodo("[")); E.insertar(m.nodo); E.insertar(new Nodo("]"));
     RESULT.nodo = E;
 :}
 |ELEMENTO:m{:
     RESULT = new Caracter();
-    Nodo E = new Nodo("MATRIZ");
+    Nodo E = new Nodo("PARAMETRO");
     E.insertar(m.nodo);
     RESULT.nodo = E;
 :};

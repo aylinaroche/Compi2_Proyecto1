@@ -1,6 +1,7 @@
 package Haskell.Ejecutar;
 
 import Haskell.Metodo_FuncionHK;
+import java.util.ArrayList;
 
 public class RecorridoHK {
 
@@ -9,6 +10,9 @@ public class RecorridoHK {
     public static String ultimoValor = "";
     public static String caso = "";
     public static Boolean boolLista = false;
+    public static ArrayList parametros = new ArrayList();
+    public static ArrayList tipo = new ArrayList();
+    public static int cantidad = 0;
 
     public String Recorrido(Nodo raiz) {
         String result = null;
@@ -19,6 +23,7 @@ public class RecorridoHK {
                     result = Recorrido(raiz.hijos[0]);
                     System.out.println("IMPRIMIR:");
                     System.out.println(ultimoValor);
+                    paradigmas.Atributos.imprimirHaskell.add(ultimoValor);
                     break;
                 case "INSTRUCCIONES":
                     switch (raiz.cantidadHijos) {
@@ -73,12 +78,29 @@ public class RecorridoHK {
                 case "ELEMENTO":
                     switch (raiz.cantidadHijos) {
                         case 1:
-                            lista = Recorrido(raiz.hijos[0]) + ",";
+                            cantidad = 1;
+                            String s = ",";
+                            lista = Recorrido(raiz.hijos[0]);
+                            if (boolLista == true) {
+                                s = ";";
+                            } else {
+                                s = ",";
+                            }
+                            boolLista = false;
+                            lista += s;
                             result = lista;
                             break;
                         case 2:
                             Recorrido(raiz.hijos[0]);
-                            lista += Recorrido(raiz.hijos[1]) + ",";
+                            cantidad++;
+                            lista += Recorrido(raiz.hijos[1]);
+                            if (boolLista == true) {
+                                s = ";";
+                            } else {
+                                s = ",";
+                            }
+                            boolLista = false;
+                            lista += s;
                             result = lista;
                             break;
                     }
@@ -93,9 +115,11 @@ public class RecorridoHK {
                                 String Dim1 = Recorrido(raiz.hijos[0]);
                                 String Dim2 = Recorrido(raiz.hijos[2]);
                                 result = Dim1 + ";" + Dim2;
+
                             } else {
-                                result = Recorrido(raiz.hijos[1]) + "/";
-                                boolLista = true;
+                                result = Recorrido(raiz.hijos[1]);
+                                tipo.add("Lista");
+                                // boolLista = true;
                             }
                             break;
                     }
@@ -104,15 +128,11 @@ public class RecorridoHK {
                     switch (raiz.cantidadHijos) {
                         case 2:
                             result = Recorrido(raiz.hijos[1]);
-                            System.out.println("RESULT");
-                            System.out.println(result);
-                            System.out.println(Operacion.tipo);
-                            String dato[] = result.split(",");
-                            for (int i = 0; i < dato.length; i++) {
-                                Metodo_FuncionHK.agregarParametro(dato[i], "");
-                            }
+                            String dato[] = result.split(";");
+                            Metodo_FuncionHK.agregarMatriz(result, tipo, cantidad);
                             result = Haskell.Metodo_FuncionHK.buscarMetodo(raiz.hijos[0].texto, Metodo_FuncionHK.parametros);
                             Metodo_FuncionHK.parametros.clear();
+                            tipo.clear();
                             break;
                         case 4:
                             result = Recorrido(raiz.hijos[2]);
@@ -226,16 +246,39 @@ public class RecorridoHK {
                     }
                     break;
                 case "VALOR_PUNTUAL":
-                    if (raiz.hijos[0].tipo.equals("numero")) {
-                        result = raiz.hijos[0].texto;
-                    } else {
-                        result = VariableHK.obtenerValor(raiz.hijos[0].texto);
+                    switch (raiz.hijos[0].tipo) {
+                        case "numero":
+                            result = raiz.hijos[0].texto;
+                            break;
+                        case "caracter":
+                            result = raiz.hijos[0].texto;
+                            break;
+                        default:
+                            result = VariableHK.obtenerValor(raiz.hijos[0].texto);
+                            break;
+                    }
+                    break;
+                case "MATRIZZ":
+                    switch (raiz.cantidadHijos) {
+                        case 1:
+                            result = Recorrido(raiz.hijos[0]);
+                            break;
+                        case 2:
+                            String Dim1 = Recorrido(raiz.hijos[0]);
+                            String Dim2 = Recorrido(raiz.hijos[1]);
+                            result = Dim1 + "," + Dim2;
+                            break;
+                        case 3:
+                            result = Recorrido(raiz.hijos[1]);
+
+                            break;
                     }
                     break;
                 case "OP":
                     result = Recorrido(raiz.hijos[0]);
                     break;
                 case "E":
+                    boolLista =false;
                     result = Operacion.resolverOperacion(raiz);
                     break;
 

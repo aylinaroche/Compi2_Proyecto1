@@ -40,18 +40,19 @@ concatenar,ERROR;
 
 non terminal Caracter INICIO,OP,E,INSTRUCCION,INSTRUCCIONES,LISTA,ELEMENTO,
 CALCULAR,MATRIZ,EXTRAS,OPERACION_LISTA,SWITCH,IF,FUNCIONES,FUNCION,PARAMETRO,
-NOMBRE_OP,POSICION,CASO,LLAMADA,VALOR_PUNTUAL,SALTOS,
+NOMBRE_OP,POSICION,CASO,LLAMADA,VALOR_PUNTUAL,SALTOS,MATRIZZ,ERRORES,
 POSICION_LISTA;
 
+precedence left concatenar;
 precedence left mas, menos;
 precedence left por, div;
 precedence left or,and,not;
 precedence left mayor,menor,mayorIgual,menorIgual;
 precedence left igual,diferente,igualDoble;
-precedence left mod,concatenar;
+precedence left mod;
 precedence right pot;
 precedence right sqrt;
-precedence left sino,dosPuntos,posicion,coma,salto;
+precedence left sino,dosPuntos,posicion,coma,salto,corcheteC;
 precedence right caso;
 
 start with INICIO;
@@ -66,7 +67,18 @@ FUNCIONES::= FUNCIONES:m FUNCION:n{:
 |FUNCION:n{:
     RESULT = new Caracter();
     Metodo_FuncionHK.parametros.clear();
+:}
+|error:e{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("FUNCIONES");
+    RESULT.nodo = E;
+    if(e!=null){
+        paradigmas.ReporteError.agregarError(e.toString(), "Error Sintactico", "Al declarar funcion ", 0, 0);
+    }else{
+        paradigmas.ReporteError.agregarError("vacio", "Error Sintactico", "Al declarar funcion ", 0, 0);
+    }
 :};
+
 
 FUNCION::= id:i PARAMETRO:p igual INSTRUCCIONES:m end{:
     RESULT = new Caracter();
@@ -143,8 +155,17 @@ INSTRUCCION::=SWITCH:n{:
     Nodo E = new Nodo("INSTRUCCION");
     E.insertar(n.nodo);
     RESULT.nodo = E;
+:}
+|ERRORES:e{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("INSTRUCCION");
+    RESULT.nodo = E;
+    if(e.error!=null && e.error!=""){
+        paradigmas.ReporteError.agregarError(e.error, "Error Sintactico", "Al declarar una instruccion ", 0, 0);
+    }else{
+        paradigmas.ReporteError.agregarError("vacio", "Error Sintactico", "Al declarar una instruccion ", 0, 0);
+    }
 :};
-
 
 
 LISTA::= let id:i igual MATRIZ:m{:
@@ -159,6 +180,7 @@ LISTA::= let id:i igual MATRIZ:m{:
     E.insertar(new Nodo("let")); E.insertar(new Nodo(i)); E.insertar(new Nodo("="));  E.insertar(m.nodo);
     RESULT.nodo = E;
 :};
+
 
 
 MATRIZ::=MATRIZ:m coma MATRIZ:n{:
@@ -181,7 +203,6 @@ MATRIZ::=MATRIZ:m coma MATRIZ:n{:
 :};
 
 
-
 ELEMENTO::= ELEMENTO:a coma OP:b{:
     RESULT = new Caracter();
     Nodo E = new Nodo("ELEMENTO");
@@ -194,7 +215,6 @@ ELEMENTO::= ELEMENTO:a coma OP:b{:
     E.insertar(n.nodo);
     RESULT.nodo = E;
 :};
-
 
 
 
@@ -218,6 +238,7 @@ OPERACION_LISTA::=dollar NOMBRE_OP:n MATRIZ:m dollar{:
      E.insertar(n.nodo); E.insertar(m.nodo); 
     RESULT.nodo = E;
 :};
+
 
 NOMBRE_OP ::= sum:n{:
     RESULT = new Caracter();
@@ -305,7 +326,6 @@ IF::= si OP:o entonces salto INSTRUCCIONES:n sino salto INSTRUCCIONES:m salto en
     RESULT.nodo = E;
 :};
 
-
 SWITCH::= caso OP:c CASO:s salto end{:
     RESULT = new Caracter();
     Nodo E = new Nodo("SWITCH");
@@ -327,6 +347,7 @@ CASO::=CASO:c salto VALOR_PUNTUAL:v dosPuntos INSTRUCCIONES:n puntoComa{:
     RESULT.nodo = E;
 :};
 
+
 VALOR_PUNTUAL::=id:n{:
     RESULT = new Caracter();
     Nodo VALOR_PUNTUAL = new Nodo("VALOR_PUNTUAL");
@@ -338,6 +359,13 @@ VALOR_PUNTUAL::=id:n{:
     Nodo VALOR_PUNTUAL = new Nodo("VALOR_PUNTUAL");
     VALOR_PUNTUAL.insertar(new Nodo(n,"numero"));
     RESULT.nodo = VALOR_PUNTUAL;
+:}
+|caracter:n{:
+    RESULT = new Caracter();
+    n = n.replace("'","");
+    Nodo VALOR_PUNTUAL = new Nodo("VALOR_PUNTUAL");
+    VALOR_PUNTUAL.insertar(new Nodo(n,"caracter"));
+    RESULT.nodo = VALOR_PUNTUAL;
 :};
 
 
@@ -347,6 +375,7 @@ LLAMADA::= dollar id:i llaveA ELEMENTO:n llaveC dollar{:
      E.insertar(new Nodo(i)); E.insertar(new Nodo("{")); E.insertar(n.nodo); E.insertar(new Nodo("}"));
     RESULT.nodo = E;
 :};
+
 
 SALTOS::= SALTOS:s salto{:
     RESULT = new Caracter();
@@ -485,30 +514,10 @@ E::=parentesisA E:a parentesisC{:
     E.insertar(new Nodo("-")); E.insertar(b.nodo);
     RESULT.nodo = E;
 :}
-|cadena:n{:
-    RESULT = new Caracter();
-    n = n.replace("\"","");
-    Nodo E = new Nodo("E");
-    E.insertar(new Nodo(n,"cadena"));
-    RESULT.nodo = E;
-:}
-|caracter:n{:
-    RESULT = new Caracter();
-    n = n.replace("'","");
-    Nodo E = new Nodo("E");
-    E.insertar(new Nodo(n,"caracter"));
-    RESULT.nodo = E;
-:}
-|numero:n{:
+|MATRIZZ:n{:
     RESULT = new Caracter();
     Nodo E = new Nodo("E");
-    E.insertar(new Nodo(n,"numero"));
-    RESULT.nodo = E;
-:}
-|id:i{:
-    RESULT = new Caracter();
-    Nodo E = new Nodo("E");
-    E.insertar(new Nodo(i,"id"));
+    E.insertar(n.nodo);
     RESULT.nodo = E;
 :}
 |CALCULAR:n{:
@@ -593,5 +602,50 @@ EXTRAS::= dollar succ E:e dollar{:
 :};
 
 
+MATRIZZ::=corcheteA MATRIZZ:a corcheteC{:
+    RESULT = new Caracter();
+    Nodo EXTRAS = new Nodo("MATRIZZ");
+    EXTRAS.insertar(new Nodo("["));EXTRAS.insertar((a.nodo));  EXTRAS.insertar(new Nodo("]"));
+    RESULT.nodo = EXTRAS;
+:}
+|MATRIZZ:m coma MATRIZZ:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("MATRIZZ");
+    E.insertar(m.nodo); E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|cadena:n{:
+    RESULT = new Caracter();
+    n = n.replace("\"","");
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(n,"cadena"));
+    RESULT.nodo = E;
+:}
+|caracter:n{:
+    RESULT = new Caracter();
+    n = n.replace("'","");
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(n,"caracter"));
+    RESULT.nodo = E;
+:}
+|numero:n{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(n,"numero"));
+    RESULT.nodo = E;
+:}
+|id:i{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("E");
+    E.insertar(new Nodo(i,"id"));
+    RESULT.nodo = E;
+:};
 
+
+ERRORES::=error:e end{:
+    RESULT = new Caracter();
+    Nodo E = new Nodo("ERRORES");
+    RESULT.nodo = E;
+    RESULT.error = e.toString();
+:};
 

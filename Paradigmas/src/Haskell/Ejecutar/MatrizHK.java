@@ -308,6 +308,10 @@ public class MatrizHK {
 
     public static String posicion(String id, String posicion) {
         Matriz m = obtenerMatriz(id);
+        if (m == null) {
+            paradigmas.ReporteError.agregarError(id, "Error Semantico", "No se encontro la lista " + id, 0, 0);
+            return "0";
+        }
         String dato[] = posicion.split("!");
         int pos1 = 0, pos2 = 0;
         try {
@@ -434,7 +438,7 @@ class Matriz {
     public String ambito;
     public String nombre;
     public String dim1;
-    public String dim2="";
+    public String dim2 = "";
     public int tamanio;
     public String tipo; //Variable o lista
     public String valorTipo;
