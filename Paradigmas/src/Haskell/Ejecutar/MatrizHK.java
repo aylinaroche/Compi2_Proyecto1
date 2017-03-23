@@ -9,10 +9,11 @@ public class MatrizHK {
     //  public static String tipo = "";
 
     public static void crearMatriz(String nombre, String valor) {
+        String tam="";
         for (int i = 0; i < listaMatriz.size(); i++) {
             Matriz s = (Matriz) listaMatriz.get(i);
             if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek())) {
-                paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "La lista " + nombre + " ya existe", 0, 0);
+                paradigmas.ReporteError.agregarErrorHK(nombre, "Error Semantico", "La lista " + nombre + " ya existe", 0, 0);
                 return;
             }
         }
@@ -24,13 +25,15 @@ public class MatrizHK {
         }
         if (dato.length > 1) {
             if (dato.length > 2) {
-                paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "La lista " + nombre + " exede el limite", 0, 0);
+                paradigmas.ReporteError.agregarErrorHK(nombre, "Error Semantico", "La lista " + nombre + " exede el limite", 0, 0);
             }
             m.dim1 = dato[0];
             m.dim2 = dato[1];
+            tam="2 Dim";
         } else {
             m.dim1 = valor;
             m.dim2 = "";
+            tam ="1 Dim";
         }
         m.nombre = nombre;
         m.ambito = pilaAmbito.peek();
@@ -38,6 +41,7 @@ public class MatrizHK {
         m.tipo = "Lista";
         m.valorTipo = tipo;
         listaMatriz.add(m);
+        paradigmas.Atributos.crearSimboloHaskell(nombre,tipo, "Lista", m.ambito, tam);
     }
 
     public static String obtenerTipo(String nombre) {
@@ -54,7 +58,7 @@ public class MatrizHK {
             }
         }
         if (entero == true && caracter == true) {
-            paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "La lista " + nombre + " no es el del mismo tipo", 0, 0);
+            paradigmas.ReporteError.agregarErrorHK(nombre, "Error Semantico", "La lista " + nombre + " no es el del mismo tipo", 0, 0);
             return "error";
         } else if (entero == true && caracter == false) {
             return "numero";
@@ -309,7 +313,7 @@ public class MatrizHK {
     public static String posicion(String id, String posicion) {
         Matriz m = obtenerMatriz(id);
         if (m == null) {
-            paradigmas.ReporteError.agregarError(id, "Error Semantico", "No se encontro la lista " + id, 0, 0);
+            paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "No se encontro la lista " + id, 0, 0);
             return "0";
         }
         String dato[] = posicion.split("!");
@@ -317,7 +321,7 @@ public class MatrizHK {
         try {
             pos1 = Integer.parseInt(dato[0]);
         } catch (Exception e) {
-            paradigmas.ReporteError.agregarError(id, "Error Semantico", "La lista " + id + " tiene un indice incorrecto", 0, 0);
+            paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "La lista " + id + " tiene un indice incorrecto", 0, 0);
             return "0";
         }
         if (dato.length == 1) {
@@ -326,14 +330,14 @@ public class MatrizHK {
                 String resultado = dato2[pos1];
                 return resultado;
             } else {
-                paradigmas.ReporteError.agregarError(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
+                paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
                 return "0";
             }
         } else {
             try {
                 pos2 = Integer.parseInt(dato[1]);
             } catch (Exception e) {
-                paradigmas.ReporteError.agregarError(id, "Error Semantico", "La lista " + id + " tiene un indice incorrecto", 0, 0);
+                paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "La lista " + id + " tiene un indice incorrecto", 0, 0);
             }
 
             switch (pos1) {
@@ -343,7 +347,7 @@ public class MatrizHK {
                         String resultado = dato2[pos2];
                         return resultado;
                     } else {
-                        paradigmas.ReporteError.agregarError(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
+                        paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
                         return "0";
                     }
                 }
@@ -353,12 +357,12 @@ public class MatrizHK {
                         String resultado = dato2[pos2];
                         return resultado;
                     } else {
-                        paradigmas.ReporteError.agregarError(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
+                        paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
                         return "0";
                     }
                 }
                 default:
-                    paradigmas.ReporteError.agregarError(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
+                    paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "El indice de la lista " + id + " no existe", 0, 0);
                     return "0";
             }
         }

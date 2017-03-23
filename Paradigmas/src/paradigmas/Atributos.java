@@ -10,11 +10,13 @@ import java.util.ArrayList;
 public class Atributos {
 
     public static String lenguaje = "";
+    public static String nombreArchivo = "Global";
     public static ArrayList imprimirHaskell = new ArrayList();
     public static ArrayList imprimirGraphik = new ArrayList();
-    public static ArrayList simbolos = new ArrayList();
+    public static ArrayList tablaSimboloHK = new ArrayList();
+    public static ArrayList tablaSimboloGK = new ArrayList();
 
-    public static void reporteSimbolo() {
+    public static void reporteSimbolo(ArrayList simbolos, String nombre) {
         File f;
         FileWriter escritorArchivo;
 
@@ -22,7 +24,7 @@ public class Atributos {
             System.out.println("Esta vacio");
         }
         try {
-            f = new File("C:\\Users\\Aylin\\Documents\\NetBeansProjects\\Paradigmas\\Simbolos.html");
+            f = new File("C:\\Users\\Aylin\\Desktop\\TablaSimbolo" + nombre + ".html");
             escritorArchivo = new FileWriter(f);
             BufferedWriter bw = new BufferedWriter(escritorArchivo);
             try (PrintWriter salida = new PrintWriter(bw)) {
@@ -48,8 +50,8 @@ public class Atributos {
                     salida.write("<th><font color=\"white\">" + s.nombre + "</font></th>");
                     salida.write("<th><font color=\"white\">" + s.tipo + "</font></th>");
                     salida.write("<th><font color=\"white\">" + s.rol + "</font></th>");
-                    salida.write("<th><font color=\"white\">" + s.ambito+ "</font></th>");
-                    salida.write("<th><font color=\"white\">" + s.tamanio+ "</font></th>");
+                    salida.write("<th><font color=\"white\">" + s.ambito + "</font></th>");
+                    salida.write("<th><font color=\"white\">" + s.tamanio + "</font></th>");
                 }
                 salida.write("</table><br>");
                 salida.write("</body></html>");
@@ -61,6 +63,31 @@ public class Atributos {
         }
     }
 
+    public static void crearSimboloHaskell(String nombre, String tipo, String rol, String ambito, String tam) {
+////        for (int i = 0; i < tablaSimboloHK.size(); i++) {
+////            Simbolo sim = (Simbolo) tablaSimboloHK.get(i);
+////            if(sim.nombre.equals(nombre)&&sim.ambito.equals(ambito)){   
+////            }   
+////        }
+        Simbolo s = new Simbolo();
+        s.nombre = nombre;
+        s.tipo = tipo;
+        s.rol = rol;
+        s.ambito = ambito;
+        s.tamanio = tam;
+        tablaSimboloHK.add(s);
+    }
+
+    public static void crearSimboloGraphik(String nombre, String tipo, String rol, String ambito, String tam) {
+
+        Simbolo s = new Simbolo();
+        s.nombre = nombre;
+        s.tipo = tipo;
+        s.rol = rol;
+        s.ambito = ambito;
+        s.tamanio = tam;
+        tablaSimboloGK.add(s);
+    }
 }
 
 class Simbolo {

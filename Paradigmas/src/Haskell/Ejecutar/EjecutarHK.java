@@ -1,5 +1,7 @@
 package Haskell.Ejecutar;
 
+import Haskell.Haskell;
+import Haskell.Metodo_FuncionHK;
 import java.io.File;
 import java.io.StringReader;
 import java_cup.runtime.Symbol;
@@ -70,9 +72,11 @@ public class EjecutarHK {
         } catch (Exception e) {
 
         }
-VariableHK.pilaAmbito.push("Global");
+        VariableHK.pilaAmbito.push("Global");
 
         RecorridoHK r = new RecorridoHK();
         r.Recorrido(raiz);
     }
+
+  
 }

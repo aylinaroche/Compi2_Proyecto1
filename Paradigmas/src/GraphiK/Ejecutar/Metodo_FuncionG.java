@@ -7,12 +7,16 @@ public class Metodo_FuncionG {
     public static ArrayList metodoFuncionG = new ArrayList();
     public static ArrayList parametros = new ArrayList();
 
-    public static void agregarMF(String n, NodoG nodo, ArrayList parametro) {
+    public static void agregarMF(String nombre, String tipo, NodoG nodo, String visible,ArrayList parametro) {
         MF mf = new MF();
-        mf.nombre = n;
+        mf.nombre = nombre;
+        mf.tipo = tipo;
         mf.nodo = nodo;
+        mf.ambito = VariableG.pilaAmbito.peek();
         mf.parametro = (ArrayList) parametro.clone();
+        mf.visibilidad = visible;
         metodoFuncionG.add(mf);
+        paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Metodo/Funcion", mf.ambito, " - ");
     }
 
     public static void agregarParametro(String t, String n) {
@@ -32,7 +36,7 @@ public class Metodo_FuncionG {
                 VariableG.nivelAmbito++;
                 if (parametro.isEmpty() && mf.parametro.isEmpty()) {
                     parametro.clear();
-                    RecorridoG r = new RecorridoG();
+                    RecorridoEjecutar r = new RecorridoEjecutar();
                     retorno = r.Recorrido(mf.nodo);
 
                     VariableG.nivelAmbito--;
@@ -46,7 +50,7 @@ public class Metodo_FuncionG {
                         VariableG.crearVariable(p.tipo, p.nombre, p2, "public");
                     }
                     parametro.clear();
-                    RecorridoG r = new RecorridoG();
+                    RecorridoEjecutar r = new RecorridoEjecutar();
                     retorno = r.Recorrido(mf.nodo);
                     VariableG.eliminarVariable();
                     VariableG.nivelAmbito--;
@@ -57,7 +61,7 @@ public class Metodo_FuncionG {
 
             }
         }
-        paradigmas.ReporteError.agregarError(id, "Error Semantico", "No se ha encontrado el metodo", 0, 0);
+        paradigmas.ReporteError.agregarErrorGK(id, "Error Semantico", "No se ha encontrado el metodo", 0, 0);
 
         return "";
     }
@@ -70,14 +74,14 @@ public class Metodo_FuncionG {
             if (mf.nombre.equals("inicio")) {
                 VariableG.pilaAmbito.push("inicio");
                 VariableG.nivelAmbito++;
-                RecorridoG r = new RecorridoG();
+                RecorridoEjecutar r = new RecorridoEjecutar();
                 retorno = r.Recorrido(mf.nodo);
                 VariableG.nivelAmbito--;
                 VariableG.pilaAmbito.pop();
                 return "";
             }
         }
-        paradigmas.ReporteError.agregarError("inicio", "Error Semantico", "No se ha encontrado el metodo principal", 0, 0);
+        paradigmas.ReporteError.agregarErrorGK("inicio", "Error Semantico", "No se ha encontrado el metodo principal", 0, 0);
 
         return "";
     }
@@ -87,9 +91,10 @@ class MF {
 
     public String nombre;
     public String tipo;
-    public String retorno;
+    public String ambito;
     public NodoG nodo;
     public ArrayList parametro;
+    public String visibilidad;
 }
 
 class Parametro {

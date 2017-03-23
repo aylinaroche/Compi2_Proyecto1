@@ -12,8 +12,10 @@ public class Metodo_FuncionHK {
         MF mf = new MF();
         mf.nombre = n;
         mf.nodo = nodo;
+        mf.ambito = VariableHK.pilaAmbito.peek();
         mf.parametro = (ArrayList) parametro.clone();
         metodoFuncionHK.add(mf);
+        paradigmas.Atributos.crearSimboloHaskell(n, " - ", "Metodo/Funcion", mf.ambito, " - ");
     }
 
     public static void agregarParametro(String n, String t) {
@@ -70,7 +72,7 @@ public class Metodo_FuncionHK {
 
             }
         }
-        paradigmas.ReporteError.agregarError(id, "Error Semantico", "No se ha encontrado el metodo", 0, 0);
+        paradigmas.ReporteError.agregarErrorHK(id, "Error Semantico", "No se ha encontrado el metodo", 0, 0);
 
         return "";
     }
@@ -116,6 +118,7 @@ class MF {
     public String retorno;
     public Nodo nodo;
     public ArrayList parametro;
+    public String ambito;
 }
 
 class Parametro {

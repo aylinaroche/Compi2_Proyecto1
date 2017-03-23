@@ -1,6 +1,5 @@
 package Haskell.Ejecutar;
 
-import Arbol.*;
 
 public class Nodo {
 
@@ -10,10 +9,7 @@ public class Nodo {
     public Nodo padre;
     public Nodo hijos[];
     public String tipo;
-    public ListaNodos nodosArr;
     public String ambito;
-
-    public ListaParametro parametros; //lista de parametros que se utiliza para las llamadas a metodos
 
     public Nodo(String texto) {
         this.texto = texto;

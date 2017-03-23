@@ -79,7 +79,7 @@ public class Operacion {
                                             return m.dim1 + ";" + m.dim2;
                                         }
                                     }
-                                    paradigmas.ReporteError.agregarError(dato, "Error Semantico", "No se encontro el id", 0, 0);
+                                    paradigmas.ReporteError.agregarErrorHK(dato, "Error Semantico", "No se encontro el id", 0, 0);
                                     Operacion.tipo = "variable";
                                     return "";
                                 }

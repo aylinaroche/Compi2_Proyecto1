@@ -975,9 +975,9 @@ class CUP$SintacticoH$actions {
     Nodo E = new Nodo("FUNCIONES");
     RESULT.nodo = E;
     if(e!=null){
-        paradigmas.ReporteError.agregarError(e.toString(), "Error Sintactico", "Al declarar funcion ", 0, 0);
+        paradigmas.ReporteError.agregarErrorHK(e.toString(), "Error Sintactico", "Al declarar funcion ", 0, 0);
     }else{
-        paradigmas.ReporteError.agregarError("vacio", "Error Sintactico", "Al declarar funcion ", 0, 0);
+        paradigmas.ReporteError.agregarErrorHK("vacio", "Error Sintactico", "Al declarar funcion ", 0, 0);
     }
 
               CUP$SintacticoH$result = parser.getSymbolFactory().newSymbol("FUNCIONES",13, ((java_cup.runtime.Symbol)CUP$SintacticoH$stack.peek()), ((java_cup.runtime.Symbol)CUP$SintacticoH$stack.peek()), RESULT);
@@ -1213,9 +1213,9 @@ class CUP$SintacticoH$actions {
     Nodo E = new Nodo("INSTRUCCION");
     RESULT.nodo = E;
     if(e.error!=null && e.error!=""){
-        paradigmas.ReporteError.agregarError(e.error, "Error Sintactico", "Al declarar una instruccion ", 0, 0);
+        paradigmas.ReporteError.agregarErrorHK(e.error, "Error Sintactico", "Al declarar una instruccion ", 0, 0);
     }else{
-        paradigmas.ReporteError.agregarError("vacio", "Error Sintactico", "Al declarar una instruccion ", 0, 0);
+        paradigmas.ReporteError.agregarErrorHK("vacio", "Error Sintactico", "Al declarar una instruccion ", 0, 0);
     }
 
               CUP$SintacticoH$result = parser.getSymbolFactory().newSymbol("INSTRUCCION",3, ((java_cup.runtime.Symbol)CUP$SintacticoH$stack.peek()), ((java_cup.runtime.Symbol)CUP$SintacticoH$stack.peek()), RESULT);

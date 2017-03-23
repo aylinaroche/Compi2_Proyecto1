@@ -1,6 +1,10 @@
 package Haskell;
 
 import Haskell.Ejecutar.EjecutarHK;
+import Haskell.Ejecutar.VariableHK;
+import Haskell.Ejecutar.*;
+import static Haskell.Ejecutar.VariableHK.listaVariables;
+import static Haskell.Ejecutar.VariableHK.nivelAmbito;
 import java.io.File;
 import java.io.StringReader;
 import java_cup.runtime.Symbol;
@@ -206,7 +210,7 @@ public class Haskell {
                 //  + "IncrementaSegunN 3,2\n"
                 //
 
-               + "\"hola\" ++ \"mundo\"\n"
+                + "\"hola\" ++ \"mundo\"\n"
                 + "let lista = [9,4,5]\n"
                 + "lista !!1\n"
                 + "");
@@ -237,7 +241,7 @@ public class Haskell {
     public static void Analizar(String texto) throws Exception {
         StringReader miReader = new StringReader(texto);
         LexicoH miAnalizador = new LexicoH(miReader);
-//        Atributos.analizador = miAnalizador;
+        VariableHK.pilaAmbito.push(paradigmas.Atributos.nombreArchivo);
 
         SintacticoH parser = new SintacticoH(miAnalizador);
         parser.parse();
@@ -254,6 +258,15 @@ public class Haskell {
         } catch (Exception e) {
 
         }
-
+        VariableHK.pilaAmbito.pop();
     }
+
+//    public static void llenarTablaSimbolosHaskell() {
+//        for (int i = 0; i < Metodo_FuncionHK.metodoFuncionHK.size(); i++) {
+//            MF m = (MF) Metodo_FuncionHK.metodoFuncionHK.get(i);
+//            paradigmas.Atributos.crearSimboloHaskell(m.nombre, m.tipo, "Metodo", m.ambito, " - ");
+//        }
+//       // EjecutarHK.llenarTablaSimbolosHaskell();
+//    }
+//    
 }

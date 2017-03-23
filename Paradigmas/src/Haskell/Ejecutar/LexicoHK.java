@@ -745,7 +745,7 @@ public String lexeme;
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { //return new Symbol(sym.ERROR,yycolumn, yyline,new String(yytext()));
-paradigmas.ReporteError.agregarError(yytext(), "Error Lexico", "No pertenece al lenguaje",0,0);
+paradigmas.ReporteError.agregarErrorHK(yytext(), "Error Lexico", "No pertenece al lenguaje",0,0);
             }
           case 60: break;
           case 2: 

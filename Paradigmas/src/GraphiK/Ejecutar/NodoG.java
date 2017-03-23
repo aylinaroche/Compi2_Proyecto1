@@ -1,7 +1,5 @@
 package Graphik.Ejecutar;
 
-import Arbol.*;
-
 public class NodoG {
 
     public String texto;
@@ -10,10 +8,7 @@ public class NodoG {
     public NodoG padre;
     public NodoG hijos[];
     public String tipo;
-    public ListaNodos nodosArr;
     public String ambito;
-
-    public ListaParametro parametros; //lista de parametros que se utiliza para las llamadas a metodos
 
     public NodoG(String texto) {
         this.texto = texto;

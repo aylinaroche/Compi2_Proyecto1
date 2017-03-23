@@ -6,31 +6,46 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ReporteError {
 
-    public static ArrayList errores = new ArrayList();
+    public static ArrayList erroresHaskell = new ArrayList();
+    public static ArrayList erroresGraphik = new ArrayList();
 
-    public static void agregarError(String l, String t, String d, int f, int c) {
+    public static void agregarErrorHK(String l, String t, String d, int f, int c) {
         Errror e = new Errror();
         e.lexema = l;
         e.tipo = t;
         e.descripcion = d;
         e.fila = f;
         e.columna = c;
-        errores.add(e);
+        erroresHaskell.add(e);
         System.out.println("-> " + t + ": " + l + "," + d + "," + c);
     }
 
-    public static void reporteErrores() {
+    public static void agregarErrorGK(String l, String t, String d, int f, int c) {
+        Errror e = new Errror();
+        e.lexema = l;
+        e.tipo = t;
+        e.descripcion = d;
+        e.fila = f;
+        e.columna = c;
+        erroresGraphik.add(e);
+        System.out.println("-> " + t + ": " + l + "," + d + "," + c);
+    }
+
+    public static void reporteErrores(ArrayList errores, String nombre) {
         File f;
         FileWriter escritorArchivo;
+        java.util.Date fecha = new Date();
+//        System.out.println(fecha);
 
         if (errores.isEmpty()) {
             System.out.println("Esta vacio");
         }
         try {
-            f = new File("C:\\Users\\Aylin\\Documents\\NetBeansProjects\\Paradigmas\\Errores.html");
+            f = new File("C:\\Users\\Aylin\\Desktop\\Errores" + nombre + ".html");
             escritorArchivo = new FileWriter(f);
             BufferedWriter bw = new BufferedWriter(escritorArchivo);
             try (PrintWriter salida = new PrintWriter(bw)) {
@@ -39,8 +54,12 @@ public class ReporteError {
                 salida.write("<body bgcolor=\"black\">");
                 salida.write("<h1><center><FONT COLOR=silver>PROYECTO 1<FONT></center></h1>\"");
                 salida.write("<h1><center><FONT COLOR=81426E> REPORTE DE ERRORES <FONT></center></h1>");
-                salida.write("<br>");
+
                 salida.write("<center>");
+
+                salida.write(fecha.toString());
+                salida.write("<br>");
+                salida.write("<br>");
                 salida.write("<table border= 1 width= 500>");
                 salida.write("<tr>");
                 salida.write("<th><font color=\"#24AAFF\" face=\"courier new\"> TIPO </font></th>");
@@ -68,18 +87,11 @@ public class ReporteError {
             System.out.println("No ha podido ser creado el fichero");
         }
 
-        try {
-          //  File archivo = menu_bar.nom_arch;
-            Runtime runTime = Runtime.getRuntime();
-            Process p = runTime.exec("C:\\Program~1\\Google\\Chrome\\Application\\chrome.exe " + "C:\\Users\\Aylin\\Documents\\NetBeansProjects\\Paradigmas\\Errores.html");
-        } catch (IOException e1) {
-            System.out.print(e1.toString());
-        }
     }
 
     public static void imprimirError() {
-        for (int i = 0; i < errores.size(); i++) {
-            Errror e = (Errror) errores.get(i);
+        for (int i = 0; i < erroresHaskell.size(); i++) {
+            Errror e = (Errror) erroresHaskell.get(i);
             System.out.println("> " + e.descripcion);
 
         }

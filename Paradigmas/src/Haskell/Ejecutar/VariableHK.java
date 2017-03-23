@@ -15,7 +15,7 @@ public class VariableHK {
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
             if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito) {
-                paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "La variable " + nombre + " ya existe", 0, 0);
+                paradigmas.ReporteError.agregarErrorHK(nombre, "Error Semantico", "La variable " + nombre + " ya existe", 0, 0);
                 return;
             }
         }
@@ -26,6 +26,7 @@ public class VariableHK {
         v.valor = valor;
         v.nivel = nivelAmbito;
         listaVariables.add(v);
+        paradigmas.Atributos.crearSimboloHaskell(nombre, " - ", "Variable", v.ambito, " - ");
     }
 
     public static void eliminarVariable() {
@@ -53,7 +54,7 @@ public class VariableHK {
                 return s.valor;
             }
         }
-        paradigmas.ReporteError.agregarError(nombre, "Error Semantico", "No existe la variable", 0, 0);
+        paradigmas.ReporteError.agregarErrorHK(nombre, "Error Semantico", "No existe la variable", 0, 0);
         return valor;
     }
 
@@ -69,8 +70,7 @@ public class VariableHK {
     }
 
 }
-
-class Variable {
+ class Variable {
 
     public String ambito;
     public int nivel;

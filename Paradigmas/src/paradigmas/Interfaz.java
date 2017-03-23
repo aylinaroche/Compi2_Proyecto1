@@ -1,5 +1,6 @@
 package paradigmas;
 
+//import Graphik.LexicoALS;
 import Haskell.*;
 import Haskell.Ejecutar.*;
 import Graphik.*;
@@ -29,7 +30,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import static paradigmas.Eleccion.opcion;
-//import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class Interfaz extends javax.swing.JFrame {
 
@@ -185,7 +185,9 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearProyectoActionPerformed
 
     private void btnPublicarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPublicarActionPerformed
-        // TODO add your handling code here:
+        Atributos.reporteSimbolo(Atributos.tablaSimboloHK, "HK");
+        Atributos.reporteSimbolo(Atributos.tablaSimboloGK, "GK");
+        imprimirConsola(">> Se ha creado el Reporte de Simbolos correctamente.");
     }//GEN-LAST:event_btnPublicarActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
@@ -193,7 +195,7 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
-        Atributos.reporteSimbolo();
+
     }//GEN-LAST:event_btnImportarActionPerformed
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
@@ -226,6 +228,8 @@ public class Interfaz extends javax.swing.JFrame {
         Pestania pes = (Pestania) pestania.get(ind);
 
         if ("hk".equals(pes.tipo)) {
+            Atributos.tablaSimboloHK.clear();
+            ReporteError.erroresHaskell.clear();
             try {
                 Haskell.Analizar(texto.getText());
             } catch (Exception ex) {
@@ -267,14 +271,17 @@ public class Interfaz extends javax.swing.JFrame {
                 Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if ("gk".equals(pes.tipo)) {
+            Atributos.tablaSimboloGK.clear();
+            ReporteError.erroresGraphik.clear();
             try {
                 Graphik.Analizar(texto.getText());
+                Graphik.iniciarEjecutar();
             } catch (Exception ex) {
                 System.out.println("ERROR: " + ex);
             }
             try {
                 StringReader miReader = new StringReader(texto.getText());
-                LexicoG miAnalizador = new LexicoG(miReader);
+                LexicoALS miAnalizador = new LexicoALS(miReader);
                 texto.setText("");
                 try {
                     Symbol s = null;
@@ -283,19 +290,25 @@ public class Interfaz extends javax.swing.JFrame {
                     while (s.sym != 0) {
                         lexema = (String) s.value;
                         //System.out.println("*" + s.sym + "*");
-                        if (lexema.toLowerCase().equals("if") || lexema.toLowerCase().equals("else") || lexema.toLowerCase().equals("case") || lexema.toLowerCase().equals("then")
-                                || lexema.toLowerCase().equals("calcular") || lexema.toLowerCase().equals("succ") || lexema.toLowerCase().equals("decc") || lexema.toLowerCase().equals("sum")
-                                || lexema.toLowerCase().equals("min") || lexema.toLowerCase().equals("max") || lexema.toLowerCase().equals("product") || lexema.toLowerCase().equals("revers")
-                                || lexema.toLowerCase().equals("impr") || lexema.toLowerCase().equals("true") || lexema.toLowerCase().equals("false") || lexema.toLowerCase().equals("let")
-                                || lexema.toLowerCase().equals("end") || lexema.toLowerCase().equals("par") || lexema.toLowerCase().equals("asc") || lexema.toLowerCase().equals("desc")
-                                || lexema.toLowerCase().equals("length") || lexema.toLowerCase().equals("'mod'") || lexema.toLowerCase().equals("'sqrt'") || lexema.toLowerCase().equals("'pot'")) {
+                        if (lexema.toLowerCase().equals("hereda") || lexema.toLowerCase().equals("inicio") || lexema.toLowerCase().equals("nuevo") || lexema.toLowerCase().equals("llamar")
+                                || lexema.toLowerCase().equals("llamarhk") || lexema.toLowerCase().equals("als") || lexema.toLowerCase().equals("var") || lexema.toLowerCase().equals("publico")
+                                || lexema.toLowerCase().equals("privado") || lexema.toLowerCase().equals("protegido") || lexema.toLowerCase().equals("importar") || lexema.toLowerCase().equals("incluir_hk")
+                                || lexema.toLowerCase().equals("vacio") || lexema.toLowerCase().equals("entero") || lexema.toLowerCase().equals("decimal") || lexema.toLowerCase().equals("cadena")
+                                || lexema.toLowerCase().equals("caracter") || lexema.toLowerCase().equals("bool") || lexema.toLowerCase().equals("verdadero") || lexema.toLowerCase().equals("falso")
+                                || lexema.toLowerCase().equals("imprimir") || lexema.toLowerCase().equals("si") || lexema.toLowerCase().equals("sino") || lexema.toLowerCase().equals("seleccion")
+                                || lexema.toLowerCase().equals("caso") || lexema.toLowerCase().equals("defecto") || lexema.toLowerCase().equals("mientras") || lexema.toLowerCase().equals("hacer")
+                                || lexema.toLowerCase().equals("para") || lexema.toLowerCase().equals("terminar") || lexema.toLowerCase().equals("continuar") || lexema.toLowerCase().equals("graphikar_funcion")
+                                || lexema.toLowerCase().equals("datos") || lexema.toLowerCase().equals("procesar") || lexema.toLowerCase().equals("columna") || lexema.toLowerCase().equals("fila")
+                                || lexema.toLowerCase().equals("donde") || lexema.toLowerCase().equals("dondecada") || lexema.toLowerCase().equals("verdadero") || lexema.toLowerCase().equals("dondetodo")) {
                             pintarAzul(lexema + " ");
-                        } else if (10 == s.sym || 45 == s.sym) { //Cadena o caracter
+                        } else if (57 == s.sym || 64 == s.sym) { //Cadena o caracter
                             pintarVerde(lexema + " ");
                         } else if ("COMENTARIO".equals(s.sym)) {
                             pintarCeleste(lexema + " ");
-                        } else if (8 == s.sym) { //id
+                        } else if (37 == s.sym) { //id
                             pintarNaranja(lexema + " ");
+                        } else if (49 == s.sym || 50 == s.sym || 51 == s.sym || 70 == s.sym) { //id
+                            pintarNegro(lexema + "\n");
                         } else {
                             pintarNegro(lexema);
                         }
@@ -310,7 +323,9 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btnTraducirActionPerformed
 
     private void btnReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportesActionPerformed
-        ReporteError.reporteErrores();
+        ReporteError.reporteErrores(ReporteError.erroresHaskell, "HK");
+        ReporteError.reporteErrores(ReporteError.erroresGraphik, "GK");
+        imprimirConsola(">> Se ha creado el Reporte de Errores correctamente.");
     }//GEN-LAST:event_btnReportesActionPerformed
 
     private void txtConsolaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConsolaKeyReleased
@@ -352,6 +367,14 @@ public class Interfaz extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtConsolaKeyReleased
 
+    public void imprimirConsola(String texto) {
+        try {
+            txtConsola.getStyledDocument().insertString(txtConsola.getStyledDocument().getLength(), texto, null);
+        } catch (BadLocationException ex) {
+            System.out.println("Error de consola = " + ex);
+        }
+    }
+
     public void continuarSegunArchivo() {
         switch (opcion) {
             case 0: //Nueva Pestania
@@ -367,6 +390,7 @@ public class Interfaz extends javax.swing.JFrame {
                 Pestania pt = new Pestania(nombre, "", Atributos.lenguaje);
                 pestania.add(pt);
                 break;
+
             case 1: //Abrir
                 try {
                     JFileChooser file = new JFileChooser();
@@ -377,7 +401,7 @@ public class Interfaz extends javax.swing.JFrame {
                     ruta = abre.getAbsolutePath();
                     nombre = abre.getName();
                     System.out.println(ruta);
-
+                    texto = "";
                     if (abre != null) {
                         FileReader archivos = new FileReader(abre);
 
@@ -479,6 +503,44 @@ public class Interfaz extends javax.swing.JFrame {
 
         }
         opcion = 100;
+    }
+
+    public void importarArchivo(String nombre) {
+        int ind = jTabbedPane1.getSelectedIndex();
+        Pestania pes = (Pestania) pestania.get(ind);
+        System.out.println("ruta = " + pes.ruta);
+        String s = pes.ruta.replace("\\", "/");
+        String dato[] = s.split("/");
+        String path = "";
+        for (int i = 0; i < dato.length - 1; i++) {
+            path += dato[i] + "/";
+        }
+        String archivo = "";
+
+        path += nombre + ".gk";
+        System.out.println("Path = " + path);
+        try {
+            if (path != null) {
+                FileReader archivos = new FileReader(path);
+                try (BufferedReader lee = new BufferedReader(archivos)) {
+                    while ((aux = lee.readLine()) != null) {
+                        archivo += aux + "\n";
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex + ""
+                    + "\nNo se ha encontrado el archivo",
+                    "ADVERTENCIA!!!", JOptionPane.WARNING_MESSAGE);
+            System.out.println("No encontro el archivo!!! = " + ex);
+            return;
+        }
+        try {
+            Graphik.Analizar(archivo);
+        } catch (Exception ex) {
+            System.out.println("Error al analizar ALS = " + ex);
+        }
+
     }
 
     public void append(int r, int g, int b, String texto) {

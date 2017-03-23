@@ -10,9 +10,10 @@ public class sym {
   /* terminals */
   public static final int dividido = 56;
   public static final int menos = 26;
-  public static final int menor = 29;
+  public static final int menor = 28;
   public static final int tipoChar = 9;
-  public static final int disminuir = 41;
+  public static final int disminuir = 40;
+  public static final int graphikar = 58;
   public static final int punto = 63;
   public static final int tipoVoid = 6;
   public static final int importar = 5;
@@ -20,42 +21,45 @@ public class sym {
   public static final int parentesisC = 13;
   public static final int parentesisA = 12;
   public static final int dosPuntos = 43;
-  public static final int parseDouble = 58;
   public static final int mas = 25;
   public static final int cadena = 57;
   public static final int mientras = 21;
-  public static final int hereda = 72;
+  public static final int hereda = 73;
   public static final int imprimir = 44;
   public static final int raiz = 24;
   public static final int aumentar = 55;
-  public static final int llamar = 74;
+  public static final int llamar = 75;
   public static final int privado = 3;
-  public static final int menorIgual = 31;
+  public static final int menorIgual = 30;
   public static final int sino = 17;
+  public static final int procesar = 59;
   public static final int decimal = 61;
   public static final int caso = 19;
   public static final int ERROR = 52;
-  public static final int incluir = 71;
-  public static final int doubleStr = 60;
-  public static final int or = 34;
+  public static final int incluir = 72;
+  public static final int fila = 54;
+  public static final int or = 33;
   public static final int signo = 51;
   public static final int caracter = 64;
-  public static final int nuevo = 68;
-  public static final int id = 38;
-  public static final int mayorIgual = 30;
+  public static final int nuevo = 69;
+  public static final int datos = 68;
+  public static final int id = 37;
+  public static final int mayorIgual = 29;
   public static final int tipoString = 7;
   public static final int tipoFloat = 66;
+  public static final int dondeTodo = 79;
   public static final int protegido = 4;
   public static final int tipoBool = 10;
-  public static final int and = 36;
+  public static final int columna = 60;
+  public static final int and = 35;
   public static final int retornar = 15;
   public static final int llaveC = 50;
-  public static final int mayor = 28;
+  public static final int mayor = 27;
   public static final int llaveA = 49;
-  public static final int llamarHK = 75;
-  public static final int xor = 35;
+  public static final int dondeCada = 78;
+  public static final int llamarHK = 76;
+  public static final int xor = 34;
   public static final int EOF = 0;
-  public static final int intStr = 59;
   public static final int inicio = 65;
   public static final int falso = 46;
   public static final int tipoDouble = 11;
@@ -66,24 +70,24 @@ public class sym {
   public static final int verdadero = 45;
   public static final int error = 1;
   public static final int continuar = 67;
-  public static final int diferente = 33;
+  public static final int diferente = 32;
   public static final int si = 16;
   public static final int entero = 62;
-  public static final int extension = 69;
-  public static final int als = 73;
+  public static final int extension = 70;
+  public static final int als = 74;
   public static final int salir = 23;
   public static final int hacer = 22;
   public static final int defecto = 20;
-  public static final int por = 27;
+  public static final int donde = 77;
+  public static final int por = 42;
   public static final int igualDoble = 47;
-  public static final int para = 42;
+  public static final int para = 41;
   public static final int coma = 14;
-  public static final int not = 37;
-  public static final int igual = 32;
-  public static final int corcheteC = 40;
-  public static final int corcheteA = 39;
-  public static final int var = 70;
-  public static final int parseInt = 54;
+  public static final int not = 36;
+  public static final int igual = 31;
+  public static final int corcheteC = 39;
+  public static final int corcheteA = 38;
+  public static final int var = 71;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -112,7 +116,6 @@ public class sym {
   "raiz",
   "mas",
   "menos",
-  "por",
   "mayor",
   "menor",
   "mayorIgual",
@@ -128,6 +131,7 @@ public class sym {
   "corcheteC",
   "disminuir",
   "para",
+  "por",
   "dosPuntos",
   "imprimir",
   "verdadero",
@@ -139,13 +143,13 @@ public class sym {
   "signo",
   "ERROR",
   "numero",
-  "parseInt",
+  "fila",
   "aumentar",
   "dividido",
   "cadena",
-  "parseDouble",
-  "intStr",
-  "doubleStr",
+  "graphikar",
+  "procesar",
+  "columna",
   "decimal",
   "entero",
   "punto",
@@ -153,6 +157,7 @@ public class sym {
   "inicio",
   "tipoFloat",
   "continuar",
+  "datos",
   "nuevo",
   "extension",
   "var",
@@ -160,7 +165,10 @@ public class sym {
   "hereda",
   "als",
   "llamar",
-  "llamarHK"
+  "llamarHK",
+  "donde",
+  "dondeCada",
+  "dondeTodo"
   };
 }
 
