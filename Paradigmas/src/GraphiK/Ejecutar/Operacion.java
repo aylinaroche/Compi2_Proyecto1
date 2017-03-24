@@ -40,7 +40,7 @@ public class Operacion {
                                 Double num = Double.parseDouble(dato);
                                 return num;
                             case "id":
-                                Object s = VariableG.obtenerVariable(dato);
+                                Object s = VariableG.obtenerVariable(dato, VariableG.nombreALS.peek());
                                 if (s != null) {
                                     return s;
                                 } else { //Buscar en lista

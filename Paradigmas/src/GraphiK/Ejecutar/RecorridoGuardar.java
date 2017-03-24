@@ -36,35 +36,48 @@ public class RecorridoGuardar {
                     }
                     break;
                 case "METODO":
-                    String tipo = raiz.hijos[0].texto;
+                    RecorridoEjecutar e = new RecorridoEjecutar();
+                    String tipo = e.Recorrido(raiz.hijos[0]).toString();
                     String id = raiz.hijos[1].texto;
-
+                    String visible = "";
                     switch (raiz.cantidadHijos) {
                         case 8:
+                            Object v = e.Recorrido(raiz.hijos[4]);
+                            visible = v.toString();
                             Metodo_FuncionG.agregarMF(id, tipo, raiz.hijos[6], raiz.hijos[4].texto, Metodo_FuncionG.parametros);
-                            Metodo_FuncionG.parametros.clear();
                             break;
                         case 9:
+                            v = e.Recorrido(raiz.hijos[5]);
+                            visible = v.toString();
+                            Recorrido(raiz.hijos[3]);
                             Metodo_FuncionG.agregarMF(id, tipo, raiz.hijos[7], raiz.hijos[5].texto, Metodo_FuncionG.parametros);
-                            Metodo_FuncionG.parametros.clear();
                             break;
                     }
+                    Metodo_FuncionG.parametros.clear();
+
                     break;
                 case "PARAMETROS":
+                    RecorridoEjecutar c = new RecorridoEjecutar();
+                    
                     switch (raiz.cantidadHijos) {
                         case 2:
-                            Metodo_FuncionG.agregarParametro(raiz.hijos[0].texto, raiz.hijos[1].texto);
+                            tipo = c.Recorrido(raiz.hijos[0]).toString();
+                            Metodo_FuncionG.agregarParametro(tipo, raiz.hijos[1].texto);
                             break;
                         case 3:
                             Recorrido(raiz.hijos[0]);
-                            Metodo_FuncionG.agregarParametro(raiz.hijos[1].texto, raiz.hijos[2].texto);
+                            tipo = c.Recorrido(raiz.hijos[1]).toString();
+                            Metodo_FuncionG.agregarParametro(tipo, raiz.hijos[2].texto);
                             break;
                     }
                     break;
                 case "VARIABLE":
                     switch (raiz.cantidadHijos) {
-                        case 1:
-                            VariableG.variableGlobal.add(raiz.hijos[0]);
+                        case 4:
+                            VariableG.pilaAmbito.push("Global");
+                            RecorridoEjecutar r = new RecorridoEjecutar();
+                            r.Recorrido(raiz);
+                            VariableG.pilaAmbito.pop();
                             break;
                     }
                     break;

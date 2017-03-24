@@ -117,12 +117,19 @@ public class RecorridoEjecutar {
                             break;
                         case 3:
                             retornar = true;
-                            result = Recorrido(raiz.hijos[1]).toString();
+                            result = Recorrido(raiz.hijos[1]);
                             break;
                     }
                     break;
                 case "VISIBILIDAD":
-                    result = raiz.hijos[0].texto;
+                    switch (raiz.cantidadHijos) {
+                        case 1:
+                            result = raiz.hijos[0].texto;
+                            break;
+                        case 2:
+                            result = Recorrido(raiz.hijos[1]);
+                            break;
+                    }
                     break;
                 case "TIPO":
                     result = raiz.hijos[0].texto;
@@ -133,7 +140,7 @@ public class RecorridoEjecutar {
                         case 4:
                             tipo = Recorrido(raiz.hijos[1]).toString();
                             Recorrido(raiz.hijos[2]);
-                            if (raiz.hijos[2].texto.equals("MasVariable")) {
+                            if (raiz.hijos[2].texto.equals("MasVARIABLE")) {
                                 for (int i = 0; i < variables.size(); i++) {
                                     Variable v = (Variable) variables.get(i);
                                     VariableG.crearVariable(tipo, v.nombre, v.valor, v.visibilidad);
@@ -338,10 +345,10 @@ public class RecorridoEjecutar {
                         case 7:
                             boolean w = false;
                             result = Recorrido(raiz.hijos[2]);
-                            w = result.equals("true");
+                            w = result.toString().equals("true");
                             while (w) {
                                 result = Recorrido(raiz.hijos[2]).toString();
-                                if (result.equals("true")) {
+                                if (result.toString().equals("true")) {
                                     Recorrido(raiz.hijos[5]);
                                     w = true;
                                 } else {
@@ -353,12 +360,12 @@ public class RecorridoEjecutar {
                         case 9:
                             Recorrido(raiz.hijos[2]);
                             result = Recorrido(raiz.hijos[6]).toString();
-                            w = result.equals("true");
+                            w = result.toString().equals("true");
                             //   w = true;
                             while (w) {
                                 Recorrido(raiz.hijos[2]);
                                 result = Recorrido(raiz.hijos[6]).toString();
-                                if (result.equals("true")) {
+                                if (result.toString().equals("true")) {
                                     w = true;
                                 } else {
                                     w = false;
@@ -501,26 +508,36 @@ public class RecorridoEjecutar {
                     switch (raiz.cantidadHijos) {
                         case 4:
                             if ("llamar".equals(raiz.hijos[0].texto)) {
-                                result = Metodo_FuncionG.buscarMetodo(raiz.hijos[1].texto, variables);
+                                result = Metodo_FuncionG.buscarMetodo(raiz.hijos[1].texto, variables, VariableG.nombreALS.peek());
                             } else { //llamar HK
                                 result = Haskell.Metodo_FuncionHK.buscarMetodo(raiz.hijos[1].texto, variables);
                             }
                             break;
                         case 5:
-                            String v[] = Recorrido(raiz.hijos[3]).toString().split(",");
-                            ArrayList parametro = new ArrayList();
-                            parametro.addAll(Arrays.asList(v));
+                            result = Recorrido(raiz.hijos[3]);
+                            ArrayList parametro = (ArrayList) result;
                             if ("llamar".equals(raiz.hijos[0].texto)) {
-                                result = Metodo_FuncionG.buscarMetodo(raiz.hijos[1].texto, parametro);
+                                result = Metodo_FuncionG.buscarMetodo(raiz.hijos[1].texto, parametro, VariableG.nombreALS.peek());
                             } else { //llamar HK
                                 result = Haskell.Metodo_FuncionHK.buscarMetodo(raiz.hijos[1].texto, parametro);
                             }
                             parametro.clear();
-                            retornar = false;
-                            salir = false;
-
+                            break;
+                        case 6:
+                            String als = ALS.tipoALS(raiz.hijos[1].texto);
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[3].texto, variables, als);
+                            break;
+                        case 7:
+                            result = Recorrido(raiz.hijos[5]);
+                            ArrayList parametro2 = (ArrayList) result;
+                            als = ALS.tipoALS(raiz.hijos[1].texto);
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[3].texto, parametro2, als);
+                            parametro2.clear();
                             break;
                     }
+                    retornar = false; //????????????????
+                    salir = false;
+                    variables.clear();
                     break;
                 case "VALORES":
                     switch (raiz.cantidadHijos) {
@@ -536,14 +553,6 @@ public class RecorridoEjecutar {
                             result = Recorrido(raiz.hijos[2]);
                             valor2.add(result);
                             result = valor2;
-                            break;
-                    }
-                    break;
-                case "ARR":
-                    switch (raiz.cantidadHijos) {
-                        case 2:
-                            ArrayList coordenada = (ArrayList) Recorrido(raiz.hijos[1]);
-                            result = VariableG.obtenerValorArreglo(raiz.hijos[0].texto, coordenada);
                             break;
                     }
                     break;
@@ -565,7 +574,8 @@ public class RecorridoEjecutar {
                     switch (raiz.cantidadHijos) {
                         case 8:
                             if (raiz.hijos[0].texto.equals(raiz.hijos[4].texto)) {
-                                ALS.buscarALS(raiz.hijos[1].texto);
+                                ALS.buscarALS(raiz.hijos[0].texto);
+                                ALS.agregarVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
                             } else {
                                 paradigmas.ReporteError.agregarErrorGK(raiz.hijos[0].texto, "Error Semantico", "Error de Sintaxis", 0, 0);
                             }
@@ -578,15 +588,45 @@ public class RecorridoEjecutar {
                             result = (Recorrido(raiz.hijos[0]));
                             break;
                         case 3:
+                            String als = ALS.tipoALS(raiz.hijos[0].texto);
+                            result = VariableG.obtenerVariable(raiz.hijos[2].texto, als);
                             break;
                         case 5:
+                            als = ALS.tipoALS(raiz.hijos[0].texto);
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, variables, als);
                             break;
-                        case 6:
+                        case 7:
+                            result = Recorrido(raiz.hijos[4]);
+                            ArrayList parametro2 = (ArrayList) result;
+                            als = ALS.tipoALS(raiz.hijos[0].texto);
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, parametro2, als);
+                            parametro2.clear();
+                    }
+                    break;
+                case "ATRIBUTO":
+                    switch (raiz.cantidadHijos) {
+                        case 2:
+                            result = (Recorrido(raiz.hijos[0]));
                             break;
+                        case 3:
+                            String als = ALS.tipoALS(raiz.hijos[0].texto);
+                            result = VariableG.obtenerVariable(raiz.hijos[2].texto, als);
+                            break;
+                        case 5:
+                            als = ALS.tipoALS(raiz.hijos[0].texto);
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, variables, als);
+                            break;
+                        case 7:
+                            result = Recorrido(raiz.hijos[4]);
+                            ArrayList parametro2 = (ArrayList) result;
+                            als = ALS.tipoALS(raiz.hijos[0].texto);
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, parametro2, als);
+                            parametro2.clear();
                     }
                     break;
                 case "IMPRIMIR":
-                    String imp = Recorrido(raiz.hijos[2]).toString();
+                    result = Recorrido(raiz.hijos[2]);
+                    String imp = result.toString();
                     if (imp != null) {
                         paradigmas.Atributos.imprimirGraphik.add(imp);
                         System.out.println(imp);

@@ -11,11 +11,12 @@ public class VariableG {
     public static int nivelAmbito = 0;
     public static ArrayList listaVariables = new ArrayList();
     public static ArrayList<NodoG> variableGlobal = new ArrayList();
+    public static Stack<String> nombreALS = new Stack<>();
 
     public static void crearVariable(String tipo, String nombre, Object valor, String visib) {
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito) {
+            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS)) {
                 paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "La variable " + nombre + " ya existe", 0, 0);
                 return;
             }
@@ -27,6 +28,7 @@ public class VariableG {
         v.visibilidad = visib;
         v.nivel = nivelAmbito;
         v.ambito = pilaAmbito.peek();
+        v.als = nombreALS.peek();
         listaVariables.add(v);
 
         paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Variable", v.ambito, "0");
@@ -35,7 +37,7 @@ public class VariableG {
     public static void crearVariable(String tipo, String nombre, Object valor, String visib, int tamanio[]) {
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito) {
+            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS)) {
                 paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "La variable " + nombre + " ya existe", 0, 0);
                 return;
             }
@@ -48,6 +50,7 @@ public class VariableG {
         v.tamanio = tamanio;
         v.nivel = nivelAmbito;
         v.ambito = pilaAmbito.peek();
+        v.als = nombreALS.peek();
         listaVariables.add(v);
         ArrayList val = (ArrayList) valor;
         paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Arreglo", v.ambito, String.valueOf(val.size()));
@@ -70,35 +73,23 @@ public class VariableG {
     public static void eliminarVariable() {
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
-            if (s.nivel == nivelAmbito) {
+            if (s.nivel == nivelAmbito && !"Global".equals(s.ambito)) {
                 listaVariables.remove(i);
                 return;
             }
         }
     }
 
-    public static Object obtenerValor(String nombre) {
-
-        String valor = "";
-        for (int i = 0; i < listaVariables.size(); i++) {
-            Variable s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre)) {
-                return s.valor;
-            }
-        }
-        paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable", 0, 0);
-        return valor;
-    }
-
-    public static Object obtenerVariable(String nombre) {
+    public static Object obtenerVariable(String nombre, String als) {
         Variable s = null;
         for (int i = listaVariables.size() - 1; i >= 0; i--) {
             Variable sim = (Variable) listaVariables.get(i);
-            if (sim.nombre.equals(nombre)) {
+            if (sim.nombre.equals(nombre) && sim.als.equals(als)) {
                 return sim.valor;
             }
         }
-        return s;
+        paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable", 0, 0);
+        return "";
     }
 
     public static Object obtenerValorArreglo(String nombre, ArrayList coord) {
@@ -170,4 +161,5 @@ class Variable {
     public String visibilidad;
     public ArrayList valores = new ArrayList();
     public int tamanio[];
+    public String als;
 }

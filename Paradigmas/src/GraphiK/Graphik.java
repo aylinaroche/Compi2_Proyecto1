@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
 
 public class Graphik {
-    
+
     public static void main(String[] args) throws Exception {
         String path_Lexico = System.getProperty("user.dir").replace("\\", "/") + "/src/Graphik/LexicoALS.jflex";
 //Genera el LEXICO
@@ -18,7 +18,7 @@ public class Graphik {
         jflex.Main.main(Flex);
 //Genera el SINTACTICO
         String Params[] = new String[5];
-        
+
         Params[0] = "-destdir";//habilita destino
         Params[1] = System.getProperty("user.dir").replace("\\", "/") + "/src/Graphik";//destino
         Params[2] = "-parser";//habilita nombre
@@ -30,7 +30,7 @@ public class Graphik {
         } catch (Exception e) {
             System.out.println(e);
         }
-        
+
         archivos();
 //        Analizar("importar Nodo.gk?\n"
 //                + "incluir_HK FormCuadraticaPositiva?\n"
@@ -49,7 +49,7 @@ public class Graphik {
 //                + "	llamar FuncionPolinomial1(x)?\n"
 //                + "	llamar creacion_nodos()?\n"
 //                + "}\n"
-//                + "cadena FormCuadraticaPositiva(){\n"
+        //+ "cadena FormCuadraticaPositiva(){\n"
 //                + "	a = (5*2)^2 - 4?\n"
 //                + "	var entero b = 3?\n"
 //                + "	var entero c = 8?\n"
@@ -234,14 +234,14 @@ public class Graphik {
 ////                //                + "}\n"
 ////                //                + "	\n"
 ////                //                + "\n"
-////                + "}#Pagina 52");
+//                + "}#Pagina 52");
     }
-    
+
     public static void Analizar(String texto) throws Exception {
         StringReader miReader = new StringReader(texto);
         LexicoALS miAnalizador = new LexicoALS(miReader);
         VariableG.pilaAmbito.push(paradigmas.Atributos.nombreArchivo);
-        
+
         SintacticoALS parser = new SintacticoALS(miAnalizador);
         parser.parse();
         try {
@@ -255,28 +255,71 @@ public class Graphik {
             }
         } catch (Exception e) {
         }
+
+        iniciarEjecutarPrueba();
     }
-    
+
+    public static void iniciarEjecutarPrueba() {
+        VariableG.pilaAmbito.push("Global");
+        ObjetoALS a = (ObjetoALS) ALS.listaALS.get(0);
+        VariableG.nombreALS.push(a.nombre);
+        RecorridoGuardar g = new RecorridoGuardar();
+        g.Recorrido(a.nodo);
+        Metodo_FuncionG.buscarMain();
+
+    }
+
     public static void iniciarEjecutar() {
         VariableG.pilaAmbito.pop();
 //Guardar Globales
-        RecorridoGuardar g = new RecorridoGuardar();
         VariableG.pilaAmbito.push("Global");
         ObjetoALS a = (ObjetoALS) ALS.listaALS.get(ALS.listaALS.size() - 1);
-        
+        VariableG.nombreALS.push(a.nombre);
+        RecorridoGuardar g = new RecorridoGuardar();
         g.Recorrido(a.nodo);
-        RecorridoEjecutar r = new RecorridoEjecutar();
-        for (int i = 0; i < VariableG.variableGlobal.size(); i++) {
-            NodoG n = VariableG.variableGlobal.get(i);
-            r.Recorrido(n);
-        }
+
         Metodo_FuncionG.buscarMain();
-        
+
     }
-    
+
     public static void archivos() {
         try {
-            Analizar("ALS aritmetica:publico {\n"
+            Analizar(""
+                    + "ALS Ejemplo_entrada:publico {\n"
+                    + "	\n"
+                    //   + "	var entero num =2?\n"
+                    + "\n"
+                    + "    vacio inicio(){\n"
+                    + "        aritmetica a = nuevo aritmetica()?\n"
+                //    + "        llamar a.aritmetica1()?"
+                    //                    + "        llamar a.aritmetica2()?\n"
+                                        + "        llamar a.aritmetica3()?\n"
+                    //                    + "        var entero i = llamar a.operacion(1,2,3)?\n"
+                    + "        imprimir(\"Resultado de operacion: \" + a.h)?\n"
+                   // + "         a.h = 5?"
+                    + "        imprimir(\"Resultado de operacion: \" + a.h)?\n"
+                    + "        aritmetica b = nuevo aritmetica()?\n"
+                    + "        imprimir(\"Resultado de operacion : \" + b.h)?\n"
+                    //                                        + "        \n"
+                    //                                        + "        var entero j = llamar a.ciclo1(i)?\n"
+                    //                                        + "        imprimir(\"Resultado de ciclo 1: \" + j)?\n"
+                    //                                        + "        \n"
+                    //                                        + "        \n"
+                    //                                        + "        var bool bandera = llamar a.ciclo2()?\n"
+                    //                                        + "        imprimir(\"Valor de bandera: \" + bandera)?\n"
+                    //                                        + "        \n"
+                    //                                        + "        \n"
+                    //                                        + "        llamar a.arreglo()?\n"
+                    //                                        + "        \n"
+                    + "        salon s = nuevo salon()?\n"
+                    + "        llamar s.cargar_estudiantes()?\n"
+                    + "        \n"
+                    + "    }   \n"
+                    + "    \n"
+                    + "}\n"
+                    + "\n"
+                    + "\n"
+                    + "ALS aritmetica:publico {\n"
                     + "    \n"
                     + "    var decimal pi = 3.1516:privado?\n"
                     + "    var decimal h:privado?\n"
@@ -302,22 +345,23 @@ public class Graphik {
                     + "    }\n"
                     + "    \n"
                     + "    vacio aritmetica3():publico{\n"
-                    + "        var entero r = 25?\n"
-                    + "        var decimal a = pi * (r^2)?\n"
-                    + "        \n"
-                    + "        imprimir(\"Salida aritmética3: \")?\n"
-                    + "        imprimir(\"El área de un circulo es: \" + a)?\n"
-                    + "        imprimir(\"Resultado = 85.0932\")?        \n"
+//                    + "       var entero r = 25?\n"
+//                    + "        var decimal a = pi * (r^2)?\n"
+//                    + "        \n"
+//                    + "        imprimir(\"Salida aritmética3: \")?\n"
+//                    + "        imprimir(\"El área de un circulo es: \" + a)?\n"
+//                    + "        imprimir(\"Resultado = 85.0932\")?        \n"
                     + "        \n"
                     + "        h = 16.75?\n"
-                    + "        \n"
-                    + "        var decimal f = a + h/4 * (20 - 3^2)?\n"
-                    + "        imprimir(\"Segunda salida aritmética3: \")?\n"
-                    + "        imprimir(\"Valor de f = \" + f)?\n"
-                    + "        imprimir(\"Resultado = 164.65\")?        \n"
+//                    + "        \n"
+//                    + "        var decimal f = a + h/4 * (20 - 3^2)?\n"
+//                    + "        imprimir(\"Segunda salida aritmética3: \")?\n"
+//                    + "        imprimir(\"Valor de f = \" + f)?\n"
+//                    + "        imprimir(\"Resultado = 164.65\")?        \n"
                     + "    }\n"
                     + "    \n"
-                    + "    entero operacion(entero a, entero b, entero c):publico{\n"
+                    + "    "
+                    + "entero operacion(entero a, entero b, entero c):publico{\n"
                     + "        \n"
                     + "        var entero x, y, z?\n"
                     + "        \n"
@@ -329,6 +373,8 @@ public class Graphik {
                     + "        retornar z?\n"
                     + "    }\n"
                     + "    \n"
+                    //////////////////////////////
+
                     + "    entero ciclo1(entero i):publico{\n"
                     + "        Para(x=0:x<10:x++){\n"
                     + "            Si(i>20 && i>x){\n"
@@ -340,7 +386,8 @@ public class Graphik {
                     + "        retornar i?\n"
                     + "    }\n"
                     + "    \n"
-                    + "    bool ciclo2():publico{\n"
+                    + "    "
+                    + "bool ciclo2():publico{\n"
                     + "        \n"
                     + "        var entero conteo = 1?\n"
                     + "        Mientras (conteo < 11) {\n"
@@ -355,18 +402,53 @@ public class Graphik {
                     + "        retornar verdadero?\n"
                     + "    }  \n"
                     + "    \n"
+                    + ""
                     + "    vacio arreglo():publico{\n"
                     + "        imprimir(\"----- Arreglo -----\")?\n"
-                    + "        var entero arreglo[] = {5,6,9,2,10}?\n"
+                    + "        var entero arreglo[5] = {5,6,9,2,10}?\n"
                     + "        Para(i=0:i<5:i++){\n"
                     + "          imprimir(arreglo[i]+\" \")?\n"
                     + "        }\n"
                     + "    }\n"
                     + "    \n"
                     + "    \n"
+                    + "}\n"
+                    //////////////////////////////////////////////
+                    + "ALS salon:publico {\n"
+                    + "    \n"
+                    + "    \n"
+                    + "    vacio cargar_estudiantes():publico{\n"
+                    + "    \n"
+                    + "        var estudiante estudiante1 = nuevo estudiante()?\n"
+                    + "        llamar estudiante1.ingresar_datos(\"Luis\", 22, 201754321)?\n"
+                    + "        llamar estudiante1.ingresar_detalle(\"3 calle\", \"5551223\", \"1234\")?\n"
+                    + "        \n"
+                    //                    + "        var estudiante estudiante2 = nuevo estudiante()?\n"
+                    //                    + "        llamar estudiante2.ingresar_datos(\"Pedro\", 20, 201754322)?\n"
+                    //                    + "        llamar estudiante2.ingresar_detalle(\"2 calle\", \"5551224\", \"444555333\")?\n"
+                    //                    + "        \n"
+                    //                    + "        var estudiante estudiante3 = nuevo estudiante()?\n"
+                    //                    + "        llamar estudiante3.ingresar_datos(\"Juan\", 19, 201754323)?\n"
+                    //                    + "        llamar estudiante3.ingresar_detalle(\"primera avenida\", \"2551224\", \"44435333\")?\n"
+                    //                    + "        \n"
+                    //                    + "        llamar estudiante1.siguiente_semestre()?\n"
+                    //                    + "        llamar estudiante2.siguiente_semestre()?\n"
+                    //                    + "        llamar estudiante3.siguiente_semestre()?\n"
+                    + "        \n"
+                    + "        \n"
+                    + "        imprimir(\"Datos de estudiantes\")?\n"
+                    + "        \n"
+                    + "        imprimir(estudiante1.nombre + \" tiene \" + estudiante1.edad + \" años, vide en: \" + estudiante1.d.direccion)?\n"
+                    //                    + "        imprimir(estudiante2.nombre + \" tiene \" + estudiante1.edad + \" años, vide en: \" + estudiante2.d.direccion)?\n"
+                    //                    + "        imprimir(estudiante3.nombre + \" tiene \" + estudiante1.edad + \" años, vide en: \" + estudiante3.d.direccion)?\n"
+                    //                    + "        \n"
+                    + "        \n"
+                    + "    }\n"
+                    + "    \n"
                     + "}");
         } catch (Exception ex) {
             Logger.getLogger(Graphik.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("ERROR :OOOO = " + ex);
         }
     }
 }
