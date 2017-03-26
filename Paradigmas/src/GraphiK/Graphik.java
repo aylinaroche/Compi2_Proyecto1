@@ -1,8 +1,10 @@
 package Graphik;
 
 import Graphik.Ejecutar.*;
+import Graphik.Objetos.ObjetoALS;
 import java.io.File;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
@@ -260,26 +262,21 @@ public class Graphik {
     }
 
     public static void iniciarEjecutarPrueba() {
-        VariableG.pilaAmbito.push("Global");
-        ObjetoALS a = (ObjetoALS) ALS.listaALS.get(0);
-        VariableG.nombreALS.push(a.nombre);
-        RecorridoGuardar g = new RecorridoGuardar();
-        g.Recorrido(a.nodo);
+        ObjetoALS a = new ObjetoALS();
+        a = (ObjetoALS) ALS.listaALS.get(0);
+        ArrayList v = new ArrayList();
+        v = (ArrayList) a.variables.clone();
+        VariableG.listaVariables = (ArrayList) v.clone();
+        Metodo_FuncionG.listaMetodos = (ArrayList) a.metodos.clone();
         Metodo_FuncionG.buscarMain();
-
     }
 
     public static void iniciarEjecutar() {
-        VariableG.pilaAmbito.pop();
-//Guardar Globales
-        VariableG.pilaAmbito.push("Global");
-        ObjetoALS a = (ObjetoALS) ALS.listaALS.get(ALS.listaALS.size() - 1);
-        VariableG.nombreALS.push(a.nombre);
-        RecorridoGuardar g = new RecorridoGuardar();
-        g.Recorrido(a.nodo);
-
+        ObjetoALS a = new ObjetoALS();
+        a = (ObjetoALS) ALS.listaALS.get(ALS.listaALS.size() - 1);
+        VariableG.listaVariables = (ArrayList) a.variables.clone();
+        Metodo_FuncionG.listaMetodos = (ArrayList) a.metodos.clone();
         Metodo_FuncionG.buscarMain();
-
     }
 
     public static void archivos() {
@@ -290,19 +287,29 @@ public class Graphik {
                     //   + "	var entero num =2?\n"
                     + "\n"
                     + "    vacio inicio(){\n"
+                    + "        imprimir(\"Entro en INICIO \")?\n"
                     + "        aritmetica a = nuevo aritmetica()?\n"
-                //    + "        llamar a.aritmetica1()?"
-                    //                    + "        llamar a.aritmetica2()?\n"
-                                        + "        llamar a.aritmetica3()?\n"
+                    //      + "        llamar a.aritmetica1()?"
+                    //      + "        llamar a.aritmetica2()?\n"
+                    + "        llamar a.aritmetica3()?\n"
                     //                    + "        var entero i = llamar a.operacion(1,2,3)?\n"
-                    + "        imprimir(\"Resultado de operacion: \" + a.h)?\n"
-                   // + "         a.h = 5?"
-                    + "        imprimir(\"Resultado de operacion: \" + a.h)?\n"
+                    + "        imprimir(\"Resultado de operacion A: \" + a.h)?\n"
+                    //                    // + "         a.h = 5?"
+                    //                    + "        imprimir(\"Resultado de operacion B: \" + a.h)?\n"
                     + "        aritmetica b = nuevo aritmetica()?\n"
-                    + "        imprimir(\"Resultado de operacion : \" + b.h)?\n"
-                    //                                        + "        \n"
-                    //                                        + "        var entero j = llamar a.ciclo1(i)?\n"
-                    //                                        + "        imprimir(\"Resultado de ciclo 1: \" + j)?\n"
+                    + "         llamar b.a3()?"
+                    + "        imprimir(\"Resultado de operacion B: \" + b.h)?\n"
+                    + "        aritmetica c= nuevo aritmetica()?\n"
+                    + "        imprimir(\"Resultado de operacion C: \" + c.h)?\n"
+                    + "        imprimir(\"Resultado de operacion A: \" + a.h)?\n"
+                    + "        imprimir(\"Resultado de operacion B: \" + b.h)?\n"
+                    + "        aritmetica d = nuevo aritmetica()?\n"
+                    + "        llamar d.aritmetica3()?\n"
+                    + "        imprimir(\"Resultado de operacion D: \" + d.h)?\n"
+                    //              
+                    ////                                        //                                        + "        \n"
+                    ////                                                            + "        var entero j = llamar a.ciclo1(i)?\n"
+                    ////                                                            + "        imprimir(\"Resultado de ciclo 1: \" + j)?\n"
                     //                                        + "        \n"
                     //                                        + "        \n"
                     //                                        + "        var bool bandera = llamar a.ciclo2()?\n"
@@ -310,9 +317,9 @@ public class Graphik {
                     //                                        + "        \n"
                     //                                        + "        \n"
                     //                                        + "        llamar a.arreglo()?\n"
-                    //                                        + "        \n"
-                    + "        salon s = nuevo salon()?\n"
-                    + "        llamar s.cargar_estudiantes()?\n"
+                    //                                                            + "        \n"
+                    //                    + "        salon s = nuevo salon()?\n"
+                    //                    + "        llamar s.cargar_estudiantes()?\n"
                     + "        \n"
                     + "    }   \n"
                     + "    \n"
@@ -321,8 +328,8 @@ public class Graphik {
                     + "\n"
                     + "ALS aritmetica:publico {\n"
                     + "    \n"
-                    + "    var decimal pi = 3.1516:privado?\n"
-                    + "    var decimal h:privado?\n"
+                    //   + "    var decimal pi = 3.1516:privado?\n"
+                    + "    var decimal h=5:privado?\n"
                     + "    \n"
                     + "    vacio aritmetica1():publico{\n"
                     + "    \n"
@@ -343,21 +350,24 @@ public class Graphik {
                     + "        imprimir(\"a^2 = \" + ((b^2) + (c^2)))?\n"
                     + "        imprimir(\"Resultado = 50\")?        \n"
                     + "    }\n"
+                    + "    vacio a3():publico{\n"
+                    + "         h=1000?"
+                    + "}\n"
                     + "    \n"
                     + "    vacio aritmetica3():publico{\n"
-//                    + "       var entero r = 25?\n"
-//                    + "        var decimal a = pi * (r^2)?\n"
-//                    + "        \n"
-//                    + "        imprimir(\"Salida aritmética3: \")?\n"
-//                    + "        imprimir(\"El área de un circulo es: \" + a)?\n"
-//                    + "        imprimir(\"Resultado = 85.0932\")?        \n"
+                    //                    + "       var entero r = 25?\n"
+                    //                    + "        var decimal a = pi * (r^2)?\n"
+                    //                    + "        \n"
+                    //                    + "        imprimir(\"Salida aritmética3: \")?\n"
+                    //                    + "        imprimir(\"El área de un circulo es: \" + a)?\n"
+                    //                    + "        imprimir(\"Resultado = 85.0932\")?        \n"
                     + "        \n"
                     + "        h = 16.75?\n"
-//                    + "        \n"
-//                    + "        var decimal f = a + h/4 * (20 - 3^2)?\n"
-//                    + "        imprimir(\"Segunda salida aritmética3: \")?\n"
-//                    + "        imprimir(\"Valor de f = \" + f)?\n"
-//                    + "        imprimir(\"Resultado = 164.65\")?        \n"
+                    //                    + "        \n"
+                    //                    + "        var decimal f = a + h/4 * (20 - 3^2)?\n"
+                    //                    + "        imprimir(\"Segunda salida aritmética3: \")?\n"
+                    //                    + "        imprimir(\"Valor de f = \" + f)?\n"
+                    //                    + "        imprimir(\"Resultado = 164.65\")?        \n"
                     + "    }\n"
                     + "    \n"
                     + "    "

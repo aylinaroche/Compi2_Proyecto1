@@ -4,6 +4,7 @@ package paradigmas;
 import Haskell.*;
 import Haskell.Ejecutar.*;
 import Graphik.*;
+import Graphik.Ejecutar.Datos;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import java.awt.Color;
@@ -195,6 +196,32 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
+        try {
+            JFileChooser file = new JFileChooser();
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter(".csv", ".csv");
+            file.setFileFilter(filtro);
+            file.showOpenDialog(this);
+            File abre = file.getSelectedFile();
+            ruta = abre.getAbsolutePath();
+            nombre = abre.getName();
+            System.out.println(ruta);
+            texto = "";
+            if (abre != null) {
+                FileReader archivos = new FileReader(abre);
+
+                try (BufferedReader lee = new BufferedReader(archivos)) {
+                    while ((aux = lee.readLine()) != null) {
+                        texto += aux + "\n";
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex + ""
+                    + "\nNo se ha encontrado el archivo",
+                    "ADVERTENCIA!!!", JOptionPane.WARNING_MESSAGE);
+        }
+
+        Datos.guardarDatos(texto);
 
     }//GEN-LAST:event_btnImportarActionPerformed
 

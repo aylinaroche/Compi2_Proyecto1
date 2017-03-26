@@ -3,8 +3,11 @@ package Graphik.Ejecutar;
 import Graphik.ALS;
 import static Graphik.Ejecutar.VariableG.nivelAmbito;
 import static Graphik.Ejecutar.VariableG.pilaAmbito;
+import Graphik.Objetos.MF;
+import Graphik.Objetos.ObjetoALS;
+import Graphik.Objetos.Variable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Stack;
 
 public class RecorridoEjecutar {
 
@@ -15,6 +18,8 @@ public class RecorridoEjecutar {
     public static Boolean asignarArreglo = false;
     public static int contador = 0;
     //
+
+//    public static Stack<String> ALSGeneral = new Stack<>();
     //
     public static int tamanio[] = new int[10];
     public static ArrayList valores = new ArrayList();
@@ -506,6 +511,9 @@ public class RecorridoEjecutar {
                 }
                 case "INSTANCIA":
                     switch (raiz.cantidadHijos) {
+                        case 2:
+                            result = Recorrido(raiz.hijos[1]);
+                            break;
                         case 4:
                             if ("llamar".equals(raiz.hijos[0].texto)) {
                                 result = Metodo_FuncionG.buscarMetodo(raiz.hijos[1].texto, variables, VariableG.nombreALS.peek());
@@ -574,8 +582,12 @@ public class RecorridoEjecutar {
                     switch (raiz.cantidadHijos) {
                         case 8:
                             if (raiz.hijos[0].texto.equals(raiz.hijos[4].texto)) {
-                                ALS.buscarALS(raiz.hijos[0].texto);
-                                ALS.agregarVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
+//                                ALS.clonar();
+//                                ALS.crearVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
+//                                ALS.clonar();
+
+                                VariableG.crearVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
+                                VariableG.imprimir();
                             } else {
                                 paradigmas.ReporteError.agregarErrorGK(raiz.hijos[0].texto, "Error Semantico", "Error de Sintaxis", 0, 0);
                             }
@@ -585,43 +597,57 @@ public class RecorridoEjecutar {
                 case "AccesoASL":
                     switch (raiz.cantidadHijos) {
                         case 2:
+//                            ObjetoALS obj = new ObjetoALS();
+//                            obj = (ObjetoALS) VariableG.obtenerVariable(raiz.hijos[0].texto, "VariableALS");
+//                            ArrayList n = new ArrayList();
+//                            n = (ArrayList) obj.variables.clone();
+//                            ALS.variables = (ArrayList) n;
+//                            ALS.metodos = (ArrayList) obj.metodos.clone();
+//                            result = (Recorrido(raiz.hijos[1]));
+//                            ALS.asignarValorALS(obj);
+
+                            VariableG.nombreALS.push(raiz.hijos[0].texto);
+                            result = (Recorrido(raiz.hijos[1]));
+                            break;
+                    }
+//                    ALS.variables.clear();
+//                    ALS.metodos.clear();
+                    break;
+                case "ATRIBUTOS":
+                    switch (raiz.cantidadHijos) {
+                        case 1:
                             result = (Recorrido(raiz.hijos[0]));
                             break;
-                        case 3:
-                            String als = ALS.tipoALS(raiz.hijos[0].texto);
-                            result = VariableG.obtenerVariable(raiz.hijos[2].texto, als);
+                        case 2:
+                            Recorrido(raiz.hijos[0]);
+                            result = (Recorrido(raiz.hijos[1]));
                             break;
-                        case 5:
-                            als = ALS.tipoALS(raiz.hijos[0].texto);
-                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, variables, als);
-                            break;
-                        case 7:
-                            result = Recorrido(raiz.hijos[4]);
-                            ArrayList parametro2 = (ArrayList) result;
-                            als = ALS.tipoALS(raiz.hijos[0].texto);
-                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, parametro2, als);
-                            parametro2.clear();
                     }
                     break;
                 case "ATRIBUTO":
                     switch (raiz.cantidadHijos) {
-                        case 2:
-                            result = (Recorrido(raiz.hijos[0]));
+                        case 1: //id
+//                            Object obj = ALS.obtenerVariableALS(raiz.hijos[0].texto);
+//                            result = obj;
+                            Object ob = VariableG.obtenerVariable(raiz.hijos[0].texto, VariableG.nombreALS.peek());
+                            result = ob;
+                            break;
+                        case 2: //arreglo
+//                            result = (Recorrido(raiz.hijos[0]));
                             break;
                         case 3:
-                            String als = ALS.tipoALS(raiz.hijos[0].texto);
-                            result = VariableG.obtenerVariable(raiz.hijos[2].texto, als);
+//                            String als = ALS.tipoALS(raiz.hijos[0].texto);
+//                            result = ALS.buscarMetodo(raiz.hijos[0].texto, variables, als);
+
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, variables, VariableG.nombreALS.peek());
                             break;
-                        case 5:
-                            als = ALS.tipoALS(raiz.hijos[0].texto);
-                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, variables, als);
+                        case 4:
+//                            result = Recorrido(raiz.hijos[4]);
+//                            ArrayList parametro2 = (ArrayList) result;
+//                            als = ALS.tipoALS(raiz.hijos[0].texto);
+//                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, parametro2, als);
+//                            parametro2.clear();
                             break;
-                        case 7:
-                            result = Recorrido(raiz.hijos[4]);
-                            ArrayList parametro2 = (ArrayList) result;
-                            als = ALS.tipoALS(raiz.hijos[0].texto);
-                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, parametro2, als);
-                            parametro2.clear();
                     }
                     break;
                 case "IMPRIMIR":

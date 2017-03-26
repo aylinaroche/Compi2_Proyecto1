@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Operacion {
-
+    
     public static Object resolverOperacion(NodoG nodo) {
         Object resultado = expresion(nodo);
         //   System.out.println(">>>>> " + resultado);
         return resultado;
     }
-
+    
     private static Object expresion(NodoG nodo) {
-
+        
         switch (nodo.cantidadHijos) {
             case 1:
                 String dato = nodo.hijos[0].texto;
-
+                
                 switch (dato) {
                     case "ARREGLO":
                     case "INSTANCIA":
@@ -52,7 +52,7 @@ public class Operacion {
                                     return true;
                                 }
                                 return false;
-
+                            
                             default:
                                 return "";
                         }
@@ -141,12 +141,12 @@ public class Operacion {
                 } else {
                     return "";
                 }
-
+            
             case 3: //Nodo binario
                 Object E1 = "";
                 Object E2 = "";
                 switch (nodo.hijos[1].texto) {
-
+                    
                     case "+": //E+E
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
@@ -242,7 +242,7 @@ public class Operacion {
                     case "-": //E-E
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
-
+                        
                         try {
                             if ((E1 instanceof Double) || (E2 instanceof Double)) {
                                 if ((E1 instanceof Integer) || (E2 instanceof Integer)) { //Entero
@@ -323,7 +323,7 @@ public class Operacion {
                     case "*": //E*E
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
-
+                        
                         try {
                             if ((E1 instanceof Double) || (E2 instanceof Double)) {
                                 if ((E1 instanceof Integer) || (E2 instanceof Integer)) { //Entero
@@ -398,7 +398,7 @@ public class Operacion {
                             }
                             paradigmas.ReporteError.agregarErrorGK("*", "Error Semantico", "Error al castear multiplicación ", 0, 0);
                             return (Double) 0.0;
-
+                            
                         } catch (Exception e) {
                             System.out.println("E");
                             return "";
@@ -486,7 +486,7 @@ public class Operacion {
                             }
                             paradigmas.ReporteError.agregarErrorGK("/", "Error Semantico", "Error al castear dividar ", 0, 0);
                             return (Double) 0.0;
-
+                            
                         } catch (Exception e) {
                             System.out.println("E");
                             return "";
@@ -496,7 +496,7 @@ public class Operacion {
                     case "^": //E*E
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
-
+                        
                         try {
                             if ((E1 instanceof Double) || (E2 instanceof Double)) {
                                 if ((E1 instanceof Integer) || (E2 instanceof Integer)) { //Entero
@@ -573,7 +573,7 @@ public class Operacion {
                             }
                             paradigmas.ReporteError.agregarErrorGK("^", "Error Semantico", "Error al castear potencia ", 0, 0);
                             return (Double) 0.0;
-
+                            
                         } catch (Exception e) {
                             System.out.println("E");
                             return "";
@@ -583,7 +583,7 @@ public class Operacion {
                         try {
                             E1 = expresion(nodo.hijos[0]);
                             E2 = expresion(nodo.hijos[2]);
-
+                            
                             if ((E1 instanceof Double || E2 instanceof Double) && (E1 instanceof Integer || E2 instanceof Integer)) {
                                 if (E1 instanceof Double) {
                                     Double var1 = (Double) (E1);
@@ -672,7 +672,7 @@ public class Operacion {
                         try {
                             E1 = expresion(nodo.hijos[0]);
                             E2 = expresion(nodo.hijos[2]);
-
+                            
                             if ((E1 instanceof Double || E2 instanceof Double) && (E1 instanceof Integer || E2 instanceof Integer)) {
                                 if (E1 instanceof Double) {
                                     Double var1 = (Double) (E1);
@@ -749,7 +749,7 @@ public class Operacion {
                                 return obtenerBoolean(E1) < obtenerBoolean(E2);
                             } else if ((E1 instanceof String && E2 instanceof String)) {
                                 return compararMenor((String) E1, (String) E2);
-
+                                
                             } else {
                                 paradigmas.ReporteError.agregarErrorGK("<", "Error Semantico", "Error al usar operador relacional <", 0, 0);
                             }
@@ -761,7 +761,7 @@ public class Operacion {
                         try {
                             E1 = expresion(nodo.hijos[0]);
                             E2 = expresion(nodo.hijos[2]);
-
+                            
                             if ((E1 instanceof Double || E2 instanceof Double) && (E1 instanceof Integer || E2 instanceof Integer)) {
                                 if (E1 instanceof Double) {
                                     Double var1 = (Double) (E1);
@@ -862,7 +862,7 @@ public class Operacion {
                         try {
                             E1 = expresion(nodo.hijos[0]);
                             E2 = expresion(nodo.hijos[2]);
-
+                            
                             if ((E1 instanceof Double || E2 instanceof Double) && (E1 instanceof Integer || E2 instanceof Integer)) {
                                 if (E1 instanceof Double) {
                                     Double var1 = (Double) (E1);
@@ -962,7 +962,7 @@ public class Operacion {
                         try {
                             E1 = expresion(nodo.hijos[0]);
                             E2 = expresion(nodo.hijos[2]);
-
+                            
                             if ((E1 instanceof Double || E2 instanceof Double) && (E1 instanceof Integer || E2 instanceof Integer)) {
                                 if (E1 instanceof Double) {
                                     Double var1 = (Double) (E1);
@@ -1051,7 +1051,7 @@ public class Operacion {
                         try {
                             E1 = expresion(nodo.hijos[0]);
                             E2 = expresion(nodo.hijos[2]);
-
+                            
                             if ((E1 instanceof Double || E2 instanceof Double) && (E1 instanceof Integer || E2 instanceof Integer)) {
                                 if (E1 instanceof Double) {
                                     Double var1 = (Double) (E1);
@@ -1138,27 +1138,27 @@ public class Operacion {
                     case "&&":
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
-
+                        
                         if (E1 instanceof Boolean && E2 instanceof Boolean) {
                             return (Boolean) E1 == true && (Boolean) E2 == true;
                         }
                         paradigmas.ReporteError.agregarErrorGK("&&", "Error Semantico", "Error al operar &&", 0, 0);
                         return false;
-
+                    
                     case "||":
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
-
+                        
                         if (E1 instanceof Boolean && E2 instanceof Boolean) {
                             return (Boolean) E1 == true || (Boolean) E2 == true;
                         }
                         paradigmas.ReporteError.agregarErrorGK("||", "Error Semantico", "Error al operar ||", 0, 0);
                         return false;
-
+                    
                     case "&|":
                         E1 = expresion(nodo.hijos[0]);
                         E2 = expresion(nodo.hijos[2]);
-
+                        
                         if (E1 instanceof Boolean && E2 instanceof Boolean) {
                             return !(Objects.equals((Boolean) E1, (Boolean) E2));
                         }
@@ -1168,10 +1168,10 @@ public class Operacion {
                         return expresion(nodo.hijos[1]);
                 }
         }
-
+        
         return "";
     }
-
+    
     public static Boolean compararMayor(String c1, String c2) {
         if (c1.length() > c2.length()) {
             return true;
@@ -1185,7 +1185,7 @@ public class Operacion {
         }
         return false;
     }
-
+    
     public static Boolean compararMenor(String c1, String c2) {
         if (c1.length() > c2.length()) {
             return false;
@@ -1199,7 +1199,7 @@ public class Operacion {
         }
         return false;
     }
-
+    
     public static Boolean compararIgual(String c1, String c2) {
         if (c1.length() > c2.length()) {
             return false;
@@ -1215,7 +1215,7 @@ public class Operacion {
         }
         return true;
     }
-
+    
     public static int obtenerBoolean(Object E1) {
         Boolean b = (Boolean) E1;
         if (b == true) {

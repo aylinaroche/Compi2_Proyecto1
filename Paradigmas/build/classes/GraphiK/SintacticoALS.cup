@@ -37,7 +37,7 @@ dosPuntos,imprimir,verdadero,falso,igualDoble,potencia,llaveA,llaveC,signo,ERROR
 dividido,cadena,graphikar,procesar,columna,decimal,entero,punto,caracter,inicio,tipoFloat,continuar,datos,
 nuevo,extension,var,incluir,hereda,als,llamar,llamarHK,donde,dondeCada,dondeTodo;
 
-non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,TIPO,ACCION,
+non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,TIPO,ACCION,ATRIBUTOS,
 INSTANCIA,IF,ELSE,CICLO,SWITCH,PARAMETROS,OP,CASO,VALORES,IMPRIMIR,MasVARIABLE,ASIGNACION,
 INSTRUCCION,OPCION,VARIABLE,DEFECTO,E,MATRIZ,ValorMATRIZ,ASIGNAR,PARA,PRINCIPAL,I,ATRIBUTO,
 ALS,AccesoASL,CrearASL,ARREGLO,MasMATRIZ,GLOBAL,A,GRAFICAR,DATOS,SENTENCIAS,SENTENCIA;
@@ -649,19 +649,11 @@ INSTANCIA::=llamar id:i parentesisA parentesisC{: //4
     INSTANCIA.insertar(new NodoG("llamarHK")); INSTANCIA.insertar(new NodoG(i)); INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(n.nodo); INSTANCIA.insertar(new NodoG(")")); 
     RESULT.nodo = INSTANCIA;
 :}
-|llamar id:i punto id:j parentesisA parentesisC{://6
-    NodoG INSTANCIA = new NodoG("INSTANCIA");
+|llamar AccesoASL:b{:
+    NodoG E = new NodoG("INSTANCIA");
     RESULT = new Caracter();
-    INSTANCIA.insertar(new NodoG("llamar")); INSTANCIA.insertar(new NodoG(i));   INSTANCIA.insertar(new NodoG(".")); 
-    INSTANCIA.insertar(new NodoG(j));INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(new NodoG(")")); 
-    RESULT.nodo = INSTANCIA;
-:}
-|llamar id:i punto id:j parentesisA VALORES:n parentesisC{://6
-    NodoG INSTANCIA = new NodoG("INSTANCIA");
-    RESULT = new Caracter();
-    INSTANCIA.insertar(new NodoG("llamar")); INSTANCIA.insertar(new NodoG(i)); INSTANCIA.insertar(new NodoG("."));  INSTANCIA.insertar(new NodoG(j)); 
-    INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(n.nodo); INSTANCIA.insertar(new NodoG(")")); 
-    RESULT.nodo = INSTANCIA;
+    E.insertar(new NodoG("llamar")); E.insertar(b.nodo); 
+    RESULT.nodo = E;
 :};
 
 
@@ -681,42 +673,50 @@ CrearASL::= var id:a id:b igual nuevo id:c parentesisA parentesisC signo{:
 :};
 
 
-AccesoASL::= AccesoASL:a signo{: 
+AccesoASL::= id:a ATRIBUTOS:b {:
     NodoG E = new NodoG("AccesoASL");
     RESULT = new Caracter();
-    E.insertar(a.nodo); 
-    RESULT.nodo = E;
-:}
-|id:a ATRIBUTO:b{:
-    NodoG E = new NodoG("AccesoASL");
-    RESULT = new Caracter();
-  //  E.insertar(new NodoG(a)); E.insertar(b.nodo); 
-    RESULT.nodo = E;
-:}
-|id:a punto id:b parentesisA parentesisC{:
-    NodoG E = new NodoG("AccesoASL");
-    RESULT = new Caracter();
-    E.insertar(new NodoG(a)); E.insertar(new NodoG("."));  E.insertar(new NodoG(b)); E.insertar(new NodoG("("));E.insertar(new NodoG(")"));
-    RESULT.nodo = E;
-:}
-|id:a punto id:b parentesisA VALORES:n parentesisC{:
-    NodoG E = new NodoG("AccesoASL");
-    RESULT = new Caracter();
-    E.insertar(new NodoG(a)); E.insertar(new NodoG("."));  E.insertar(new NodoG(b)); E.insertar(new NodoG("(")); E.insertar(n.nodo); E.insertar(new NodoG(")"));
+    E.insertar(new NodoG(a)); E.insertar(b.nodo); 
     RESULT.nodo = E;
 :};
 
 
-ATRIBUTO::=ATRIBUTO:a punto id:i{:
-    NodoG E = new NodoG("ATRIBUTO");
+ATRIBUTOS::=ATRIBUTOS:a ATRIBUTO:b{:
+    NodoG E = new NodoG("ATRIBUTOS");
     RESULT = new Caracter();
-    E.insertar(a.nodo); E.insertar(new NodoG(i)); 
+    E.insertar(a.nodo); E.insertar(b.nodo); 
     RESULT.nodo = E;
 :}
-|punto id:i{:
+|ATRIBUTO:a{:
+    NodoG E = new NodoG("ATRIBUTOS");
+    RESULT = new Caracter();
+    E.insertar(a.nodo); 
+    RESULT.nodo = E;
+:};
+
+
+ATRIBUTO::=punto id:i{:
     NodoG E = new NodoG("ATRIBUTO");
     RESULT = new Caracter();
     E.insertar(new NodoG(i)); 
+    RESULT.nodo = E;
+:}
+|punto id:i ARREGLO:n{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("ATRIBUTO");
+    E.insertar(new NodoG(i)); E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|punto id:b parentesisA parentesisC{:
+    NodoG E = new NodoG("ATRIBUTO");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(b)); E.insertar(new NodoG("("));E.insertar(new NodoG(")"));
+    RESULT.nodo = E;
+:}
+|punto id:b parentesisA VALORES:n parentesisC{:
+    NodoG E = new NodoG("ATRIBUTO");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(b)); E.insertar(new NodoG("(")); E.insertar(n.nodo); E.insertar(new NodoG(")"));
     RESULT.nodo = E;
 :};
 

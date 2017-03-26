@@ -1,10 +1,12 @@
 package Graphik.Ejecutar;
 
+import Graphik.Objetos.MF;
+import Graphik.Objetos.Parametro;
 import java.util.ArrayList;
 
 public class Metodo_FuncionG {
 
-    public static ArrayList metodoFuncionG = new ArrayList();
+    public static ArrayList listaMetodos = new ArrayList();
     public static ArrayList parametros = new ArrayList();
 
     public static void agregarMF(String nombre, String tipo, NodoG nodo, String visible, ArrayList parametro) {
@@ -16,7 +18,7 @@ public class Metodo_FuncionG {
         mf.parametro = (ArrayList) parametro.clone();
         mf.visibilidad = visible;
         mf.als = VariableG.nombreALS.peek();
-        metodoFuncionG.add(mf);
+        listaMetodos.add(mf);
         paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Metodo/Funcion", mf.ambito, " - ");
     }
 
@@ -29,8 +31,8 @@ public class Metodo_FuncionG {
 
     public static Object buscarMetodo(String id, ArrayList parametro, String als) {
         Object retorno = "";
-        for (int i = 0; i < metodoFuncionG.size(); i++) {
-            MF mf = (MF) metodoFuncionG.get(i);
+        for (int i = 0; i < listaMetodos.size(); i++) {
+            MF mf = (MF) listaMetodos.get(i);
 
             if (mf.nombre.equals(id) && mf.als.equals(als)) {
                 VariableG.pilaAmbito.push(id);
@@ -69,8 +71,8 @@ public class Metodo_FuncionG {
     }
 
     public static String buscarMain() {
-        for (int i = 0; i < metodoFuncionG.size(); i++) {
-            MF mf = (MF) metodoFuncionG.get(i);
+        for (int i = 0; i < listaMetodos.size(); i++) {
+            MF mf = (MF) listaMetodos.get(i);
 
             if (mf.nombre.equals("inicio")) {
                 VariableG.pilaAmbito.push("inicio");
@@ -85,22 +87,4 @@ public class Metodo_FuncionG {
         paradigmas.ReporteError.agregarErrorGK("inicio", "Error Semantico", "No se ha encontrado el metodo principal", 0, 0);
         return "";
     }
-}
-
-class MF {
-
-    public String nombre;
-    public String tipo;
-    public String ambito;
-    public NodoG nodo;
-    public ArrayList parametro;
-    public String visibilidad;
-    public String als;
-}
-
-class Parametro {
-
-    public String nombre;
-    public String tipo;
-    public String valor;
 }

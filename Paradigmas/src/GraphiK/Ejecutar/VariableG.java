@@ -1,7 +1,12 @@
 package Graphik.Ejecutar;
 
+import Graphik.ALS;
+import static Graphik.ALS.listaALS;
+import Graphik.Objetos.MF;
+import Graphik.Objetos.ObjetoALS;
 import java.util.ArrayList;
 import java.util.Stack;
+import Graphik.Objetos.Variable;
 
 public class VariableG {
 
@@ -57,17 +62,24 @@ public class VariableG {
     }
 
     public static void asignarValor(String nombre, Object valor) {
-        boolean existe = false;
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre)) {
+            if (s.nombre.equals(nombre) &&s.als.equals(nombreALS.peek())) {
                 s.valor = valor;
-                existe = true;
+                ALS.imprimir("Asig1");
+                return;
             }
         }
-        if (existe == false) {
-            paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable " + nombre, 0, 0);
-        }
+//        for (int i = 0; i < ALS.variables.size(); i++) {
+//            Variable s = (Variable) ALS.variables.get(i);
+//            if (s.nombre.equals(nombre)) {
+//                ALS.imprimir("Asi2");
+//                s.valor = valor;
+//                ALS.imprimir("Asi3");
+//                return;
+//            }
+//        }
+        paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable " + nombre, 0, 0);
     }
 
     public static void eliminarVariable() {
@@ -85,9 +97,18 @@ public class VariableG {
         for (int i = listaVariables.size() - 1; i >= 0; i--) {
             Variable sim = (Variable) listaVariables.get(i);
             if (sim.nombre.equals(nombre) && sim.als.equals(als)) {
-                return sim.valor;
+                Object valor = sim.valor;
+                return valor;
             }
         }
+//        for (int i = ALS.variables.size() - 1; i >= 0; i--) {
+//            Variable sim = (Variable) ALS.variables.get(i);
+//            if (sim.nombre.equals(nombre)) {
+//                 Object valor = sim.valor;
+//                return valor;
+//            }
+//        }
+
         paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable", 0, 0);
         return "";
     }
@@ -148,18 +169,46 @@ public class VariableG {
         }
     }
 
-}
+    ///////////////////////////
+    public static void crearVariableALS(String tipo, String nombre) {
+        ObjetoALS ins = new ObjetoALS();
+        ins.als = tipo;
+        ins.nombre = nombre;
+        nombreALS.push(nombre);
+        for (int i = 0; i < listaALS.size(); i++) {
+            ObjetoALS obj = (ObjetoALS) listaALS.get(i);
+            if (obj.nombre.equals(tipo)) {
 
-class Variable {
+                for (int j = 0; j < obj.variables.size(); j++) {
+                    Variable var = (Variable) obj.variables.get(j);
 
-    public String ambito;
-    public int nivel;
+                    Variable v = new Variable();
+                    v.nombre = var.nombre;
+                    v.tipo = var.tipo;
+                    v.valor = var.valor;
+                    v.nivel = var.nivel;
+                    v.ambito = var.ambito;
+                    v.als = nombre;
+                    listaVariables.add(v);
+                }
+                for (int j = 0; j < obj.metodos.size(); j++) {
+                    MF var = (MF) obj.metodos.get(j);
 
-    public String nombre;
-    public Object valor;
-    public String tipo;
-    public String visibilidad;
-    public ArrayList valores = new ArrayList();
-    public int tamanio[];
-    public String als;
+                    Metodo_FuncionG.agregarMF(var.nombre, var.tipo, var.nodo, var.visibilidad, var.parametro);
+                }
+                
+            }
+        }
+
+        // paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Variable", v.ambito, "0");
+    }
+
+    public static void imprimir() {
+        System.out.println("********** IMPRIMIR ***********");
+        for (int i = 0; i < listaVariables.size(); i++) {
+            Variable v = (Variable) listaVariables.get(i);
+            System.out.println(v.nombre + "  -  " + v.tipo + "  -  " + v.als + "  -  " + v.ambito + "  -  " + v.valor);
+            // return;
+        }
+    }
 }
