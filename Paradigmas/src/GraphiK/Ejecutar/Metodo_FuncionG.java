@@ -37,7 +37,7 @@ public class Metodo_FuncionG {
             if (mf.nombre.equals(id) && mf.als.equals(als)) {
                 VariableG.pilaAmbito.push(id);
                 VariableG.nivelAmbito++;
-                VariableG.nombreALS.push(als);
+              //  VariableG.nombreALS.push(als);
                 if (parametro.isEmpty() && mf.parametro.isEmpty()) {
                     parametro.clear();
                     RecorridoEjecutar r = new RecorridoEjecutar();
@@ -59,7 +59,7 @@ public class Metodo_FuncionG {
                     VariableG.eliminarVariable();
                     VariableG.nivelAmbito--;
                     VariableG.pilaAmbito.pop();
-                    VariableG.nombreALS.pop();
+             //       VariableG.nombreALS.pop();
 
                     return retorno;
                 }

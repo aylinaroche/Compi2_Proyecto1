@@ -2,7 +2,7 @@ package Graphik.Objetos;
 
 import java.util.ArrayList;
 
-public class Variable implements Cloneable{
+public class Variable implements Cloneable {
 
     public String ambito;
     public int nivel;
@@ -14,4 +14,5 @@ public class Variable implements Cloneable{
     public ArrayList valores = new ArrayList();
     public int tamanio[];
     public String als;
+    public String aux;
 }

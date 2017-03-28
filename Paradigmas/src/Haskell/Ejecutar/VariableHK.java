@@ -30,18 +30,18 @@ public class VariableHK {
     }
 
     public static void eliminarVariable() {
-        for (int i = 0; i < listaVariables.size(); i++) {
+        for (int i =listaVariables.size()-1; i>=0;i--) {
             Variable s = (Variable) listaVariables.get(i);
             if (s.nivel == nivelAmbito) {
                 listaVariables.remove(i);
-                return;
+             //   return;
             }
         }
-        for (int i = 0; i < MatrizHK.listaMatriz.size(); i++) {
+       for (int i =MatrizHK.listaMatriz.size()-1; i>=0;i--) {
             Matriz s = (Matriz) MatrizHK.listaMatriz.get(i);
             if (s.nivel == nivelAmbito) {
                 MatrizHK.listaMatriz.remove(i);
-                return;
+               // return;
             }
         }
     }

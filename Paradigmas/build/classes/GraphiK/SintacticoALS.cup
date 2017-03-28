@@ -38,9 +38,9 @@ dividido,cadena,graphikar,procesar,columna,decimal,entero,punto,caracter,inicio,
 nuevo,extension,var,incluir,hereda,als,llamar,llamarHK,donde,dondeCada,dondeTodo;
 
 non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,TIPO,ACCION,ATRIBUTOS,
-INSTANCIA,IF,ELSE,CICLO,SWITCH,PARAMETROS,OP,CASO,VALORES,IMPRIMIR,MasVARIABLE,ASIGNACION,
-INSTRUCCION,OPCION,VARIABLE,DEFECTO,E,MATRIZ,ValorMATRIZ,ASIGNAR,PARA,PRINCIPAL,I,ATRIBUTO,
-ALS,AccesoASL,CrearASL,ARREGLO,MasMATRIZ,GLOBAL,A,GRAFICAR,DATOS,SENTENCIAS,SENTENCIA;
+INSTANCIA,IF,ELSE,CICLO,SWITCH,PARAMETROS,OP,CASO,VALORES,IMPRIMIR,MasVARIABLE,ASIGNACION,PROCESAR,
+INSTRUCCION,OPCION,VARIABLE,DEFECTO,E,MATRIZ,ValorMATRIZ,ASIGNAR,PARA,PRINCIPAL,I,ATRIBUTO,DONDE,
+ALS,AccesoASL,CrearASL,ARREGLO,MasMATRIZ,GLOBAL,A,GRAFICAR,DATOS,SENTENCIAS,SENTENCIA,COLUMNA;
 
 precedence left mas, menos;
 precedence left por, dividido;
@@ -315,7 +315,13 @@ TIPO::=tipoString:n{:
     TIPO.insertar(new NodoG("vacio")); 
     RESULT.nodo = TIPO;
 :}
-|tipoFloat{::};
+|tipoFloat{::}
+|id:i{:
+    NodoG TIPO = new NodoG("TIPO");
+    RESULT = new Caracter();
+    TIPO.insertar(new NodoG(i)); 
+    RESULT.nodo = TIPO;
+:};
 
 
 IMPRIMIR::=imprimir parentesisA OP:n parentesisC signo{:
@@ -399,16 +405,16 @@ ASIGNACION::=id:i ASIGNAR:a signo{: //2 (?)
     ASIGNACION.insertar(new NodoG(i));  ASIGNACION.insertar(a.nodo); 
     RESULT.nodo = ASIGNACION;
 :}
-|id:i ARREGLO:m ASIGNAR:a signo{: //4
+|id:i ARREGLO:m ASIGNAR:a signo{: //3
     NodoG ASIGNACION = new NodoG("ASIGNACION");
     RESULT = new Caracter();
-    ASIGNACION.insertar(new NodoG(i)); ASIGNACION.insertar(m.nodo);  ASIGNACION.insertar(a.nodo); ASIGNACION.insertar(new NodoG("?")); 
+    ASIGNACION.insertar(new NodoG(i)); ASIGNACION.insertar(m.nodo);  ASIGNACION.insertar(a.nodo); 
     RESULT.nodo = ASIGNACION;
 :}
-|id:i ATRIBUTO:m ASIGNAR:a signo{: //5
+|id:i ATRIBUTO:m ASIGNAR:a signo{: //4
     NodoG ASIGNACION = new NodoG("ASIGNACION");
     RESULT = new Caracter();
-    ASIGNACION.insertar(new NodoG(i));  ASIGNACION.insertar(new NodoG(".")); ASIGNACION.insertar(m.nodo);  ASIGNACION.insertar(a.nodo); ASIGNACION.insertar(new NodoG("?")); 
+    ASIGNACION.insertar(new NodoG(i));  ASIGNACION.insertar(m.nodo); ASIGNACION.insertar(a.nodo); ASIGNACION.insertar(new NodoG("?")); 
     RESULT.nodo = ASIGNACION;
 :};
 
@@ -625,7 +631,13 @@ PARA::= para parentesisA VARIABLE:a dosPuntos OP:n1 dosPuntos OP:n2 parentesisC 
 :};
 
 
-INSTANCIA::=llamar id:i parentesisA parentesisC{: //4
+INSTANCIA::=llamar datos parentesisA parentesisC{: //4
+    NodoG INSTANCIA = new NodoG("INSTANCIA");
+    RESULT = new Caracter();
+    INSTANCIA.insertar(new NodoG("llamar"));
+    RESULT.nodo = INSTANCIA;
+:}
+|llamar id:i parentesisA parentesisC{: //4
     NodoG INSTANCIA = new NodoG("INSTANCIA");
     RESULT = new Caracter();
     INSTANCIA.insertar(new NodoG("llamar")); INSTANCIA.insertar(new NodoG(i)); INSTANCIA.insertar(new NodoG("(")); INSTANCIA.insertar(new NodoG(")")); 
@@ -668,6 +680,13 @@ CrearASL::= var id:a id:b igual nuevo id:c parentesisA parentesisC signo{:
     NodoG E = new NodoG("CrearASL");
     RESULT = new Caracter();
     E.insertar(new NodoG(a));  E.insertar(new NodoG(b)); E.insertar(new NodoG("=")); E.insertar(new NodoG("nuevo")); 
+    E.insertar(new NodoG(c));E.insertar(new NodoG("(")); E.insertar(new NodoG(")")); E.insertar(new NodoG("?")); 
+    RESULT.nodo = E;
+:}
+|id:b igual nuevo id:c parentesisA parentesisC signo{:
+    NodoG E = new NodoG("CrearASL");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(b)); E.insertar(new NodoG("=")); E.insertar(new NodoG("nuevo")); 
     E.insertar(new NodoG(c));E.insertar(new NodoG("(")); E.insertar(new NodoG(")")); E.insertar(new NodoG("?")); 
     RESULT.nodo = E;
 :};
@@ -921,10 +940,10 @@ E::=parentesisA E:a parentesisC{:
 :};
 
 
-GRAFICAR::=graphikar parentesisA parentesisC signo{:
+GRAFICAR::=graphikar parentesisA id:i coma id:j parentesisC signo{:
     RESULT = new Caracter();
     NodoG E = new NodoG("GRAFICAR");
-    E.insertar(new NodoG("graphikar")); E.insertar(new NodoG("(")); E.insertar(new NodoG(")")); 
+    E.insertar(new NodoG("graphikar")); E.insertar(new NodoG(i)); E.insertar(new NodoG(j)); 
     RESULT.nodo = E;
 :};
 
@@ -932,46 +951,68 @@ GRAFICAR::=graphikar parentesisA parentesisC signo{:
 DATOS::= tipoVoid datos parentesisA parentesisC llaveA SENTENCIAS:n llaveC{:
     RESULT = new Caracter();
     NodoG E = new NodoG("DATOS");
-    E.insertar(new NodoG("vacio")); E.insertar(new NodoG("datos"));  E.insertar(n.nodo);
+    E.insertar(new NodoG("datos"));  E.insertar(n.nodo);
     RESULT.nodo = E;
 :};
 
 
-SENTENCIAS::= SENTENCIAS:n SENTENCIA:m{:
+SENTENCIAS::= PROCESAR:p DONDE:n{:
     RESULT = new Caracter();
     NodoG E = new NodoG("SENTENCIAS");
-    E.insertar(n.nodo); E.insertar(m.nodo);
+    E.insertar(p.nodo); E.insertar(n.nodo);
     RESULT.nodo = E;
 :}
-|SENTENCIA:n{:
+|PROCESAR:p {:
     RESULT = new Caracter();
     NodoG E = new NodoG("SENTENCIAS");
+    E.insertar(p.nodo); 
+    RESULT.nodo = E;
+:};
+
+
+PROCESAR::=procesar igual llamarHK id:i parentesisA COLUMNA:n parentesisC signo{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("PROCESAR");
+    E.insertar(new NodoG("ProcesarHK")); E.insertar(new NodoG(i)); E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|procesar igual llamar id:i parentesisA COLUMNA:n parentesisC signo{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("PROCESAR");
+    E.insertar(new NodoG("Procesar")); E.insertar(new NodoG(i)); E.insertar(n.nodo);
+    RESULT.nodo = E;
+:};
+
+
+COLUMNA::= COLUMNA:c coma columna parentesisA OP:n parentesisC{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("COLUMNA");
+    E.insertar(c.nodo); E.insertar(n.nodo);
+    RESULT.nodo = E;
+:}
+|columna parentesisA OP:n parentesisC{:
+    RESULT = new Caracter();
+    NodoG E = new NodoG("COLUMNA");
     E.insertar(n.nodo);
     RESULT.nodo = E;
 :};
 
 
-SENTENCIA::=procesar igual OP:n{:
+DONDE::=donde parentesisA OP:n parentesisC igual OP:m signo{:
     RESULT = new Caracter();
-    NodoG E = new NodoG("SENTENCIA");
-    E.insertar(new NodoG("Procesar")); E.insertar(n.nodo);
-    RESULT.nodo = E;
-:}
-|donde parentesisA OP:n parentesisC igual OP:m signo{:
-    RESULT = new Caracter();
-    NodoG E = new NodoG("SENTENCIA");
-    E.insertar(new NodoG("Donde")); E.insertar(n.nodo); E.insertar(m.nodo);
+    NodoG E = new NodoG("DONDE");
+    E.insertar(new NodoG("Donde")); E.insertar(n.nodo); E.insertar(m.nodo); E.insertar(new NodoG("?"));
     RESULT.nodo = E;
 :}
 |dondeCada parentesisA OP:n parentesisC signo{:
     RESULT = new Caracter();
-    NodoG E = new NodoG("SENTENCIA");
-    E.insertar(new NodoG("DondeCada"));E.insertar(n.nodo);
+    NodoG E = new NodoG("DONDE");
+    E.insertar(new NodoG("DondeCada"));E.insertar(n.nodo);E.insertar(new NodoG("?"));
     RESULT.nodo = E;
 :}
 |dondeTodo parentesisA OP:n parentesisC signo{:
     RESULT = new Caracter();
-    NodoG E = new NodoG("SENTENCIA");
+    NodoG E = new NodoG("DONDE");
     E.insertar(new NodoG("DondeTodo")); E.insertar(n.nodo);
     RESULT.nodo = E;
 :};

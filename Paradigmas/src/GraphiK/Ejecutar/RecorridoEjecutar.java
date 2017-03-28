@@ -3,11 +3,9 @@ package Graphik.Ejecutar;
 import Graphik.ALS;
 import static Graphik.Ejecutar.VariableG.nivelAmbito;
 import static Graphik.Ejecutar.VariableG.pilaAmbito;
-import Graphik.Objetos.MF;
-import Graphik.Objetos.ObjetoALS;
 import Graphik.Objetos.Variable;
 import java.util.ArrayList;
-import java.util.Stack;
+import paradigmas.Pop;
 
 public class RecorridoEjecutar {
 
@@ -16,7 +14,12 @@ public class RecorridoEjecutar {
     public static ArrayList variables = new ArrayList();
     public static Boolean retornar = false, continuar = false, salir = false;
     public static Boolean asignarArreglo = false;
+    public static Boolean atributoAsignar = false;
     public static int contador = 0;
+    public static int posDonde = 0;
+    public static String atributo = "";
+    public static String tipoDonde = "";
+    public static String tipoAux = "";
     //
 
 //    public static Stack<String> ALSGeneral = new Stack<>();
@@ -85,7 +88,6 @@ public class RecorridoEjecutar {
                     switch (raiz.cantidadHijos) {
                         case 1:
                             result = Recorrido(raiz.hijos[0]);
-
                             break;
                         case 2:
                             result = Recorrido(raiz.hijos[0]);
@@ -240,12 +242,21 @@ public class RecorridoEjecutar {
                             asignar = Recorrido(raiz.hijos[1]);
                             VariableG.asignarValor(id, asignar);
                             break;
-                        case 4:
+                        case 3:
                             asignarArreglo = true;
                             ArrayList coordenada = (ArrayList) Recorrido(raiz.hijos[1]);
                             asignar = Recorrido(raiz.hijos[2]);
                             VariableG.asignarValorArreglo(raiz.hijos[0].texto, coordenada, asignar);
                             asignarArreglo = false;
+                            break;
+                        case 4:
+                            atributoAsignar = true;
+                            asignar = Recorrido(raiz.hijos[2]);
+                            Recorrido(raiz.hijos[1]);
+                            atributo = raiz.hijos[0].texto + "," + atributo;
+                            VariableG.asignarValorALS(atributo, asignar);
+                            atributoAsignar = false;
+                            atributo = "";
                             break;
                     }
                     break;
@@ -511,6 +522,9 @@ public class RecorridoEjecutar {
                 }
                 case "INSTANCIA":
                     switch (raiz.cantidadHijos) {
+                        case 1:
+                            result = Metodo_FuncionG.buscarMetodo("datos", variables, VariableG.nombreALS.peek());
+                            break;
                         case 2:
                             result = Recorrido(raiz.hijos[1]);
                             break;
@@ -580,14 +594,19 @@ public class RecorridoEjecutar {
                     break;
                 case "CrearASL":
                     switch (raiz.cantidadHijos) {
+                        case 7:
+                            Boolean b = VariableG.existeVariable(raiz.hijos[0].texto, raiz.hijos[3].texto);
+                            if (b) {
+                                VariableG.crearVariableALS(raiz.hijos[3].texto, raiz.hijos[0].texto);
+                                // VariableG.imprimir();
+                            } else {
+                                paradigmas.ReporteError.agregarErrorGK(raiz.hijos[0].texto, "Error Semantico", "Error de Sintaxis", 0, 0);
+                            }
+                            break;
                         case 8:
                             if (raiz.hijos[0].texto.equals(raiz.hijos[4].texto)) {
-//                                ALS.clonar();
-//                                ALS.crearVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
-//                                ALS.clonar();
-
                                 VariableG.crearVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
-                                VariableG.imprimir();
+                                //VariableG.imprimir();
                             } else {
                                 paradigmas.ReporteError.agregarErrorGK(raiz.hijos[0].texto, "Error Semantico", "Error de Sintaxis", 0, 0);
                             }
@@ -597,21 +616,16 @@ public class RecorridoEjecutar {
                 case "AccesoASL":
                     switch (raiz.cantidadHijos) {
                         case 2:
-//                            ObjetoALS obj = new ObjetoALS();
-//                            obj = (ObjetoALS) VariableG.obtenerVariable(raiz.hijos[0].texto, "VariableALS");
-//                            ArrayList n = new ArrayList();
-//                            n = (ArrayList) obj.variables.clone();
-//                            ALS.variables = (ArrayList) n;
-//                            ALS.metodos = (ArrayList) obj.metodos.clone();
-//                            result = (Recorrido(raiz.hijos[1]));
-//                            ALS.asignarValorALS(obj);
-
+                            int cont = VariableG.nivelALS;
                             VariableG.nombreALS.push(raiz.hijos[0].texto);
+                            VariableG.nivelALS++;
                             result = (Recorrido(raiz.hijos[1]));
+                            while (cont != VariableG.nivelALS) {
+                                VariableG.nivelALS--;
+                                VariableG.nombreALS.pop();
+                            }
                             break;
                     }
-//                    ALS.variables.clear();
-//                    ALS.metodos.clear();
                     break;
                 case "ATRIBUTOS":
                     switch (raiz.cantidadHijos) {
@@ -625,28 +639,132 @@ public class RecorridoEjecutar {
                     }
                     break;
                 case "ATRIBUTO":
-                    switch (raiz.cantidadHijos) {
-                        case 1: //id
-//                            Object obj = ALS.obtenerVariableALS(raiz.hijos[0].texto);
-//                            result = obj;
-                            Object ob = VariableG.obtenerVariable(raiz.hijos[0].texto, VariableG.nombreALS.peek());
-                            result = ob;
-                            break;
-                        case 2: //arreglo
+                    if (atributoAsignar == true) {
+                        switch (raiz.cantidadHijos) {
+                            case 1: //id
+                                atributo += raiz.hijos[0].texto + ",";
+                                break;
+                            case 2: //arreglo
 //                            result = (Recorrido(raiz.hijos[0]));
+                                break;
+                            case 3:
+                                //result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, variables, VariableG.nombreALS.peek());
+                                break;
+                            case 4:
+                                break;
+                        }
+                    } else {
+                        switch (raiz.cantidadHijos) {
+                            case 1: //id
+                                Object obj = VariableG.obtenerVariable(raiz.hijos[0].texto, VariableG.nombreALS.peek());
+                                if (obj instanceof Double || obj instanceof Integer || obj instanceof String || obj instanceof Character || obj instanceof Boolean) {
+                                    result = obj;
+                                } else if (tipo.equals("entero") || tipo.equals("decimal") || tipo.equals("cadena") || tipo.equals("caracter") || tipo.equals("bool")) {
+                                    result = obj;
+                                } else {
+                                    //     System.out.println(" ->>>>> " + raiz.hijos[0].texto);
+                                    VariableG.nombreALS.push(raiz.hijos[0].texto);
+                                    VariableG.nivelALS++;
+                                }
+                                break;
+                            case 2: //arreglo
+//                            result = (Recorrido(raiz.hijos[0]));
+                                break;
+                            case 3:
+                                result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, variables, VariableG.nombreALS.peek());
+                                break;
+                            case 4:
+                                result = Recorrido(raiz.hijos[2]);
+                                ArrayList parametro2 = (ArrayList) result;
+                                result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, parametro2, VariableG.nombreALS.peek());
+                                parametro2.clear();
+                                break;
+                        }
+                    }
+                    //VariableG.nivelALS--;
+                    break;
+                case "SENTENCIAS":
+                    switch (raiz.cantidadHijos) {
+                        case 1:
+                            posDonde = (int) Recorrido(raiz.hijos[1]); //Donde
                             break;
+                        case 2:
+                            posDonde = (int) Recorrido(raiz.hijos[1]); //Donde
+                            Recorrido(raiz.hijos[0]);//Procesar
+                            break;
+                    }
+                    Pop pop = new Pop();
+                    pop.show();
+                    break;
+                case "PROCESAR":
+                    switch (raiz.cantidadHijos) {
                         case 3:
-//                            String als = ALS.tipoALS(raiz.hijos[0].texto);
-//                            result = ALS.buscarMetodo(raiz.hijos[0].texto, variables, als);
+                            if (raiz.hijos[0].texto.equals("ProcesarHK")) {
+                                Datos.titulo[1] = "LlamarHK " + raiz.hijos[1].texto + "()";
+                                result = Recorrido(raiz.hijos[2]);
 
-                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, variables, VariableG.nombreALS.peek());
+                                switch (Datos.titulo[0]) {
+                                    case "Donde":
+                                        Datos.procesarDonde(raiz.hijos[1].texto, (ArrayList) result, "HK");
+                                        break;
+                                    case "DondeCada":
+                                        Datos.procesarDondeCada(raiz.hijos[1].texto, (ArrayList) result, "HK", posDonde);
+                                        break;
+                                    case "DondeTodo":
+                                        Datos.procesarDondeTodo(raiz.hijos[1].texto, (ArrayList) result, "HK", posDonde);
+                                        break;
+                                }
+                            } else {
+                                Datos.titulo[1] = "Llamar " + raiz.hijos[1].texto + "()";
+                                result = Recorrido(raiz.hijos[2]);
+
+                                switch (Datos.titulo[0]) {
+                                    case "Donde":
+                                        Datos.procesarDonde(raiz.hijos[1].texto, (ArrayList) result, "GK");
+                                        break;
+                                    case "DondeCada":
+                                        Datos.procesarDondeCada(raiz.hijos[1].texto, (ArrayList) result, "GK", posDonde);
+                                        break;
+                                    case "DondeTodo":
+                                        Datos.procesarDondeTodo(raiz.hijos[1].texto, (ArrayList) result, "GK", posDonde);
+                                        break;
+                                }
+                            }
                             break;
-                        case 4:
-//                            result = Recorrido(raiz.hijos[4]);
-//                            ArrayList parametro2 = (ArrayList) result;
-//                            als = ALS.tipoALS(raiz.hijos[0].texto);
-//                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[2].texto, parametro2, als);
-//                            parametro2.clear();
+                    }
+                    break;
+                case "COLUMNA":
+                    switch (raiz.cantidadHijos) {
+                        case 1:
+                            ArrayList columna = new ArrayList();
+                            result = (Recorrido(raiz.hijos[0]));
+                            columna.add(result);
+                            result = columna;
+                            break;
+                        case 2:
+                            result = Recorrido(raiz.hijos[0]);
+                            ArrayList column = (ArrayList) result;
+                            result = (Recorrido(raiz.hijos[1]));
+                            column.add(result);
+                            result = column;
+                            break;
+                    }
+                    break;
+                case "DONDE":
+                    switch (raiz.cantidadHijos) {
+                        case 2://DondeTodo
+                            Datos.titulo[0] = "DondeTodo";
+                            result = (Recorrido(raiz.hijos[1]));
+                            break;
+                        case 3: //DondeCada
+                            Datos.titulo[0] = "DondeCada";
+                            result = (Recorrido(raiz.hijos[1]));
+                            break;
+                        case 4: //Donde
+                            Datos.titulo[0] = "Donde";
+                            Object obj = Recorrido(raiz.hijos[1]);
+                            result = (Recorrido(raiz.hijos[2]));
+                            Datos.recolectarDonde(obj, result);
                             break;
                     }
                     break;

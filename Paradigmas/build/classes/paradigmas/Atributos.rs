@@ -1,0 +1,2 @@
+paradigmas.Simbolo
+paradigmas.Atributos

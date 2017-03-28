@@ -1,10 +1,7 @@
 package Graphik;
 
-import Graphik.Objetos.MF;
 import Graphik.Ejecutar.Metodo_FuncionG;
 import Graphik.Ejecutar.NodoG;
-import Graphik.Objetos.Parametro;
-import Graphik.Ejecutar.RecorridoEjecutar;
 import Graphik.Ejecutar.RecorridoGuardar;
 import Graphik.Objetos.Variable;
 import Graphik.Ejecutar.VariableG;
@@ -18,11 +15,7 @@ import java.util.ArrayList;
 public class ALS {
 
     public static ArrayList listaALS = new ArrayList();
-//    public static ArrayList listaAux = new ArrayList();
-//     public static ArrayList<VariableALS> instanciaALS = new ArrayList();
-//    public static ArrayList variables = new ArrayList();
-//    public static ArrayList<MF> metodos = new ArrayList();
-
+    
     public static void agregarALS(String nombre, NodoG nodo, String visible) {
         VariableG.pilaAmbito.push("Global");
         VariableG.nombreALS.push(nombre);
@@ -44,32 +37,12 @@ public class ALS {
         // agregarALS2(nombre, nodo, visible);
     }
 
-    public static void agregarALS2(String nombre, NodoG nodo, String visible) {
-        VariableG.pilaAmbito.push("Global");
-        VariableG.nombreALS.push(nombre);
-        RecorridoGuardar g = new RecorridoGuardar();
-        g.Recorrido(nodo);
-        ObjetoALS obj = new ObjetoALS();
-        obj.nombre = nombre;
-        obj.visibilidad = visible;
-        ArrayList n = new ArrayList();
-        n = (ArrayList) VariableG.listaVariables.clone();
-        obj.variables = (ArrayList) n.clone();
-        obj.metodos = (ArrayList) Metodo_FuncionG.listaMetodos.clone();
-        //listaAux.add(obj);
-        paradigmas.Atributos.crearSimboloGraphik(nombre, "ALS", "Objeto ALS", "Clase", " - ");
-        VariableG.listaVariables.clear();
-        Metodo_FuncionG.listaMetodos.clear();
-        VariableG.pilaAmbito.pop();
-        VariableG.nombreALS.pop();
-    }
-
     public static void crearVariableALS(String tipo, String nombre) {
 
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = new Variable();
             s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS)) {
+            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS.peek())) {
                 paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "La variable " + nombre + " ya existe", 0, 0);
                 return;
             }
@@ -128,66 +101,6 @@ public class ALS {
         return "";
     }
 
-//    public static void asignarValorALS(ObjetoALS var) {
-//        ArrayList l = new ArrayList();
-//        l = (ArrayList) ALS.variables.clone();
-//        var.variables = (ArrayList) l.clone();
-//        var.metodos = (ArrayList) ALS.metodos.clone();
-//        VariableG.asignarValor(var.nombre, var);
-//    }
-//
-//    public static Object obtenerVariableALS(String nombre) {
-//        Variable s = null;
-//        for (int i = variables.size() - 1; i >= 0; i--) {
-//            Variable sim = (Variable) variables.get(i);
-//            if (sim.nombre.equals(nombre)) {
-//                return sim.valor;
-//            }
-//        }
-//        paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable", 0, 0);
-//        return "";
-//    }
-//    public static Object buscarMetodo(String id, ArrayList parametro, String als) {
-//        Object retorno = "";
-//        for (int i = 0; i < metodos.size(); i++) {
-//            MF mf = (MF) metodos.get(i);
-//
-//            if (mf.nombre.equals(id)) {
-//                VariableG.pilaAmbito.push(id);
-//                VariableG.nivelAmbito++;
-//                VariableG.nombreALS.push(als);
-//                if (parametro.isEmpty() && mf.parametro.isEmpty()) {
-//                    parametro.clear();
-//                    RecorridoEjecutar r = new RecorridoEjecutar();
-//                    retorno = r.Recorrido(mf.nodo);
-//
-//                    VariableG.eliminarVariable();
-//                    VariableG.nivelAmbito--;
-//                    VariableG.pilaAmbito.pop();
-//                    return retorno;
-//                }
-//                if (parametro.size() == mf.parametro.size()) {
-//                    for (int j = 0; j < parametro.size(); j++) {
-//                        Parametro p = (Parametro) mf.parametro.get(j);
-//                        Object p2 = (Object) parametro.get(j);
-//                        VariableG.crearVariable(p.tipo, p.nombre, p2, "public");
-//                    }
-//                    parametro.clear();
-//                    RecorridoEjecutar r = new RecorridoEjecutar();
-//                    retorno = r.Recorrido(mf.nodo);
-//                    VariableG.eliminarVariable();
-//                    VariableG.nivelAmbito--;
-//                    VariableG.pilaAmbito.pop();
-//                    VariableG.nombreALS.pop();
-//
-//                    return retorno;
-//                }
-//            }
-//        }
-//        paradigmas.ReporteError.agregarErrorGK(id, "Error Semantico", "No se ha encontrado el metodo", 0, 0);
-//
-//        return "";
-//    }
     public static void imprimir(String lugar) {
         for (int i = listaALS.size() - 1; i >= 0; i--) {
             ObjetoALS sim = (ObjetoALS) ALS.listaALS.get(i);
@@ -200,41 +113,6 @@ public class ALS {
                 }
             }
         }
-//        for (int i = listaAux.size() - 1; i >= 0; i--) {
-//            ObjetoALS sim = (ObjetoALS) ALS.listaAux.get(i);
-//            if (sim.nombre.equals("aritmetica")) {
-//                ArrayList a = (ArrayList) sim.variables.clone();
-//                for (int j = 0; j < a.size(); j++) {
-//                    Variable v = (Variable) a.get(j);
-//                    System.out.println(v.nombre + " = " + v.valor);
-//                    return;
-//                }
-//            }
-//        }
     }
-
-//    public static void clonar() {
-//        listaALS.clear();
-//        ArrayList nueva = new ArrayList();
-//        for (int i = 0; i < listaAux.size(); i++) {
-//            nueva.add(listaAux.get(i));
-//
-//        }
-//        for (int i = 0; i < listaAux.size(); i++) {
-//            ObjetoALS o = new ObjetoALS();
-//            o = (ObjetoALS) listaAux.get(i);
-//            ObjetoALS obj = new ObjetoALS();
-//            obj = (ObjetoALS) o.clone();
-////            obj.nombre = o.nombre;
-////            obj.visibilidad = o.visibilidad;
-////            obj.variables = (ArrayList) o.variables.clone();
-////            obj.metodos = (ArrayList) o.metodos.clone();
-//            listaALS.add(obj);
-//        }
-//        listaAux.clear();
-//
-//        listaAux = (ArrayList) nueva.clone();
-//
-//    }
     
 }

@@ -1,6 +1,5 @@
 package Graphik.Ejecutar;
 
-import Graphik.ALS;
 import static Graphik.ALS.listaALS;
 import Graphik.Objetos.MF;
 import Graphik.Objetos.ObjetoALS;
@@ -17,11 +16,15 @@ public class VariableG {
     public static ArrayList listaVariables = new ArrayList();
     public static ArrayList<NodoG> variableGlobal = new ArrayList();
     public static Stack<String> nombreALS = new Stack<>();
+    public static int nivelALS = 0;
 
     public static void crearVariable(String tipo, String nombre, Object valor, String visib) {
+        if (verificarTipo(tipo) == false) {
+            return;
+        }
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS)) {
+            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS.peek())) {
                 paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "La variable " + nombre + " ya existe", 0, 0);
                 return;
             }
@@ -34,15 +37,20 @@ public class VariableG {
         v.nivel = nivelAmbito;
         v.ambito = pilaAmbito.peek();
         v.als = nombreALS.peek();
+        v.aux = nombre();
         listaVariables.add(v);
 
         paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Variable", v.ambito, "0");
     }
 
     public static void crearVariable(String tipo, String nombre, Object valor, String visib, int tamanio[]) {
+        if (verificarTipo(tipo) == false) {
+            return;
+        }
+
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS)) {
+            if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS.peek())) {
                 paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "La variable " + nombre + " ya existe", 0, 0);
                 return;
             }
@@ -64,30 +72,20 @@ public class VariableG {
     public static void asignarValor(String nombre, Object valor) {
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
-            if (s.nombre.equals(nombre) &&s.als.equals(nombreALS.peek())) {
+            if (s.nombre.equals(nombre) && s.als.equals(nombreALS.peek())) {
                 s.valor = valor;
-                ALS.imprimir("Asig1");
                 return;
             }
         }
-//        for (int i = 0; i < ALS.variables.size(); i++) {
-//            Variable s = (Variable) ALS.variables.get(i);
-//            if (s.nombre.equals(nombre)) {
-//                ALS.imprimir("Asi2");
-//                s.valor = valor;
-//                ALS.imprimir("Asi3");
-//                return;
-//            }
-//        }
         paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable " + nombre, 0, 0);
     }
 
     public static void eliminarVariable() {
-        for (int i = 0; i < listaVariables.size(); i++) {
+        for (int i =listaVariables.size()-1; i>=0;i--) {
             Variable s = (Variable) listaVariables.get(i);
             if (s.nivel == nivelAmbito && !"Global".equals(s.ambito)) {
                 listaVariables.remove(i);
-                return;
+  //              return;
             }
         }
     }
@@ -96,19 +94,13 @@ public class VariableG {
         Variable s = null;
         for (int i = listaVariables.size() - 1; i >= 0; i--) {
             Variable sim = (Variable) listaVariables.get(i);
-            if (sim.nombre.equals(nombre) && sim.als.equals(als)) {
+            String nom= nombre();
+            if (sim.nombre.equals(nombre) && sim.als.equals(als) &&sim.aux.equals(nom)) {
                 Object valor = sim.valor;
+                RecorridoEjecutar.tipoAux =sim.tipo;
                 return valor;
             }
         }
-//        for (int i = ALS.variables.size() - 1; i >= 0; i--) {
-//            Variable sim = (Variable) ALS.variables.get(i);
-//            if (sim.nombre.equals(nombre)) {
-//                 Object valor = sim.valor;
-//                return valor;
-//            }
-//        }
-
         paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable", 0, 0);
         return "";
     }
@@ -170,11 +162,27 @@ public class VariableG {
     }
 
     ///////////////////////////
+    public static Boolean verificarTipo(String tipo) {
+        if (tipo.equals("entero") || tipo.equals("decimal") || tipo.equals("cadena") || tipo.equals("caracter") || tipo.equals("bool")) {
+            return true;
+        } else {
+            for (int i = 0; i < listaALS.size(); i++) {
+                ObjetoALS obj = (ObjetoALS) listaALS.get(i);
+                if (obj.nombre.equals(tipo)) {
+                    return true;
+                }
+            }
+        }
+        paradigmas.ReporteError.agregarErrorGK(tipo, "Error Semantico", "El tipo no existe", 0, 0);
+        return false;
+    }
+
     public static void crearVariableALS(String tipo, String nombre) {
         ObjetoALS ins = new ObjetoALS();
         ins.als = tipo;
         ins.nombre = nombre;
         nombreALS.push(nombre);
+        nivelALS++;
         for (int i = 0; i < listaALS.size(); i++) {
             ObjetoALS obj = (ObjetoALS) listaALS.get(i);
             if (obj.nombre.equals(tipo)) {
@@ -189,26 +197,79 @@ public class VariableG {
                     v.nivel = var.nivel;
                     v.ambito = var.ambito;
                     v.als = nombre;
+                    v.aux = nombre();
                     listaVariables.add(v);
+                    paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Variable", v.ambito, "0");
                 }
                 for (int j = 0; j < obj.metodos.size(); j++) {
                     MF var = (MF) obj.metodos.get(j);
 
                     Metodo_FuncionG.agregarMF(var.nombre, var.tipo, var.nodo, var.visibilidad, var.parametro);
                 }
-                
+                nombreALS.pop();
+                nivelALS--;
+                return;
             }
+            // nombreALS.pop();
         }
 
-        // paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Variable", v.ambito, "0");
+        paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No se ha encontrado el objeto: " + tipo, 0, 0);
+
     }
 
     public static void imprimir() {
         System.out.println("********** IMPRIMIR ***********");
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable v = (Variable) listaVariables.get(i);
-            System.out.println(v.nombre + "  -  " + v.tipo + "  -  " + v.als + "  -  " + v.ambito + "  -  " + v.valor);
+            System.out.println(v.nombre + "  -  " + v.tipo + "  -  " + v.als + "  -  " + v.ambito + "  -  " + v.valor + "  -  " + v.aux);
             // return;
         }
+        System.out.println("*******************************");
+    }
+
+    public static Boolean existeVariable(String nombre, String als) {
+        Variable s = null;
+        for (int i = listaVariables.size() - 1; i >= 0; i--) {
+            Variable sim = (Variable) listaVariables.get(i);
+            if (sim.nombre.equals(nombre) && sim.tipo.equals(als)) {
+                return true;
+            }
+        }
+        paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable", 0, 0);
+        return false;
+    }
+
+    public static String nombre() {
+        String dato = nombreALS.peek();
+        Stack<String> nombre = (Stack<String>) nombreALS.clone();
+
+        //if (nombre.size() > nivelALS) {
+        for (int i = 0; i < nivelALS - 1; i++) {
+            nombre.pop();
+            dato = nombre.peek() + "." + dato;
+        }
+        //}
+        return dato;
+    }
+
+    public static void asignarValorALS(String nombre, Object valor) {
+        //    nombre = nombre + ".";
+        String n[] = nombre.split(",");
+        String aux = nombre();
+
+        for (int i = 0; i < n.length - 1; i++) {
+            aux += "." + n[i];
+        }
+        if (n.length > 1) {
+            nombre = n[n.length - 1];
+        }
+        for (int i = 0; i < listaVariables.size(); i++) {
+            Variable s = (Variable) listaVariables.get(i);
+            if (s.nombre.equals(nombre) && s.aux.equals(aux)) {
+                s.valor = valor;
+                return;
+            }
+        }
+        paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable " + nombre, 0, 0);
     }
 }

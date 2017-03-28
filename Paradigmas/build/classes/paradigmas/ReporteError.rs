@@ -1,0 +1,2 @@
+paradigmas.ReporteError
+paradigmas.Errror

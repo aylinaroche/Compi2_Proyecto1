@@ -83,8 +83,8 @@ public class RecorridoGuardar {
                     break;
                 case "DATOS":
                     switch (raiz.cantidadHijos) {
-                        case 1:
-                            Metodo_FuncionG.agregarMF("datos", "vacio", raiz.hijos[0], "publico", parametros);
+                        case 2:
+                            Metodo_FuncionG.agregarMF("datos", "vacio", raiz.hijos[1], "publico", parametros);
                             break;
                     }
                     break;
