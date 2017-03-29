@@ -15,8 +15,10 @@ public class Eleccion extends javax.swing.JFrame {
 
         btnHaskell = new javax.swing.JButton();
         btnGraphik = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnHaskell.setBackground(new java.awt.Color(255, 255, 255));
         btnHaskell.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/has.png"))); // NOI18N
@@ -25,6 +27,7 @@ public class Eleccion extends javax.swing.JFrame {
                 btnHaskellActionPerformed(evt);
             }
         });
+        getContentPane().add(btnHaskell, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, 155, 152));
 
         btnGraphik.setBackground(new java.awt.Color(255, 255, 255));
         btnGraphik.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/descarga.jpg"))); // NOI18N
@@ -33,27 +36,10 @@ public class Eleccion extends javax.swing.JFrame {
                 btnGraphikActionPerformed(evt);
             }
         });
+        getContentPane().add(btnGraphik, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 11, 152, 152));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnHaskell, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnGraphik, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnGraphik, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHaskell, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/a.jpg"))); // NOI18N
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 340, 180));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -107,5 +93,6 @@ public class Eleccion extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGraphik;
     private javax.swing.JButton btnHaskell;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

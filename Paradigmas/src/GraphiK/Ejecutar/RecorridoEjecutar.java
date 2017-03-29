@@ -5,6 +5,7 @@ import static Graphik.Ejecutar.VariableG.nivelAmbito;
 import static Graphik.Ejecutar.VariableG.pilaAmbito;
 import Graphik.Objetos.Variable;
 import java.util.ArrayList;
+import paradigmas.GraficarFuncion;
 import paradigmas.Pop;
 
 public class RecorridoEjecutar {
@@ -533,6 +534,8 @@ public class RecorridoEjecutar {
                                 result = Metodo_FuncionG.buscarMetodo(raiz.hijos[1].texto, variables, VariableG.nombreALS.peek());
                             } else { //llamar HK
                                 result = Haskell.Metodo_FuncionHK.buscarMetodo(raiz.hijos[1].texto, variables);
+                                String resultado = String.valueOf(result);
+                                result = VariableG.verificarTipoHaskell(resultado);
                             }
                             break;
                         case 5:
@@ -541,9 +544,15 @@ public class RecorridoEjecutar {
                             if ("llamar".equals(raiz.hijos[0].texto)) {
                                 result = Metodo_FuncionG.buscarMetodo(raiz.hijos[1].texto, parametro, VariableG.nombreALS.peek());
                             } else { //llamar HK
-                                result = Haskell.Metodo_FuncionHK.buscarMetodo(raiz.hijos[1].texto, parametro);
+                                for (int i = 0; i < parametro.size(); i++) {
+                                    String s = String.valueOf(parametro.get(i));
+                                    Haskell.Metodo_FuncionHK.agregarParametro(s, "");
+                                }
+                                result = Haskell.Metodo_FuncionHK.buscarMetodo(raiz.hijos[1].texto, Haskell.Metodo_FuncionHK.parametros);
+                                parametro.clear();
+                                String resultado = String.valueOf(result);
+                                result = VariableG.verificarTipoHaskell(resultado);
                             }
-                            parametro.clear();
                             break;
                         case 6:
                             String als = ALS.tipoALS(raiz.hijos[1].texto);
@@ -765,6 +774,27 @@ public class RecorridoEjecutar {
                             Object obj = Recorrido(raiz.hijos[1]);
                             result = (Recorrido(raiz.hijos[2]));
                             Datos.recolectarDonde(obj, result);
+                            break;
+                    }
+                    break;
+                case "GRAFICAR":
+                    switch (raiz.cantidadHijos) {
+                        case 3://
+                            Object arreglo1 = VariableG.obtenerVariable(raiz.hijos[1].texto, VariableG.nombreALS.peek());
+                            Object arreglo2 = VariableG.obtenerVariable(raiz.hijos[2].texto, VariableG.nombreALS.peek());
+
+                            if (arreglo1 instanceof ArrayList && arreglo2 instanceof ArrayList) {
+                                ArrayList arr1 = (ArrayList) arreglo1;
+                                ArrayList arr2 = (ArrayList) arreglo1;
+                                if (arr1.size() == arr2.size()) {
+                                    GraficarFuncion f = new GraficarFuncion(arr1, arr2, raiz.hijos[1].texto, raiz.hijos[2].texto);
+                                    f.setVisible(true);
+                                } else {
+                                    paradigmas.ReporteError.agregarErrorGK(raiz.hijos[1].texto + "-" + raiz.hijos[2].texto, "Error Semantico", "No son del mismo tamanio", 0, 0);
+                                }
+                            } else {
+                                paradigmas.ReporteError.agregarErrorGK(raiz.hijos[1].texto + "-" + raiz.hijos[2].texto, "Error Semantico", "Error al ver arreglo.", 0, 0);
+                            }
                             break;
                     }
                     break;

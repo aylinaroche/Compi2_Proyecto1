@@ -237,7 +237,7 @@ OPCION::=IMPRIMIR:n{:
     OPCION.insertar(n.nodo);
     RESULT.nodo = OPCION;
 :}
-|GRAFICAR:n signo{:
+|GRAFICAR:n{:
     NodoG OPCION = new NodoG("OPCION");
     RESULT = new Caracter();
     OPCION.insertar(n.nodo);

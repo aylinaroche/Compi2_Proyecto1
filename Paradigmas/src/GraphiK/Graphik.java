@@ -33,7 +33,55 @@ public class Graphik {
             System.out.println(e);
         }
 
-        archivos();
+        //  archivos();
+        objetos();
+    }
+
+    public static void Analizar(String texto) throws Exception {
+        StringReader miReader = new StringReader(texto);
+        LexicoALS miAnalizador = new LexicoALS(miReader);
+        VariableG.pilaAmbito.push(paradigmas.Atributos.nombreArchivo);
+
+        SintacticoALS parser = new SintacticoALS(miAnalizador);
+        parser.parse();
+        try {
+            Symbol s;
+            s = (Symbol) miAnalizador.next_token();
+            int cont = 0;
+            while (s.sym != 0) {
+                System.out.println(cont + " Lexema " + s.value + "  Token " + s.sym + " Linea " + (s.right + 1) + " Columna " + (s.left + 2));
+                s = (Symbol) miAnalizador.next_token();
+                cont++;
+            }
+        } catch (Exception e) {
+        }
+
+        iniciarEjecutarPrueba();
+//        System.out.println("");
+//        VariableG.imprimir();
+    }
+
+    public static void iniciarEjecutarPrueba() {
+        ObjetoALS a = new ObjetoALS();
+        a = (ObjetoALS) ALS.listaALS.get(0);
+        ArrayList v = new ArrayList();
+        v = (ArrayList) a.variables.clone();
+        VariableG.listaVariables = (ArrayList) v.clone();
+        Metodo_FuncionG.listaMetodos = (ArrayList) a.metodos.clone();
+        VariableG.nombreALS.push(a.nombre);
+
+        Metodo_FuncionG.buscarMain();
+    }
+
+    public static void iniciarEjecutar() {
+        ObjetoALS a = new ObjetoALS();
+        a = (ObjetoALS) ALS.listaALS.get(ALS.listaALS.size() - 1);
+        VariableG.listaVariables = (ArrayList) a.variables.clone();
+        Metodo_FuncionG.listaMetodos = (ArrayList) a.metodos.clone();
+        Metodo_FuncionG.buscarMain();
+    }
+
+    public static void prueba() {
 //        Analizar("importar Nodo.gk?\n"
 //                + "incluir_HK FormCuadraticaPositiva?\n"
 //                + "incluir_HK FormCuadraticaNegativa?\n"
@@ -239,50 +287,6 @@ public class Graphik {
 //                + "}#Pagina 52");
     }
 
-    public static void Analizar(String texto) throws Exception {
-        StringReader miReader = new StringReader(texto);
-        LexicoALS miAnalizador = new LexicoALS(miReader);
-        VariableG.pilaAmbito.push(paradigmas.Atributos.nombreArchivo);
-
-        SintacticoALS parser = new SintacticoALS(miAnalizador);
-        parser.parse();
-        try {
-            Symbol s;
-            s = (Symbol) miAnalizador.next_token();
-            int cont = 0;
-            while (s.sym != 0) {
-                System.out.println(cont + " Lexema " + s.value + "  Token " + s.sym + " Linea " + (s.right + 1) + " Columna " + (s.left + 2));
-                s = (Symbol) miAnalizador.next_token();
-                cont++;
-            }
-        } catch (Exception e) {
-        }
-
-        iniciarEjecutarPrueba();
-//        System.out.println("");
-//        VariableG.imprimir();
-    }
-
-    public static void iniciarEjecutarPrueba() {
-        ObjetoALS a = new ObjetoALS();
-        a = (ObjetoALS) ALS.listaALS.get(0);
-        ArrayList v = new ArrayList();
-        v = (ArrayList) a.variables.clone();
-        VariableG.listaVariables = (ArrayList) v.clone();
-        Metodo_FuncionG.listaMetodos = (ArrayList) a.metodos.clone();
-        VariableG.nombreALS.push(a.nombre);
-        
-        Metodo_FuncionG.buscarMain();
-    }
-
-    public static void iniciarEjecutar() {
-        ObjetoALS a = new ObjetoALS();
-        a = (ObjetoALS) ALS.listaALS.get(ALS.listaALS.size() - 1);
-        VariableG.listaVariables = (ArrayList) a.variables.clone();
-        Metodo_FuncionG.listaMetodos = (ArrayList) a.metodos.clone();
-        Metodo_FuncionG.buscarMain();
-    }
-
     public static void archivos() {
         try {
             Analizar(""
@@ -432,9 +436,9 @@ public class Graphik {
                     + "        llamar estudiante3.ingresar_datos(\"Juan\", 19, 201754323)?\n"
                     + "        llamar estudiante3.ingresar_detalle(\"primera avenida\", \"2551224\", \"44435333\")?\n"
                     + "        \n"
-                                        + "        llamar estudiante1.siguiente_semestre()?\n"
-                                        + "        llamar estudiante2.siguiente_semestre()?\n"
-                                        + "        llamar estudiante3.siguiente_semestre()?\n"
+                    + "        llamar estudiante1.siguiente_semestre()?\n"
+                    + "        llamar estudiante2.siguiente_semestre()?\n"
+                    + "        llamar estudiante3.siguiente_semestre()?\n"
                     + "        \n"
                     + "        \n"
                     + "        imprimir(\"Datos de estudiantes\")?\n"
@@ -489,4 +493,13 @@ public class Graphik {
             System.out.println("ERROR :OOOO = " + ex);
         }
     }
+
+    public static void objetos() {
+        try {
+            Analizar("");
+        } catch (Exception ex) {
+            System.out.println("ERROR = " + ex);
+        }
+    }
+
 }

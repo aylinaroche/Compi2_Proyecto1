@@ -85,7 +85,12 @@ public class Operacion {
                                 }
                             case "bool":
                                 Operacion.tipo = "variable";
-                                break;
+                                if(dato.equals("true") ||dato.equals("verdadero")){
+                                    return "true";
+                                }else{
+                                    return "false";
+                                }
+                                //break;
                             default:
                                 Operacion.tipo = "variable";
                                 return "";

@@ -47,7 +47,6 @@ public class VariableG {
         if (verificarTipo(tipo) == false) {
             return;
         }
-
         for (int i = 0; i < listaVariables.size(); i++) {
             Variable s = (Variable) listaVariables.get(i);
             if (s.nombre.equals(nombre) && s.ambito.equals(pilaAmbito.peek()) && s.nivel == nivelAmbito && s.als.equals(nombreALS.peek())) {
@@ -55,6 +54,23 @@ public class VariableG {
                 return;
             }
         }
+        ArrayList valores = (ArrayList) valor;
+        if (valores.isEmpty()) {
+            int tam = 1;
+            for (int i = 0; i < tamanio.length; i++) {
+                int j = tamanio[i];
+                if (j != 0) {
+                    tam *= j;
+             //       System.out.println(i+":"+tam);
+                }
+            }
+            ArrayList lista= new ArrayList();                
+            for (int i = 0; i < tam; i++) {
+                lista.add("");                
+            }
+            valor = lista;
+        }
+
         Variable v = new Variable();
         v.nombre = nombre;
         v.tipo = tipo;
@@ -64,6 +80,7 @@ public class VariableG {
         v.nivel = nivelAmbito;
         v.ambito = pilaAmbito.peek();
         v.als = nombreALS.peek();
+        v.aux = nombre();
         listaVariables.add(v);
         ArrayList val = (ArrayList) valor;
         paradigmas.Atributos.crearSimboloGraphik(nombre, tipo, "Arreglo", v.ambito, String.valueOf(val.size()));
@@ -81,11 +98,11 @@ public class VariableG {
     }
 
     public static void eliminarVariable() {
-        for (int i =listaVariables.size()-1; i>=0;i--) {
+        for (int i = listaVariables.size() - 1; i >= 0; i--) {
             Variable s = (Variable) listaVariables.get(i);
             if (s.nivel == nivelAmbito && !"Global".equals(s.ambito)) {
                 listaVariables.remove(i);
-  //              return;
+                //              return;
             }
         }
     }
@@ -94,10 +111,10 @@ public class VariableG {
         Variable s = null;
         for (int i = listaVariables.size() - 1; i >= 0; i--) {
             Variable sim = (Variable) listaVariables.get(i);
-            String nom= nombre();
-            if (sim.nombre.equals(nombre) && sim.als.equals(als) &&sim.aux.equals(nom)) {
+            String nom = nombre();
+            if (sim.nombre.equals(nombre) && sim.als.equals(als) && sim.aux.equals(nom)) {
                 Object valor = sim.valor;
-                RecorridoEjecutar.tipoAux =sim.tipo;
+                RecorridoEjecutar.tipoAux = sim.tipo;
                 return valor;
             }
         }
@@ -271,5 +288,20 @@ public class VariableG {
             }
         }
         paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "No existe la variable " + nombre, 0, 0);
+    }
+
+    public static Object verificarTipoHaskell(String resultado) {
+        if ("true".equals(resultado)) {
+            return true;
+        } else if ("false".equals(resultado)) {
+            return false;
+        } else {
+            try {
+                double d = Double.parseDouble(resultado);
+                return d;
+            } catch (Exception e) {
+                return resultado;
+            }
+        }
     }
 }

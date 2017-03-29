@@ -33,19 +33,19 @@ import javax.swing.text.StyledDocument;
 import static paradigmas.Eleccion.opcion;
 
 public class Interfaz extends javax.swing.JFrame {
-
+    
     public static ArrayList pestania = new ArrayList();
     public int contadorPestania = 0;
     String aux = "";
     String texto = "";
     String nombre = "";
     String ruta = "";
-
+    
     public Interfaz() {
         initComponents();
-
+        
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -192,7 +192,13 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPublicarActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        // TODO add your handling code here:
+        try {
+            Graficar.crearArbol();
+        } catch (IOException ex) {
+            System.out.println("Error al crear Arbol: " + ex);
+        }
+        ArbolFuncion arbol = new ArbolFuncion();
+        arbol.setVisible(true);
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
@@ -208,7 +214,7 @@ public class Interfaz extends javax.swing.JFrame {
             texto = "";
             if (abre != null) {
                 FileReader archivos = new FileReader(abre);
-
+                
                 try (BufferedReader lee = new BufferedReader(archivos)) {
                     while ((aux = lee.readLine()) != null) {
                         texto += aux + "\n";
@@ -220,7 +226,7 @@ public class Interfaz extends javax.swing.JFrame {
                     + "\nNo se ha encontrado el archivo",
                     "ADVERTENCIA!!!", JOptionPane.WARNING_MESSAGE);
         }
-
+        
         Datos.guardarDatos(texto);
 
     }//GEN-LAST:event_btnImportarActionPerformed
@@ -250,10 +256,10 @@ public class Interfaz extends javax.swing.JFrame {
         JPanel panel = (JPanel) this.jTabbedPane1.getSelectedComponent();
         JScrollPane scroll = (JScrollPane) panel.getComponent(0);
         JTextPane texto = (JTextPane) scroll.getViewport().getComponent(0);
-
+        
         int ind = jTabbedPane1.getSelectedIndex();
         Pestania pes = (Pestania) pestania.get(ind);
-
+        
         if ("hk".equals(pes.tipo)) {
             Atributos.tablaSimboloHK.clear();
             ReporteError.erroresHaskell.clear();
@@ -265,7 +271,7 @@ public class Interfaz extends javax.swing.JFrame {
             try {
                 StringReader miReader = new StringReader(texto.getText());
                 LexicoH miAnalizador = new LexicoH(miReader);
-
+                
                 texto.setText("");
                 try {
                     Symbol s = null;
@@ -370,7 +376,7 @@ public class Interfaz extends javax.swing.JFrame {
             int ind = jTabbedPane1.getSelectedIndex();
             Pestania pes = (Pestania) pestania.get(ind);
             if ("hk".equals(pes.tipo)) {
-
+                
                 for (int i = 0; i < Atributos.imprimirHaskell.size(); i++) {
                     String s = ">> " + Atributos.imprimirHaskell.get(i) + "\n";
                     try {
@@ -393,7 +399,7 @@ public class Interfaz extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_txtConsolaKeyReleased
-
+    
     public void imprimirConsola(String texto) {
         try {
             txtConsola.getStyledDocument().insertString(txtConsola.getStyledDocument().getLength(), texto, null);
@@ -401,7 +407,7 @@ public class Interfaz extends javax.swing.JFrame {
             System.out.println("Error de consola = " + ex);
         }
     }
-
+    
     public void continuarSegunArchivo() {
         switch (opcion) {
             case 0: //Nueva Pestania
@@ -412,12 +418,12 @@ public class Interfaz extends javax.swing.JFrame {
                 p.setSize(17, 50);
                 t.setName(nombre);
                 p.add(new JScrollPane(t));
-
+                
                 jTabbedPane1.addTab(nombre, null, p);
                 Pestania pt = new Pestania(nombre, "", Atributos.lenguaje);
                 pestania.add(pt);
                 break;
-
+            
             case 1: //Abrir
                 try {
                     JFileChooser file = new JFileChooser();
@@ -431,7 +437,7 @@ public class Interfaz extends javax.swing.JFrame {
                     texto = "";
                     if (abre != null) {
                         FileReader archivos = new FileReader(abre);
-
+                        
                         try (BufferedReader lee = new BufferedReader(archivos)) {
                             while ((aux = lee.readLine()) != null) {
                                 texto += aux + "\n";
@@ -443,7 +449,7 @@ public class Interfaz extends javax.swing.JFrame {
                             + "\nNo se ha encontrado el archivo",
                             "ADVERTENCIA!!!", JOptionPane.WARNING_MESSAGE);
                 }
-
+                
                 JPanel p1 = new JPanel();
                 JTextPane t1 = new JTextPane();
                 p1.setLayout(new BorderLayout());
@@ -455,22 +461,22 @@ public class Interfaz extends javax.swing.JFrame {
                 Pestania pt1 = new Pestania(nombre, ruta, Atributos.lenguaje);
                 pestania.add(pt1);
                 break;
-
+            
             case 2: //Guardar
                 int i = jTabbedPane1.getSelectedIndex();
                 Pestania pes = (Pestania) pestania.get(i);
                 JPanel panel = (JPanel) this.jTabbedPane1.getSelectedComponent();
                 JScrollPane scroll = (JScrollPane) panel.getComponent(0);
                 JTextPane texto = (JTextPane) scroll.getViewport().getComponent(0);
-
+                
                 File archivo = new File(pes.ruta);
                 BufferedWriter bw = null;
-
+                
                 try {
                     if (archivo.exists()) {
                         bw = new BufferedWriter(new FileWriter(archivo));
                         bw.write(texto.getText());
-
+                        
                     } else {
                         try {
                             JFileChooser file = new JFileChooser();
@@ -495,19 +501,19 @@ public class Interfaz extends javax.swing.JFrame {
                 } catch (IOException | HeadlessException e) {
                 }
                 break;
-
+            
             case 3: //Guardar Como
                 Pestania pest = (Pestania) pestania.get(jTabbedPane1.getSelectedIndex());
                 JPanel panel3 = (JPanel) this.jTabbedPane1.getSelectedComponent();
                 JScrollPane scroll3 = (JScrollPane) panel3.getComponent(0);
                 JTextPane texto3 = (JTextPane) scroll3.getViewport().getComponent(0);
-
+                
                 try {
                     JFileChooser file = new JFileChooser();
                     file.showSaveDialog(this);
                     File guarda = file.getSelectedFile();
                     ruta = guarda.getAbsolutePath();
-
+                    
                     if (guarda != null) {
                         FileWriter save = new FileWriter(guarda + "." + pest.tipo);
                         save.write(texto3.getText());
@@ -523,15 +529,15 @@ public class Interfaz extends javax.swing.JFrame {
                 }
                 pest.ruta = ruta;
                 break;
-
+            
             case 4:
-
+                
                 break;
-
+            
         }
         opcion = 100;
     }
-
+    
     public void importarArchivo(String nombre) {
         int ind = jTabbedPane1.getSelectedIndex();
         Pestania pes = (Pestania) pestania.get(ind);
@@ -543,7 +549,7 @@ public class Interfaz extends javax.swing.JFrame {
             path += dato[i] + "/";
         }
         String archivo = "";
-
+        
         path += nombre + ".gk";
         System.out.println("Path = " + path);
         try {
@@ -567,17 +573,17 @@ public class Interfaz extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Error al analizar ALS = " + ex);
         }
-
+        
     }
-
+    
     public void append(int r, int g, int b, String texto) {
         JPanel panel = (JPanel) this.jTabbedPane1.getSelectedComponent();
         JScrollPane scroll = (JScrollPane) panel.getComponent(0);
         JTextPane pane = (JTextPane) scroll.getViewport().getComponent(0);
-
+        
         StyledDocument doc = pane.getStyledDocument();
         Style style = doc.addStyle("txt", null);
-
+        
         Color color = new Color(r, g, b);
         StyleConstants.setForeground(style, color);
         try {
@@ -586,39 +592,39 @@ public class Interfaz extends javax.swing.JFrame {
         } catch (BadLocationException ex) {
         }
     }
-
+    
     public void pintarRojo(String texto) {
         append(255, 0, 0, texto);
     }
-
+    
     public void pintarNegro(String texto) {
         append(0, 0, 0, texto);
     }
-
+    
     public void pintarVerde(String texto) {
         append(55, 200, 0, texto);
     }
-
+    
     public void pintarMorado(String texto) {
         append(165, 65, 155, texto);
     }
-
+    
     public void pintarCeleste(String texto) {
         append(35, 120, 255, texto);
     }
-
+    
     public void pintarAzul(String texto) {
         append(60, 15, 170, texto);
     }
-
+    
     public void pintarNaranja(String texto) {
         append(250, 145, 30, texto);
     }
-
+    
     public void pintarCafe(String texto) {
         append(200, 110, 5, texto);
     }
-
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

@@ -1,6 +1,8 @@
 package Haskell;
 
 import Haskell.Ejecutar.*;
+import Haskell.Objetos.MF;
+import Haskell.Objetos.Parametro;
 import java.util.ArrayList;
 
 public class Metodo_FuncionHK {
@@ -111,19 +113,3 @@ public class Metodo_FuncionHK {
     }
 }
 
-class MF {
-
-    public String nombre;
-    public String tipo;
-    public String retorno;
-    public Nodo nodo;
-    public ArrayList parametro;
-    public String ambito;
-}
-
-class Parametro {
-
-    public String nombre;
-    public String tipo;
-    public String valor;
-}
