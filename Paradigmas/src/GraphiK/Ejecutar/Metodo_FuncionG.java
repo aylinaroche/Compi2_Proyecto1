@@ -37,12 +37,12 @@ public class Metodo_FuncionG {
             if (mf.nombre.equals(id) && mf.als.equals(als)) {
                 VariableG.pilaAmbito.push(id);
                 VariableG.nivelAmbito++;
-              //  VariableG.nombreALS.push(als);
+                VariableG.nombreALS.push(id);
                 if (parametro.isEmpty() && mf.parametro.isEmpty()) {
                     parametro.clear();
                     RecorridoEjecutar r = new RecorridoEjecutar();
                     retorno = r.Recorrido(mf.nodo);
-
+                    VariableG.nombreALS.pop();
                     VariableG.nivelAmbito--;
                     VariableG.pilaAmbito.pop();
                     return retorno;
@@ -59,7 +59,7 @@ public class Metodo_FuncionG {
                     VariableG.eliminarVariable();
                     VariableG.nivelAmbito--;
                     VariableG.pilaAmbito.pop();
-             //       VariableG.nombreALS.pop();
+                    VariableG.nombreALS.pop();
 
                     return retorno;
                 }

@@ -615,7 +615,7 @@ public class RecorridoEjecutar {
                         case 8:
                             if (raiz.hijos[0].texto.equals(raiz.hijos[4].texto)) {
                                 VariableG.crearVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
-                                //VariableG.imprimir();
+                                VariableG.imprimir();
                             } else {
                                 paradigmas.ReporteError.agregarErrorGK(raiz.hijos[0].texto, "Error Semantico", "Error de Sintaxis", 0, 0);
                             }

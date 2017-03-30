@@ -31,16 +31,16 @@ action code
 :}
 
 terminal String publico,privado,protegido,importar,tipoVoid,tipoString,tipoInt,tipoChar,tipoBool,tipoDouble,
-parentesisA,parentesisC,coma,retornar,si,sino,interrumpir,caso,defecto,mientras,hacer,salir,raiz,mas,menos,
+parentesisA,parentesisC,coma,retornar,si,sino,interrumpir,caso,defecto,mientras,hacer,salir,mas,menos,
 mayor,menor,mayorIgual,menorIgual,igual,diferente,or,xor,and,not,id,corcheteA,corcheteC,disminuir,para,por,
 dosPuntos,imprimir,verdadero,falso,igualDoble,potencia,llaveA,llaveC,signo,ERROR,numero,fila,aumentar,
 dividido,cadena,graphikar,procesar,columna,decimal,entero,punto,caracter,inicio,tipoFloat,continuar,datos,
 nuevo,extension,var,incluir,hereda,als,llamar,llamarHK,donde,dondeCada,dondeTodo;
 
-non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,TIPO,ACCION,ATRIBUTOS,
+non terminal Caracter INICIO,ENTRADA,IMPORT,VISIBILIDAD,INSTRUCCIONES,METODO,TIPO,ATRIBUTOS,
 INSTANCIA,IF,ELSE,CICLO,SWITCH,PARAMETROS,OP,CASO,VALORES,IMPRIMIR,MasVARIABLE,ASIGNACION,PROCESAR,
 INSTRUCCION,OPCION,VARIABLE,DEFECTO,E,MATRIZ,ValorMATRIZ,ASIGNAR,PARA,PRINCIPAL,I,ATRIBUTO,DONDE,
-ALS,AccesoASL,CrearASL,ARREGLO,MasMATRIZ,GLOBAL,A,GRAFICAR,DATOS,SENTENCIAS,SENTENCIA,COLUMNA;
+ALS,AccesoASL,CrearASL,ARREGLO,MasMATRIZ,GLOBAL,A,GRAFICAR,DATOS,SENTENCIAS,COLUMNA;
 
 precedence left mas, menos;
 precedence left por, dividido;
@@ -696,6 +696,18 @@ AccesoASL::= id:a ATRIBUTOS:b {:
     NodoG E = new NodoG("AccesoASL");
     RESULT = new Caracter();
     E.insertar(new NodoG(a)); E.insertar(b.nodo); 
+    RESULT.nodo = E;
+:}
+|id:b parentesisA parentesisC ATRIBUTOS:a{:
+    NodoG E = new NodoG("ATRIBUTO");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(b)); E.insertar(new NodoG("("));E.insertar(new NodoG(")")); E.insertar(a.nodo); 
+    RESULT.nodo = E;
+:}
+|id:b parentesisA VALORES:n parentesisC ATRIBUTOS:a{:
+    NodoG E = new NodoG("ATRIBUTO");
+    RESULT = new Caracter();
+    E.insertar(new NodoG(b)); E.insertar(new NodoG("(")); E.insertar(n.nodo); E.insertar(new NodoG(")")); E.insertar(a.nodo); 
     RESULT.nodo = E;
 :};
 

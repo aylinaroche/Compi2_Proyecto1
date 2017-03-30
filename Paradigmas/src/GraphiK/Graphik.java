@@ -35,6 +35,7 @@ public class Graphik {
 
         //  archivos();
         objetos();
+        VariableG.imprimir();
     }
 
     public static void Analizar(String texto) throws Exception {
@@ -69,6 +70,7 @@ public class Graphik {
         VariableG.listaVariables = (ArrayList) v.clone();
         Metodo_FuncionG.listaMetodos = (ArrayList) a.metodos.clone();
         VariableG.nombreALS.push(a.nombre);
+        VariableG.nivelALS++;
 
         Metodo_FuncionG.buscarMain();
     }
@@ -496,7 +498,34 @@ public class Graphik {
 
     public static void objetos() {
         try {
-            Analizar("");
+            Analizar(""
+                    + "importar detalle.gk?\n"
+                    + "\n"
+                    + "ALS Ejemplo_entrada:publico {\n"
+                    + "	\n"
+                    + "    vacio inicio(){\n"
+                    + "        \n"
+                    + "        var entero det = llamar funcion().dpi?\n"
+                    //+"var cadena nombre_objeto = llamar objeto.obtener_nodo().nombre_nodo? "
+                    + "        imprimir(\"Resultado de operacion: \" + det)?\n"
+                    + "        \n"
+                    + "    }   \n"
+                    + "    \n"
+                    + "    detalle funcion(){\n"
+                    + "        \n"
+                    + "        detalle d = nuevo detalle()?\n"
+                    + "        d.dpi=123?\n"
+                    //       + "        imprimir(\"Resultado de operacion: \" + d.dpi)?\n"
+                    + "        retornar d?"
+                    + "    }   \n"
+                    + "}"
+                    + ""
+                    + "ALS detalle:publico{\n"
+                    + "    var cadena direccion:publico?\n"
+                    + "    var cadena telefono:publico?\n"
+                    + "    var cadena dpi:publico?\n"
+                    + "}"
+                    + "");
         } catch (Exception ex) {
             System.out.println("ERROR = " + ex);
         }

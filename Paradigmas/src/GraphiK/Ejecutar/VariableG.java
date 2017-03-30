@@ -29,6 +29,12 @@ public class VariableG {
                 return;
             }
         }
+        if (valor instanceof ObjetoALS) {
+            igualarALS(nombre, valor);
+            ObjetoALS obj = (ObjetoALS) valor;
+            obj.nombre = nombre;
+            valor = obj;
+        }
         Variable v = new Variable();
         v.nombre = nombre;
         v.tipo = tipo;
@@ -61,12 +67,12 @@ public class VariableG {
                 int j = tamanio[i];
                 if (j != 0) {
                     tam *= j;
-             //       System.out.println(i+":"+tam);
+                    //       System.out.println(i+":"+tam);
                 }
             }
-            ArrayList lista= new ArrayList();                
+            ArrayList lista = new ArrayList();
             for (int i = 0; i < tam; i++) {
-                lista.add("");                
+                lista.add("");
             }
             valor = lista;
         }
@@ -198,6 +204,22 @@ public class VariableG {
         ObjetoALS ins = new ObjetoALS();
         ins.als = tipo;
         ins.nombre = nombre;
+        for (int i = 0; i < listaVariables.size(); i++) {
+            Variable v = (Variable) listaVariables.get(i);
+            if (v.nombre.equals(nombre) && v.valor instanceof ObjetoALS) {
+                paradigmas.ReporteError.agregarErrorGK(nombre, "Error Semantico", "Ya existe la variable " + nombre, 0, 0);
+                return;
+            }
+        }
+        Variable v1 = new Variable();
+        v1.nombre = nombre;
+        v1.tipo = tipo;
+        v1.valor = ins;
+        v1.nivel = nivelALS;
+        v1.ambito = pilaAmbito.peek();
+        v1.als = nombreALS.peek();
+        v1.aux = nombreALS.peek();
+        listaVariables.add(v1);
         nombreALS.push(nombre);
         nivelALS++;
         for (int i = 0; i < listaALS.size(); i++) {
@@ -301,6 +323,27 @@ public class VariableG {
                 return d;
             } catch (Exception e) {
                 return resultado;
+            }
+        }
+    }
+
+    public static void igualarALS(String nombre, Object valor) {
+        ObjetoALS obj = (ObjetoALS) valor;
+
+        for (int i = 0; i < listaVariables.size(); i++) {
+            Variable var = (Variable) listaVariables.get(i);
+
+            if (var.als.equals(obj.nombre)) {
+                Variable v = new Variable();
+                v.nombre = var.nombre;
+                v.tipo = var.tipo;
+                v.valor = var.valor;
+                v.visibilidad = var.visibilidad;
+                v.nivel = nivelAmbito;
+                v.ambito = pilaAmbito.peek();
+                v.als = nombre;
+                v.aux = nombre()+"."+nombre;
+                listaVariables.add(v);
             }
         }
     }
