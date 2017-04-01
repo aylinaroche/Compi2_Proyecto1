@@ -33,8 +33,11 @@ public class Graphik {
             System.out.println(e);
         }
 
-        //  archivos();
-        objetos();
+//        archivos();
+//        objetos();
+//        control();
+        objetoFuncion();
+        // herencia();
         VariableG.imprimir();
     }
 
@@ -506,7 +509,6 @@ public class Graphik {
                     + "    vacio inicio(){\n"
                     + "        \n"
                     + "        var entero det = llamar funcion().dpi?\n"
-                    //+"var cadena nombre_objeto = llamar objeto.obtener_nodo().nombre_nodo? "
                     + "        imprimir(\"Resultado de operacion: \" + det)?\n"
                     + "        \n"
                     + "    }   \n"
@@ -515,7 +517,7 @@ public class Graphik {
                     + "        \n"
                     + "        detalle d = nuevo detalle()?\n"
                     + "        d.dpi=123?\n"
-                    //       + "        imprimir(\"Resultado de operacion: \" + d.dpi)?\n"
+                    + "        imprimir(\"Resultado de operacion: \" + d.dpi)?\n"
                     + "        retornar d?"
                     + "    }   \n"
                     + "}"
@@ -531,4 +533,132 @@ public class Graphik {
         }
     }
 
+    public static void control() {
+        try {
+            Analizar("	Als principal{\n"
+                    + "			\n"
+                    + "			vacio inicio(){\n"
+                    + "				var entero a = 1?\n"
+                    + "				si(a==10){\n"
+                    + "                         imprimir(\"estoy en if\")?\n"
+                    + "                     imprimir(\"------------------PROBANDO EL WHILE-------------\")?\n"
+                    + "					var entero b = 0?\n"
+                    + "                    mientras(b<10){\n"
+                    + "                        si(b==5){\n"
+                    + "                            imprimir(\"se puso el continuar el while en \" + b)?\n"
+                    + "                            b = b+1?\n"
+                    + "                            continuar?\n"
+                    + "                            }\n"
+                    + "                        imprimir(\"incrementando while\" + b)?\n"
+                    + "                        \n"
+                    + "                        b = b+1?    \n"
+                    + "                    }\n"
+                    + "                    imprimir(\"------------------TERMINO EL WHILE-------------\")?\n"
+                    + "                   \n"
+                    + "				}sino{\n"
+                    + "                    var entero b = 0?\n"
+                    + "                    imprimir(\"estoy en else \")?\n"
+                    + "					imprimir(\"------------------PROBANDO EL HASTA-------------\")?\n"
+                    + "					hacer{\n"
+                    + "                        si(b==5){\n"
+                    + "                            imprimir(\"se puso el terminar el while en \" + b)?\n"
+                    + "                            terminar?\n"
+                    + "                            }\n"
+                    + "                        imprimir(\"incrementando hacer \" + b)?\n"
+                    + "                        \n"
+                    + "                        b = b+1?    \n"
+                    + "                    }mientras(b<10)?\n"
+                    + "					imprimir(\"------------------TERMINO EL HASTA-------------\")?\n"
+                    + "                }\n"
+                    + "			}\n"
+                    + "	}");
+        } catch (Exception ex) {
+            System.out.println("ERROR = " + ex);
+        }
+    }
+
+    public static void objetoFuncion() {
+        try {
+            Analizar(""
+                    + "	Als principal{\n"
+                    // + "              var Profesor p?"
+                    + "			vacio inicio(){\n"
+                    + "                      var profesor profe1 = nuevo profesor()?\n"
+                    + "                      imprimir(profe1.saludo().salario)?\n"
+                    //+ "               p = nuevo Profesor()?"
+                    + "			}\n"
+                    + "	}\n"
+                    + "		ALS profesor:publico { \n"
+                    + "			var cadena nombreProfe:publico?\n"
+                    + "			var entero edadProfe:publico?\n"
+                    + "			var entero carnetProfe:publico?\n"
+                    + "			\n"
+                    + "			\n"
+                    + "                 Estudiante saludo():publico{\n"
+                    + "                         var Estudiante estu1 = nuevo Estudiante()? \n"
+                    + "				var Curso curso = nuevo curso()?\n"
+                    + "				\n"
+                    + "				llamar curso.saludo()?\n"
+                    + "				imprimir(\"estoy en metodo de profesor\")?\n"
+                    + "                         retornar estu1?\n"
+                    + "			}\n"
+                    + "			\n"
+                    + "		}\n"
+                    + "		\n"
+                    + "\n"
+                    + "\n"
+                    + "		ALS estudiante:publico {\n"
+                    + "                 var entero salario:publico = 20000?\n"
+                    + "			var cadena nombre:publico?\n"
+                    + "			var entero edad:publico?\n"
+                    + "			var entero carnet:publico?\n"
+                    + "			\n"
+                    + "			vacio ingresar_datos(cadena n, entero e, entero c):publico{\n"
+                    + "				nombre = n?\n"
+                    + "				edad = e?\n"
+                    + "				carnet = c?\n"
+                    + "			}\n"
+                    + "		}\n"
+                    + "			ALS curso:publico {\n"
+                    + "                         var entero codigo:publico = 3485?\n"
+                    + "				var cadena nombre:publico=\"matematica\"?\n"
+                    + "				\n"
+                    + "				\n"
+                    + "				vacio saludo():publico{\n"
+                    + "                                  imprimir(\"es el codigo del curso \"+codigo)?\n"
+                    + "					imprimir(\"estoy en el metodo de curso\")?\n"
+                    + "				}\n"
+                    + "				\n"
+                    + "	}"
+                    + "");
+        } catch (Exception ex) {
+            System.out.println("ERROR = " + ex);
+        }
+    }
+
+    public static void herencia() {
+        try {
+            Analizar(""
+                    + "Als identificador hereda i {\n"
+                    + "\n"
+                    + "var decimal x = 6.0 ?\n"
+                    + "vacio inicio(){\n"
+                    + "     llamar metodo1()?\n"
+                    + "}\n"
+                    + "}"
+                    + "als j: protegido{\n"
+                    + "     var decimal x = 1.0 ?\n"
+                    + "}\n"
+                    + "\n"
+                    + "als i hereda j{\n"
+                    + "     vacio metodo1(){\n"
+                    + "         imprimir(x)?\n"
+                    + "     }\n"
+                    + "}\n"
+                    + "\n"
+                    + "");
+        } catch (Exception ex) {
+            Logger.getLogger(Graphik.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

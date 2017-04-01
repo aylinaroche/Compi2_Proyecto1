@@ -3,6 +3,7 @@ package Graphik.Ejecutar;
 import Graphik.ALS;
 import static Graphik.Ejecutar.VariableG.nivelAmbito;
 import static Graphik.Ejecutar.VariableG.pilaAmbito;
+import Graphik.Objetos.ObjetoALS;
 import Graphik.Objetos.Variable;
 import java.util.ArrayList;
 import paradigmas.GraficarFuncion;
@@ -143,7 +144,6 @@ public class RecorridoEjecutar {
                     result = raiz.hijos[0].texto;
                     break;
                 case "VARIABLE":
-                    //  System.out.println("Hola");
                     switch (raiz.cantidadHijos) {
                         case 4:
                             tipo = Recorrido(raiz.hijos[1]).toString();
@@ -300,6 +300,11 @@ public class RecorridoEjecutar {
                         case 2:
                             result = Recorrido(raiz.hijos[1]);
                             break;
+                        case 3:
+                            ObjetoALS obj = new ObjetoALS();
+                            obj.als = raiz.hijos[0].texto;
+                            result = obj;
+                            break;
                     }
                     break;
                 case "ValorMATRIZ":
@@ -364,6 +369,7 @@ public class RecorridoEjecutar {
                             result = Recorrido(raiz.hijos[2]);
                             w = result.toString().equals("true");
                             while (w) {
+                                continuar = false;
                                 result = Recorrido(raiz.hijos[2]).toString();
                                 if (result.toString().equals("true")) {
                                     Recorrido(raiz.hijos[5]);
@@ -378,8 +384,8 @@ public class RecorridoEjecutar {
                             Recorrido(raiz.hijos[2]);
                             result = Recorrido(raiz.hijos[6]).toString();
                             w = result.toString().equals("true");
-                            //   w = true;
                             while (w) {
+                                continuar = false;
                                 Recorrido(raiz.hijos[2]);
                                 result = Recorrido(raiz.hijos[6]).toString();
                                 if (result.toString().equals("true")) {
@@ -391,6 +397,8 @@ public class RecorridoEjecutar {
                             }
                             break;
                     }
+                    salir = false;
+                    continuar = false;
                     pilaAmbito.pop();
                     VariableG.eliminarVariable();
                     nivelAmbito -= 1;
@@ -633,6 +641,29 @@ public class RecorridoEjecutar {
                                 VariableG.nivelALS--;
                                 VariableG.nombreALS.pop();
                             }
+                            break;
+                        case 4:
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, variables, VariableG.nombreALS.peek());
+                            if (result instanceof ObjetoALS) {
+                                ObjetoALS als = (ObjetoALS) result;
+                                System.out.println("r= " + als.nombre);
+//                                VariableG.nombreALS.push(raiz.hijos[0].texto);
+                                VariableG.nombreALS.push(als.nombre);
+//                                VariableG.nivelALS++;
+                                VariableG.nivelALS++;
+                            }
+                            result = Recorrido(raiz.hijos[3]);
+                            VariableG.nombreALS.pop();
+//                            VariableG.nombreALS.pop();
+//                            VariableG.nivelALS--;
+                            VariableG.nivelALS--;
+                            break;
+                        case 5:
+                            result = Recorrido(raiz.hijos[2]);
+                            ArrayList parametro = (ArrayList) result;
+                            result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, parametro, VariableG.nombreALS.peek());
+                            result = Recorrido(raiz.hijos[4]);
+                            VariableG.nivelALS--;
                             break;
                     }
                     break;

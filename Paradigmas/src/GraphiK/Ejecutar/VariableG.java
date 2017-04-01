@@ -342,7 +342,7 @@ public class VariableG {
                 v.nivel = nivelAmbito;
                 v.ambito = pilaAmbito.peek();
                 v.als = nombre;
-                v.aux = nombre()+"."+nombre;
+                v.aux = nombre() + "." + nombre;
                 listaVariables.add(v);
             }
         }
