@@ -6,6 +6,7 @@ import static Graphik.Ejecutar.VariableG.pilaAmbito;
 import Graphik.Objetos.ObjetoALS;
 import Graphik.Objetos.Variable;
 import java.util.ArrayList;
+import java.util.Stack;
 import paradigmas.GraficarFuncion;
 import paradigmas.Pop;
 
@@ -22,9 +23,9 @@ public class RecorridoEjecutar {
     public static String atributo = "";
     public static String tipoDonde = "";
     public static String tipoAux = "";
-    //
-
-//    public static Stack<String> ALSGeneral = new Stack<>();
+    public static Boolean boolObjeto = false;
+    public static int nivelObjeto = 0;
+    public static Stack<String> pilaAux = new Stack<>();
     //
     public static int tamanio[] = new int[10];
     public static ArrayList valores = new ArrayList();
@@ -151,7 +152,12 @@ public class RecorridoEjecutar {
                             if (raiz.hijos[2].texto.equals("MasVARIABLE")) {
                                 for (int i = 0; i < variables.size(); i++) {
                                     Variable v = (Variable) variables.get(i);
-                                    VariableG.crearVariable(tipo, v.nombre, v.valor, v.visibilidad);
+                                    if (v.valor instanceof ObjetoALS) {
+                                        ObjetoALS obj = (ObjetoALS) v.valor;
+                                        VariableG.crearVariableALS(obj.als, v.nombre);
+                                    } else {
+                                        VariableG.crearVariable(tipo, v.nombre, v.valor, v.visibilidad);
+                                    }
                                 }
                             } else {
                                 for (int i = 0; i < variables.size(); i++) {
@@ -581,17 +587,52 @@ public class RecorridoEjecutar {
                 case "VALORES":
                     switch (raiz.cantidadHijos) {
                         case 1:
-                            result = (Recorrido(raiz.hijos[0]));
-                            ArrayList valor = new ArrayList();
-                            valor.add(result);
-                            result = valor;
+                            if (boolObjeto == true) {
+                                for (int i = 0; i < nivelObjeto; i++) {
+                                    pilaAux.push(VariableG.nombreALS.peek());
+                                    VariableG.nombreALS.pop();
+                                    VariableG.nivelALS--;
+                                }
+                                result = (Recorrido(raiz.hijos[0]));
+                                ArrayList valor = new ArrayList();
+                                valor.add(result);
+                                result = valor;
+                                for (int i = 0; i < nivelObjeto; i++) {
+                                    VariableG.nombreALS.push(pilaAux.peek());
+                                    pilaAux.pop();
+                                    VariableG.nivelALS++;
+                                }
+                            } else {
+                                result = (Recorrido(raiz.hijos[0]));
+                                ArrayList valor = new ArrayList();
+                                valor.add(result);
+                                result = valor;
+                            }
                             break;
                         case 3:
-                            result = Recorrido(raiz.hijos[0]);
-                            ArrayList valor2 = (ArrayList) result;
-                            result = Recorrido(raiz.hijos[2]);
-                            valor2.add(result);
-                            result = valor2;
+                            if (boolObjeto == true) {
+                                for (int i = 0; i < nivelObjeto; i++) {
+                                    pilaAux.push(VariableG.nombreALS.peek());
+                                    VariableG.nombreALS.pop();
+                                    VariableG.nivelALS--;
+                                }
+                                result = Recorrido(raiz.hijos[0]);
+                                ArrayList valor2 = (ArrayList) result;
+                                result = Recorrido(raiz.hijos[2]);
+                                valor2.add(result);
+                                result = valor2;
+                                for (int i = 0; i < nivelObjeto; i++) {
+                                    VariableG.nombreALS.push(pilaAux.peek());
+                                    pilaAux.pop();
+                                    VariableG.nivelALS++;
+                                }
+                            } else {
+                                result = Recorrido(raiz.hijos[0]);
+                                ArrayList valor2 = (ArrayList) result;
+                                result = Recorrido(raiz.hijos[2]);
+                                valor2.add(result);
+                                result = valor2;
+                            }
                             break;
                     }
                     break;
@@ -623,7 +664,7 @@ public class RecorridoEjecutar {
                         case 8:
                             if (raiz.hijos[0].texto.equals(raiz.hijos[4].texto)) {
                                 VariableG.crearVariableALS(raiz.hijos[0].texto, raiz.hijos[1].texto);
-                                VariableG.imprimir();
+                                //     VariableG.imprimir();
                             } else {
                                 paradigmas.ReporteError.agregarErrorGK(raiz.hijos[0].texto, "Error Semantico", "Error de Sintaxis", 0, 0);
                             }
@@ -636,6 +677,7 @@ public class RecorridoEjecutar {
                             int cont = VariableG.nivelALS;
                             VariableG.nombreALS.push(raiz.hijos[0].texto);
                             VariableG.nivelALS++;
+                            nivelObjeto++;
                             result = (Recorrido(raiz.hijos[1]));
                             while (cont != VariableG.nivelALS) {
                                 VariableG.nivelALS--;
@@ -644,28 +686,39 @@ public class RecorridoEjecutar {
                             break;
                         case 4:
                             result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, variables, VariableG.nombreALS.peek());
+                            retornar = false;
                             if (result instanceof ObjetoALS) {
                                 ObjetoALS als = (ObjetoALS) result;
                                 System.out.println("r= " + als.nombre);
-//                                VariableG.nombreALS.push(raiz.hijos[0].texto);
                                 VariableG.nombreALS.push(als.nombre);
-//                                VariableG.nivelALS++;
                                 VariableG.nivelALS++;
+                                nivelObjeto++;
                             }
                             result = Recorrido(raiz.hijos[3]);
                             VariableG.nombreALS.pop();
-//                            VariableG.nombreALS.pop();
-//                            VariableG.nivelALS--;
                             VariableG.nivelALS--;
                             break;
                         case 5:
+                            boolObjeto = true;
                             result = Recorrido(raiz.hijos[2]);
                             ArrayList parametro = (ArrayList) result;
                             result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, parametro, VariableG.nombreALS.peek());
+                            retornar = false;
+                            if (result instanceof ObjetoALS) {
+                                ObjetoALS als = (ObjetoALS) result;
+                                System.out.println("r2= " + als.nombre);
+                                VariableG.nombreALS.push(als.nombre);
+                                VariableG.nivelALS++;
+                                nivelObjeto++;
+                            }
+                            //ya habia un -- y alli lo deje
                             result = Recorrido(raiz.hijos[4]);
+                            VariableG.nombreALS.pop();
                             VariableG.nivelALS--;
+                            boolObjeto = false;
                             break;
                     }
+                    nivelObjeto = 0;
                     break;
                 case "ATRIBUTOS":
                     switch (raiz.cantidadHijos) {
@@ -673,8 +726,16 @@ public class RecorridoEjecutar {
                             result = (Recorrido(raiz.hijos[0]));
                             break;
                         case 2:
-                            Recorrido(raiz.hijos[0]);
+                            result = Recorrido(raiz.hijos[0]);
+                            if (result instanceof ObjetoALS) {
+                                ObjetoALS obj = (ObjetoALS) result;
+                                VariableG.nombreALS.push(obj.nombre);
+                                VariableG.nivelALS++;
+                                nivelObjeto++;
+                            }
                             result = (Recorrido(raiz.hijos[1]));
+                            VariableG.nivelALS--;
+                            VariableG.nombreALS.pop();
                             break;
                     }
                     break;
@@ -702,26 +763,28 @@ public class RecorridoEjecutar {
                                 } else if (tipo.equals("entero") || tipo.equals("decimal") || tipo.equals("cadena") || tipo.equals("caracter") || tipo.equals("bool")) {
                                     result = obj;
                                 } else {
-                                    //     System.out.println(" ->>>>> " + raiz.hijos[0].texto);
                                     VariableG.nombreALS.push(raiz.hijos[0].texto);
                                     VariableG.nivelALS++;
                                 }
                                 break;
                             case 2: //arreglo
-//                            result = (Recorrido(raiz.hijos[0]));
+                                result = (Recorrido(raiz.hijos[2]));
                                 break;
                             case 3:
                                 result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, variables, VariableG.nombreALS.peek());
+                                retornar = false;
                                 break;
                             case 4:
+                                boolObjeto = true;
                                 result = Recorrido(raiz.hijos[2]);
                                 ArrayList parametro2 = (ArrayList) result;
                                 result = Metodo_FuncionG.buscarMetodo(raiz.hijos[0].texto, parametro2, VariableG.nombreALS.peek());
                                 parametro2.clear();
+                                retornar = false;
+                                boolObjeto = false;
                                 break;
                         }
                     }
-                    //VariableG.nivelALS--;
                     break;
                 case "SENTENCIAS":
                     switch (raiz.cantidadHijos) {

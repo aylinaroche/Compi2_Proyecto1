@@ -60,7 +60,6 @@ public class Metodo_FuncionG {
                     VariableG.nivelAmbito--;
                     VariableG.pilaAmbito.pop();
 //                    VariableG.nombreALS.pop();
-
                     return retorno;
                 }
             }

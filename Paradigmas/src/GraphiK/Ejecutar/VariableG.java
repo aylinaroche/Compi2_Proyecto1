@@ -218,7 +218,7 @@ public class VariableG {
         v1.nivel = nivelALS;
         v1.ambito = pilaAmbito.peek();
         v1.als = nombreALS.peek();
-        v1.aux = nombreALS.peek();
+        v1.aux = nombre();
         listaVariables.add(v1);
         nombreALS.push(nombre);
         nivelALS++;
